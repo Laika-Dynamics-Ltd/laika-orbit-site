@@ -2112,25 +2112,72 @@ const stars = [0, 90, 180, 270].map((a) => pt(40, a + 45))
     }
   }
 
-  /* ---------------- phone: nav, the chat, then the map running off the edge ---------------- */
+  /* ---------------- phone: one agent's chat, set large, with the map running off the edge ----------------
+     The nav rail, the inner chat tabs and the code diff drop out; the canvas narrows so it scales up
+     to roughly 1.2x, which puts body text near 14px on a 390px screen. */
   @container (max-width: 600px) {
-    .main {
-      grid-template-columns: 52px 270px 394px;
+    .hw-box {
+      aspect-ratio: 458 / 560;
+      border-radius: 12px;
     }
-    .hw-nav {
-      order: 1;
+    .hw {
+      width: 458px;
+      height: 560px;
+      transform: scale(tan(atan2(100cqw, 458px)));
+    }
+    .hd {
+      height: 44px;
+      padding: 0 12px 0 14px;
+    }
+    .main {
+      grid-template-columns: 266px 394px;
+    }
+    .hw-nav,
+    .ctabs,
+    .diff,
+    .ws-tab.need ~ .ws-tab,
+    .ws-plus,
+    .hud {
+      display: none;
+    }
+    .ws-tab.need {
+      display: flex;
     }
     .ss {
-      order: 2;
+      order: 1;
       border-left: 0;
       border-right: 1px solid var(--n16);
-      box-shadow: 20px 0 40px -20px rgba(0, 0, 0, 0.8);
+      box-shadow: 24px 0 48px -24px rgba(0, 0, 0, 0.85);
     }
     .stage {
-      order: 3;
+      order: 2;
     }
-    .hud.l {
-      display: none;
+    .map {
+      left: -96px;
+    }
+    .ss-bar {
+      height: 42px;
+      padding: 0 6px 0 4px;
+    }
+    .stream {
+      gap: 11px;
+      padding: 16px 14px 10px 14px;
+    }
+    .you {
+      padding: 10px 12px;
+      font-size: 12.5px;
+    }
+    .step {
+      font-size: 12.5px;
+    }
+    .step span {
+      font-size: 11px;
+    }
+    .io {
+      margin-top: -2px;
+    }
+    .say {
+      font-size: 12.5px;
     }
   }
 </style>
