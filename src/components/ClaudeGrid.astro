@@ -289,7 +289,7 @@ RUNS  src/checkout/checkout.test.ts
     display: flex;
     flex-direction: column;
     width: 100%;
-    aspect-ratio: 5 / 3;
+    aspect-ratio: var(--cg-aspect, 5 / 3);
     overflow: hidden;
     background: var(--n2);
     color: var(--text);
@@ -674,8 +674,8 @@ RUNS  src/checkout/checkout.test.ts
     gap: calc(11 * var(--u));
     padding: calc(14 * var(--u)) calc(16 * var(--u)) calc(12 * var(--u)) calc(14 * var(--u));
     overflow: hidden;
-    -webkit-mask-image: linear-gradient(transparent, black calc(34 * var(--u)));
-    mask-image: linear-gradient(transparent, black calc(34 * var(--u)));
+    -webkit-mask-image: linear-gradient(transparent calc(14 * var(--u)), black calc(58 * var(--u)));
+    mask-image: linear-gradient(transparent calc(14 * var(--u)), black calc(58 * var(--u)));
   }
   .log > * {
     flex-shrink: 0;

@@ -114,18 +114,21 @@ const mark = { yes: '●', partial: '◐', no: '—' } as const
     </section>
 
     <!-- ─────────────────────────────── agents ── -->
-    <section class="section wrap" id="product">
-      <div class="eyebrow">Agents</div>
-      <div class="split-head">
-        <h2>Many agents.<br />One view.</h2>
-        <p class="muted">
-          Split chats like editor groups, or run four in a grid. Every chat is a real Claude Code
-          session, per repo or across a whole project folder, with its tasks and sub-agents in
-          view.
+    <section class="section wrap agents" id="product">
+      <div class="agents-head">
+        <div>
+          <div class="eyebrow">Agents</div>
+          <h2>Many agents. <span class="muted">One view.</span></h2>
+        </div>
+        <p>
+          Run Claude Code in four chats at once, each in its own repo or across a whole project
+          folder. Split them like editor groups and see at a glance which one is waiting on you.
         </p>
       </div>
-      <div class="frame">
-        <ClaudeGrid />
+      <div class="agents-stage">
+        <div class="frame agents-frame">
+          <ClaudeGrid />
+        </div>
       </div>
     </section>
 
