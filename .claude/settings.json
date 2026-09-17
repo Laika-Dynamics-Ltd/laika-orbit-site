@@ -2,21 +2,22 @@
   "permissions": {
     "allow": [
       "Bash(vercel deploy:*)",
-      "Bash(vercel ls:*)",
+      "Bash(vercel env add:*)",
+      "Bash(vercel env ls:*)",
+      "Bash(vercel env pull:*)",
       "Bash(vercel inspect:*)",
-      "Bash(vercel env pull:*)"
+      "Bash(vercel ls:*)"
     ],
     "deny": [
-      "Bash(vercel domains:*)",
-      "Bash(vercel env add:*)",
-      "Bash(vercel env rm:*)",
-      "Bash(vercel project:*)",
-      "Bash(vercel teams:*)",
-      "Bash(vercel remove:*)",
-      "Bash(vercel rm:*)",
       "Bash(vercel alias:*)",
       "Bash(vercel certs:*)",
-      "Bash(vercel secrets:*)"
+      "Bash(vercel domains:*)",
+      "Bash(vercel env rm:*)",
+      "Bash(vercel project:*)",
+      "Bash(vercel remove:*)",
+      "Bash(vercel rm:*)",
+      "Bash(vercel secrets:*)",
+      "Bash(vercel teams:*)"
     ]
   }
 }
