@@ -16,7 +16,9 @@ export const FREE_FEATURES = [
 export const PRO_FEATURES = [
   'Everything in Free',
   'Signed, notarised Mac app with automatic updates',
-  'Settings, workspaces and pins synced across your Macs',
-  'Managed build runners for heavy jobs',
-  'Priority email support',
+  'Priority email support, from a person who builds it',
+  'Your price locked for as long as you stay subscribed',
 ]
+
+/** Named on the pricing page as not built yet, so nobody buys on the strength of them. */
+export const PRO_COMING = ['Settings, workspaces and pins synced across your Macs, end-to-end encrypted']

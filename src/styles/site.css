@@ -1570,3 +1570,22 @@ h3 {
   color: #8fe6c6;
   font-size: 15px;
 }
+
+/* pricing: features that are honestly not built yet */
+.soon-item {
+  color: var(--muted);
+}
+.soon-tag {
+  margin-left: 6px;
+  padding: 2px 7px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 184, 77, 0.3);
+  background: rgba(255, 184, 77, 0.08);
+  color: #ffd79a;
+  font-size: 11.5px;
+  white-space: nowrap;
+}
+.soon-item::before {
+  content: '·' !important;
+  color: var(--faint) !important;
+}
