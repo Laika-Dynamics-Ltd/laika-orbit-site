@@ -32,7 +32,7 @@ const GITHUB = 'https://github.com/Laika-Dynamics-Ltd/laika-orbit'
       <div class="plan-top"><h2>Pro</h2>{!open && <span class="soon">Coming soon</span>}</div>
       <div class="price">
         <b data-show="yearly">{PRO.yearly.label}</b><b data-show="monthly" hidden>{PRO.monthly.label}</b>
-        <span data-show="yearly">{PRO.yearly.per}</span><span data-show="monthly" hidden>{PRO.monthly.per}</span>
+        <span data-show="yearly">{PRO.currency} {PRO.yearly.per}</span><span data-show="monthly" hidden>{PRO.currency} {PRO.monthly.per}</span>
       </div>
       <p class="muted">For people who want the app to just work, everywhere.</p>
       {open ? (
@@ -44,7 +44,7 @@ const GITHUB = 'https://github.com/Laika-Dynamics-Ltd/laika-orbit'
           <button type="submit" class="btn btn-light">Join the waitlist</button>
         </form>
       )}
-      <p class="form-note" data-note aria-live="polite">{open ? 'Taxes are calculated at checkout. Cancel any time.' : 'Be first to hear when Pro opens. No spam.'}</p>
+      <p class="form-note" data-note aria-live="polite">{open ? 'Prices in US dollars. Tax is added at checkout where required. Cancel any time.' : 'Be first to hear when Pro opens. No spam.'}</p>
       <ul>{PRO_FEATURES.map((f) => <li>{f}</li>)}</ul>
     </article>
   </section>
@@ -54,7 +54,7 @@ const GITHUB = 'https://github.com/Laika-Dynamics-Ltd/laika-orbit'
     <details><summary>Do I need a Claude account?</summary><p>Yes. Chats run Claude Code under your own Claude account. Laika Orbit never provides, resells or meters Claude usage, on Free or Pro.</p></details>
     <details><summary>What happens if I stop paying?</summary><p>Pro features stop at the end of your billing period, and the app carries on as the free, open-source version. Your data stays on your machine.</p></details>
     <details><summary>Can I cancel or change plans?</summary><p>Any time, from the billing portal linked in your account. Yearly plans can switch to monthly at renewal.</p></details>
-    <details><summary>Do you charge tax?</summary><p>Where the law requires it, such as GST in New Zealand or VAT in the UK and EU, tax is calculated at checkout from your address. Business customers can add a tax ID.</p></details>
+    <details><summary>What currency, and do you charge tax?</summary><p>Prices are in US dollars. Where the law requires it, such as GST in New Zealand or VAT in the UK and EU, tax is calculated at checkout from your address. Business customers can add a tax ID.</p></details>
     <details><summary>Is there a refund?</summary><p>See the <a class="link" href="/legal/refunds/">refund policy</a>.</p></details>
     <details><summary>Is the code really open source?</summary><p>Yes, MIT licensed, on <a class="link" href={GITHUB}>GitHub</a>.</p></details>
   </section>
