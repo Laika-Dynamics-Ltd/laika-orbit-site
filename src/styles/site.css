@@ -1206,10 +1206,11 @@ h3 {
 @media (min-width: 721px) {
   .agents-frame .c1 .log > :not(.m-ask),
   .agents-frame .c2 .log > .m-user,
+  .agents-frame .c2 .log > .m-claude,
   .agents-frame .c3 .log > .m-user,
-  .agents-frame .c3 .log > .m-think,
   .agents-frame .c4 .log > .m-user,
-  .agents-frame .c4 .log > .m-think {
+  .agents-frame .c4 .log > .m-think,
+  .agents-frame .c4 .log > .m-tool {
     display: none;
   }
   .agents-frame .log {
