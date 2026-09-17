@@ -33,9 +33,9 @@ const mark = { yes: '●', partial: '◐', no: '—' } as const
       <canvas class="orbit" aria-hidden="true"></canvas>
       <div class="orbit-poster" aria-hidden="true"></div>
       <div class="wrap hero-in">
-        <a class="pill" href="/docs/1brain/mcp/">
+        <a class="pill" href="/docs/recall/mcp/">
           <span class="pill-tag">New</span>
-          <span>1brain for Claude Code<span class="pill-more">: recall with zero model calls</span></span>
+          <span>Laika Orbit recall for Claude Code<span class="pill-more">: answers with zero model calls</span></span>
           <span aria-hidden="true">→</span>
         </a>
         <h1>Mission control<br />for your AI agents</h1>
@@ -48,7 +48,7 @@ const mark = { yes: '●', partial: '◐', no: '—' } as const
           <a class="btn btn-ghost" href={GITHUB}>Star on GitHub</a>
         </div>
         <p class="hero-note">
-          Already in Claude Code? Add 1brain recall with
+          Already in Claude Code? Add Laika Orbit recall with
           <code class="cmd"><span class="dim">$</span> npx 1brain mcp</code>
         </p>
       </div>
@@ -190,24 +190,24 @@ const mark = { yes: '●', partial: '◐', no: '—' } as const
       <div class="frame frame-bare"><KnowledgeMap /></div>
     </section>
 
-    <!-- ─────────────────────────────── 1brain ── -->
-    <section class="section wrap onebrain" id="1brain">
+    <!-- ─────────────────────────────── recall ── -->
+    <section class="section wrap onebrain" id="recall">
       <div class="onebrain-copy">
-        <div class="eyebrow">1brain</div>
+        <div class="eyebrow">Laika Orbit recall</div>
         <h2>Context without<br />the token bill.</h2>
         <p class="muted">
-          Agents answer questions about your work by grepping and reading whole files. 1brain finds
+          Agents answer questions about your work by grepping and reading whole files. Laika Orbit recall finds
           the exact section in plain code, then hands Claude one small answer. It's the engine inside
-          Orbit, and it works in any Claude Code session today.
+          the app, and it works in any Claude Code session today.
         </p>
         <dl class="stats">
           <div><dt>~1ms</dt><dd>to answer</dd></div>
           <div><dt>0</dt><dd>model calls to search</dd></div>
           <div><dt>97.8%</dt><dd>fewer tokens than grep-and-read<sup><a href="https://github.com/Laika-Dynamics-Ltd/laika-orbit/blob/main/bench/RESULTS.md">1</a></sup></dd></div>
         </dl>
-        <a class="link" href="/docs/1brain/">How 1brain works →</a>
+        <a class="link" href="/docs/recall/">How recall works →</a>
       </div>
-      <div class="term" role="img" aria-label="Terminal: adding 1brain to Claude Code and recalling an answer">
+      <div class="term" role="img" aria-label="Terminal: adding Laika Orbit recall to Claude Code and recalling an answer">
         <div class="term-bar"><i></i><i></i><i></i><span>zsh</span></div>
 <pre><span class="dim">$</span> claude mcp add 1brain -- npx -y 1brain mcp
 <span class="ok">Added stdio MCP server 1brain</span>

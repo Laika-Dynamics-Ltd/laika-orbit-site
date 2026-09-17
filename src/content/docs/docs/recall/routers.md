@@ -4,7 +4,7 @@ description: Typed pointer files that turn fast search into answers.
 ---
 
 Router files are short Markdown files in `brain/routers/` that say where things are. They're the
-curated index: 1brain weighs them above file names and contents, so a good router line is how a
+curated index: Laika Orbit recall weighs them above file names and contents, so a good router line is how a
 question finds its answer.
 
 ```markdown

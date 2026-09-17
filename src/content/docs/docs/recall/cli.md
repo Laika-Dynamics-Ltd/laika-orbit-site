@@ -1,6 +1,6 @@
 ---
 title: CLI
-description: 1brain commands and options.
+description: Laika Orbit recall commands and options.
 ---
 
 ```bash

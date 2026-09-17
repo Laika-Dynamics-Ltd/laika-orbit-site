@@ -5,6 +5,15 @@ import { defineConfig } from 'astro/config'
 
 export default defineConfig({
   site: 'https://laikaorbit.com',
+  // the recall docs used to live at /docs/1brain/; keep the published links working
+  redirects: {
+    '/docs/1brain': '/docs/recall/',
+    '/docs/1brain/mcp': '/docs/recall/mcp/',
+    '/docs/1brain/cli': '/docs/recall/cli/',
+    '/docs/1brain/routers': '/docs/recall/routers/',
+    '/docs/1brain/how-recall-works': '/docs/recall/how-recall-works/',
+    '/docs/1brain/configuration': '/docs/recall/configuration/',
+  },
   // pages stay static; the checkout, webhook and licence routes run as Vercel functions
   adapter: vercel(),
   // the dev toolbar sits over the page in every capture
@@ -13,7 +22,7 @@ export default defineConfig({
     starlight({
       title: 'Laika Orbit',
       description:
-        'Docs for Laika Orbit, the local-first workspace for Claude Code, and 1brain, its zero-model retrieval engine.',
+        'Docs for Laika Orbit, the local-first workspace for Claude Code, and Laika Orbit recall, its zero-model retrieval engine.',
       social: [
         { icon: 'github', label: 'GitHub', href: 'https://github.com/Laika-Dynamics-Ltd/laika-orbit' },
       ],
@@ -55,14 +64,14 @@ export default defineConfig({
           ],
         },
         {
-          label: '1brain',
+          label: 'Laika Orbit recall',
           items: [
-            { label: 'Overview', slug: 'docs/1brain' },
-            { label: 'Use with Claude Code (MCP)', slug: 'docs/1brain/mcp' },
-            { label: 'CLI', slug: 'docs/1brain/cli' },
-            { label: 'Router files', slug: 'docs/1brain/routers' },
-            { label: 'How recall works', slug: 'docs/1brain/how-recall-works' },
-            { label: 'Index configuration', slug: 'docs/1brain/configuration' },
+            { label: 'Overview', slug: 'docs/recall' },
+            { label: 'Use with Claude Code (MCP)', slug: 'docs/recall/mcp' },
+            { label: 'CLI', slug: 'docs/recall/cli' },
+            { label: 'Router files', slug: 'docs/recall/routers' },
+            { label: 'How recall works', slug: 'docs/recall/how-recall-works' },
+            { label: 'Index configuration', slug: 'docs/recall/configuration' },
           ],
         },
         {

@@ -29,7 +29,7 @@ All of these are gitignored, so `git pull` never touches them.
 | File | Holds |
 |---|---|
 | `.env.local` | The variables above |
-| `brain/index.config.json` | What gets indexed ([reference](/docs/1brain/configuration/)) |
+| `brain/index.config.json` | What gets indexed ([reference](/docs/recall/configuration/)) |
 | `brain/agents.local.json` | Claude accounts added in the app: a label and a Claude Code config folder each, no credentials |
 | `brain/connectors.local.json` | Claude connectors to list in settings and on the map: `[{ "id", "name", "via", "live" }]` |
 | `brain/widgets/_settings.json` | Widget layout |

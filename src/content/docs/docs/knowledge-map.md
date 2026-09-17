@@ -3,7 +3,7 @@ title: Knowledge map
 description: The 3D map of your files, repos, chats and routines, and what gets indexed.
 ---
 
-The map draws everything 1brain has indexed, grouped by what it is (plans, specs, legal, code…) and
+The map draws everything Laika Orbit recall has indexed, grouped by what it is (plans, specs, legal, code…) and
 where it lives. Chats and routines orbit alongside.
 
 ## Moving around
@@ -24,7 +24,7 @@ Click a node to open it; double-click flies to it. <kbd>space</kbd> previews the
 ## Search
 
 <kbd>⌘</kbd><kbd>K</kbd> (or <kbd>/</kbd>) opens spotlight: files, actions, and questions answered
-by 1brain.
+by Laika Orbit recall.
 
 ## What gets indexed
 
@@ -36,7 +36,7 @@ indexed. Add **sources** (any folder, such as `~/Documents/Projects` or `~/dev`)
 - how deep to go
 
 The same settings are used by the CLI and the MCP server. They're saved to
-`brain/index.config.json`; see [Index configuration](/docs/1brain/configuration/).
+`brain/index.config.json`; see [Index configuration](/docs/recall/configuration/).
 
 `.docx`, `.rtf` and `.odt` files are read with macOS `textutil`, and PDFs with `pdftotext` when it's
 installed.

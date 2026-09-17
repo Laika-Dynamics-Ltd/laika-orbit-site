@@ -10,7 +10,7 @@ export const FREE_FEATURES = [
   'Claude Code chats side by side, grid and task track',
   'Browser with a profile per account',
   'Inbox, calendar and widgets',
-  '1brain knowledge map, CLI and MCP server',
+  'Laika Orbit recall: knowledge map, CLI and MCP server',
 ]
 
 export const PRO_FEATURES = [

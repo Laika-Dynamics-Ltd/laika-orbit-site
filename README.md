@@ -1,7 +1,7 @@
 # laikaorbit.com
 
 The website and docs for [Laika Orbit](https://github.com/Laika-Dynamics-Ltd/laika-orbit) and its
-retrieval engine, 1brain. Built with [Astro](https://astro.build) and
+retrieval engine, Laika Orbit recall. Built with [Astro](https://astro.build) and
 [Starlight](https://starlight.astro.build).
 
 ```bash

@@ -5,7 +5,7 @@ description: Requirements, installing from source, and what happens on first lau
 
 ## Requirements
 
-- **macOS** for the desktop app. The server and 1brain also run on Linux.
+- **macOS** for the desktop app. The server and Laika Orbit recall also run on Linux.
 - **Node 22.18 or newer** and **pnpm 10**. With [mise](https://mise.jdx.dev), `mise install` sets up both.
 - **A Claude account** for chats (you can try the panel with an offline demo agent first).
 - Optional: `brew install poppler` so PDFs are indexed (`pdftotext`).

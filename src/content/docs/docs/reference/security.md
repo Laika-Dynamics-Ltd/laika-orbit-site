@@ -9,7 +9,7 @@ description: What stays on your machine, what leaves it, and how the app protect
   terminal. After each turn a short summary is written by a small model on the same account
   (`LAIKA_BRIEFS=0` turns that off).
 - **Inbox and calendar** are fetched from Google with the credentials you configure.
-- **1brain** makes no network calls. Indexing and recall are local.
+- **Laika Orbit recall** makes no network calls. Indexing and recall are local.
 
 Nothing is sent to Laika Dynamics. There's no telemetry.
 

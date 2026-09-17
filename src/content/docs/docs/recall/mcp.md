@@ -1,6 +1,6 @@
 ---
-title: Use 1brain with Claude Code
-description: Add the 1brain MCP server so Claude recalls instead of grepping.
+title: Use Laika Orbit recall with Claude Code
+description: Add the Laika Orbit recall MCP server so Claude recalls instead of grepping.
 ---
 
 ```bash
@@ -25,7 +25,7 @@ claude mcp add brain-notes -- npx -y 1brain mcp --root ~/notes
 ```
 
 The index is built on the first call and refreshed at most every `refreshSecs` (see
-[Index configuration](/docs/1brain/configuration/)), re-reading only files that changed.
+[Index configuration](/docs/recall/configuration/)), re-reading only files that changed.
 
 ## Nudging Claude to use it
 

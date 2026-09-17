@@ -1,6 +1,6 @@
 ---
 title: Introduction
-description: What Laika Orbit and 1brain are, and where to start.
+description: What Laika Orbit and its recall engine are, and where to start.
 ---
 
 **Laika Orbit** is a desktop workspace for people who work with Claude Code all day. One window holds:
@@ -12,17 +12,17 @@ description: What Laika Orbit and 1brain are, and where to start.
 - **A real browser:** Chromium tabs with one storage profile per account, and Chrome extensions.
 - **Widgets:** inbox, calendar, agents, routines and anything else you describe in a JSON file.
 
-Underneath is **1brain**, a retrieval engine that answers questions about your files without calling
+Underneath is **Laika Orbit recall**, a retrieval engine that answers questions about your files without calling
 a model. It ships on its own too, as a CLI and an MCP server for Claude Code.
 
 :::note[Preview]
-Laika Orbit is a macOS preview, built from source. 1brain runs anywhere Node 22 runs.
+Laika Orbit is a macOS preview, built from source. Laika Orbit recall runs anywhere Node 22 runs.
 :::
 
 ## Where to start
 
 - **Want the whole workspace?** [Install and first run](/docs/getting-started/).
-- **Only want better recall in Claude Code?** [Use 1brain with Claude Code](/docs/1brain/mcp/), one
+- **Only want better recall in Claude Code?** [Use Laika Orbit recall with Claude Code](/docs/recall/mcp/), one
   command, no clone needed.
 
 ## How it relates to Claude
