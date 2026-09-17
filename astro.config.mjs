@@ -18,7 +18,24 @@ export default defineConfig({
         { icon: 'github', label: 'GitHub', href: 'https://github.com/Laika-Dynamics-Ltd/laika-orbit' },
       ],
       editLink: { baseUrl: 'https://github.com/Laika-Dynamics-Ltd/laika-orbit-site/edit/main/' },
-      customCss: ['./src/styles/theme.css'],
+      customCss: ['@fontsource-variable/inter', '@fontsource-variable/jetbrains-mono', './src/styles/theme.css'],
+      components: {
+        ThemeProvider: './src/components/docs/ThemeProvider.astro',
+        ThemeSelect: './src/components/docs/ThemeSelect.astro',
+        SiteTitle: './src/components/docs/SiteTitle.astro',
+      },
+      // one dark code theme, framed like the site's panels
+      expressiveCode: {
+        themes: ['github-dark-default'],
+        useStarlightUiThemeColors: true,
+        styleOverrides: {
+          borderRadius: '12px',
+          borderColor: 'rgba(255, 255, 255, 0.13)',
+          codeFontFamily: "'JetBrains Mono Variable', ui-monospace, monospace",
+          codeBackground: '#0d0e11',
+          frames: { editorTabBarBackground: '#111216', terminalTitlebarBackground: '#111216', terminalTitlebarBorderBottomColor: 'rgba(255, 255, 255, 0.08)', frameBoxShadowCssValue: 'none' },
+        },
+      },
       lastUpdated: true,
       sidebar: [
         {

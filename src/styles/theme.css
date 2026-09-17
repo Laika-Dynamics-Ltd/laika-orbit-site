@@ -1,12 +1,220 @@
-/* Laika Orbit: deep space with the app's orange accent */
+/*
+ * Docs theme: the marketing site's tokens (src/styles/site.css) mapped onto Starlight.
+ * Dark only; ThemeProvider pins data-theme="dark", so there is no light palette to keep in sync.
+ */
 :root {
+  /* greys from the site: text #f7f8f8 → background #08090a */
+  --sl-color-white: #f7f8f8;
+  --sl-color-gray-1: #e6e8eb;
+  --sl-color-gray-2: #b4b8c1;
+  --sl-color-gray-3: #8a8f98;
+  --sl-color-gray-4: #62666d;
+  --sl-color-gray-5: #24262b;
+  --sl-color-gray-6: #111216;
+  --sl-color-black: #08090a;
+
   --sl-color-accent-low: #3a1a0c;
   --sl-color-accent: #ff7a45;
-  --sl-color-accent-high: #ff8a5c;
-  --sl-color-black: #07080d;
+  --sl-color-accent-high: #ffb08f;
+
+  --sl-color-text: #b4b8c1;
+  --sl-color-bg: #08090a;
+  --sl-color-bg-nav: rgba(8, 9, 10, 0.94);
+  --sl-color-bg-sidebar: #08090a;
+  --sl-color-bg-inline-code: #16171b;
+  --sl-color-hairline: rgba(255, 255, 255, 0.08);
+  --sl-color-hairline-light: rgba(255, 255, 255, 0.13);
+  --sl-color-hairline-shade: #000;
+  --sl-color-backdrop-overlay: rgba(8, 9, 10, 0.72);
+
+  --sl-font: 'Inter Variable';
+  --sl-font-mono: 'JetBrains Mono Variable';
+  --sl-nav-height: 4rem;
+  --sl-line-height: 1.7;
+  color-scheme: dark;
 }
-:root[data-theme='light'] {
-  --sl-color-accent-low: #ffe1d3;
-  --sl-color-accent: #c2461a;
-  --sl-color-accent-high: #5c1f08;
+
+body {
+  font-feature-settings: 'cv01', 'cv02', 'ss03', 'cv11';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* header: the site's frosted bar */
+.header {
+  backdrop-filter: saturate(180%) blur(18px);
+  -webkit-backdrop-filter: saturate(180%) blur(18px);
+  border-bottom: 1px solid var(--sl-color-hairline);
+}
+site-search button[data-open-modal] {
+  background: #0d0e11;
+  border: 1px solid var(--sl-color-hairline-light);
+  border-radius: 10px;
+  color: var(--sl-color-gray-3);
+}
+site-search button[data-open-modal]:hover {
+  border-color: rgba(255, 255, 255, 0.22);
+  color: var(--sl-color-gray-2);
+}
+site-search kbd {
+  background: #16171b;
+  border: 1px solid var(--sl-color-hairline-light);
+  color: var(--sl-color-gray-2);
+}
+
+/* headings: the site's tight display type */
+.sl-markdown-content :is(h1, h2, h3, h4),
+.content-panel h1 {
+  color: var(--sl-color-white);
+  font-weight: 580;
+  letter-spacing: -0.03em;
+}
+.content-panel h1 {
+  font-size: clamp(2.25rem, 4vw, 3rem);
+  letter-spacing: -0.04em;
+}
+.sl-markdown-content :is(h2, h3) {
+  letter-spacing: -0.025em;
+}
+.content-panel + .content-panel {
+  border-top-color: var(--sl-color-hairline);
+}
+
+/* body links: quiet underline, orange on hover (the orange is a signal, not a theme) */
+.sl-markdown-content a:not(:where(.not-content *)) {
+  color: var(--sl-color-white);
+  text-decoration-color: rgba(255, 122, 69, 0.55);
+  text-underline-offset: 3px;
+}
+.sl-markdown-content a:not(:where(.not-content *)):hover {
+  color: var(--sl-color-accent-high);
+}
+.sl-markdown-content strong {
+  color: var(--sl-color-white);
+  font-weight: 580;
+}
+
+/* inline code */
+.sl-markdown-content code:not(:where(.not-content *, pre *)) {
+  border: 1px solid var(--sl-color-hairline-light);
+  border-radius: 6px;
+  padding: 0.12em 0.4em;
+  color: #e6e8eb;
+}
+
+/* sidebar: muted list, active item as a soft pill rather than a solid orange block */
+.sidebar-pane {
+  border-inline-end: 1px solid var(--sl-color-hairline);
+}
+.sidebar-content .group-label .large {
+  color: var(--sl-color-white);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+.sidebar-content a {
+  color: var(--sl-color-gray-3);
+  font-size: 0.875rem;
+  border-radius: 8px;
+}
+.sidebar-content a:hover {
+  color: var(--sl-color-white);
+}
+.sidebar-content a[aria-current='page'],
+.sidebar-content a[aria-current='page']:hover {
+  background: rgba(255, 122, 69, 0.12);
+  color: var(--sl-color-white);
+  font-weight: 540;
+  box-shadow: inset 2px 0 0 var(--sl-color-accent);
+}
+.sidebar-content ul ul li {
+  border-inline-start-color: var(--sl-color-hairline-light);
+}
+
+/* on this page */
+.right-sidebar {
+  border-inline-start: 1px solid var(--sl-color-hairline);
+}
+.right-sidebar-panel h2 {
+  color: var(--sl-color-white);
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+.right-sidebar-panel a {
+  color: var(--sl-color-gray-3);
+}
+.right-sidebar-panel a[aria-current='true'] {
+  color: var(--sl-color-accent-high);
+}
+mobile-starlight-toc nav summary {
+  background: var(--sl-color-bg-nav);
+  border-bottom: 1px solid var(--sl-color-hairline);
+}
+
+/* asides, cards, pagination */
+.starlight-aside {
+  border-radius: 12px;
+  border: 1px solid var(--sl-color-hairline-light);
+  border-inline-start-width: 3px;
+}
+.pagination-links a {
+  border: 1px solid var(--sl-color-hairline-light);
+  border-radius: 14px;
+  box-shadow: none;
+  background: #0d0e11;
+}
+.pagination-links a:hover {
+  border-color: rgba(255, 122, 69, 0.4);
+}
+.sl-markdown-content :is(table) {
+  border-color: var(--sl-color-hairline-light);
+}
+footer .meta,
+footer .kudos {
+  color: var(--sl-color-gray-4);
+}
+
+/* header details: no divider left behind by the removed theme picker; a quiet mobile menu button */
+.header .social-icons::after {
+  display: none;
+}
+button.sl-menu-button {
+  background-color: #111216;
+  color: var(--sl-color-white);
+  border: 1px solid var(--sl-color-hairline-light);
+  box-shadow: none;
+}
+button.sl-menu-button:has(~ :popover-open) {
+  background-color: #1a1b20;
+}
+
+/* notes and warnings: the site's panels with a coloured edge, not Starlight's saturated fills */
+.starlight-aside {
+  background: #0d0e11;
+  color: var(--sl-color-gray-2);
+}
+.starlight-aside--note {
+  border-color: var(--sl-color-hairline-light);
+  border-inline-start-color: var(--sl-color-accent);
+}
+.starlight-aside--note .starlight-aside__title {
+  color: var(--sl-color-accent-high);
+}
+.starlight-aside--tip {
+  border-inline-start-color: #4fd1a5;
+}
+.starlight-aside--tip .starlight-aside__title {
+  color: #8fe6c6;
+}
+.starlight-aside--caution {
+  border-inline-start-color: #ffb84d;
+}
+.starlight-aside--caution .starlight-aside__title {
+  color: #ffd79a;
+}
+.starlight-aside--danger {
+  border-inline-start-color: #ff6b6b;
+}
+.starlight-aside--danger .starlight-aside__title {
+  color: #ff9e9e;
 }
