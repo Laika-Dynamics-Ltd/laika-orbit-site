@@ -141,7 +141,7 @@ kbd {
   display: flex;
   align-items: center;
   height: 64px;
-  gap: 32px;
+  gap: 40px;
 }
 .brand {
   display: inline-flex;
@@ -178,7 +178,7 @@ kbd {
 /* ─────────────────────────────── hero ── */
 .hero {
   position: relative;
-  padding-top: clamp(80px, 12vh, 132px);
+  padding-top: clamp(48px, 7vh, 72px);
   isolation: isolate;
 }
 .orbit,
@@ -240,21 +240,21 @@ kbd {
   font-size: 12px;
 }
 h1 {
-  margin: 28px 0 0;
-  font-size: clamp(46px, 7.4vw, 92px);
-  line-height: 0.98;
-  font-weight: 580;
-  letter-spacing: -0.048em;
-  background: linear-gradient(180deg, #ffffff 30%, #c2c6d0 100%);
+  margin: 24px 0 0;
+  font-size: clamp(46px, 5.6vw, 80px);
+  line-height: 1;
+  font-weight: 590;
+  letter-spacing: -0.045em;
+  background: linear-gradient(180deg, #ffffff 40%, #cfd3dc 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
-  max-width: 11ch;
+  max-width: 12ch;
 }
 .lede {
-  margin: 28px 0 0;
-  max-width: 34rem;
-  font-size: clamp(17px, 1.6vw, 20px);
+  margin: 22px 0 0;
+  max-width: 37rem;
+  font-size: clamp(17px, 1.4vw, 19px);
   line-height: 1.55;
   color: var(--text-2);
   letter-spacing: -0.011em;
@@ -264,7 +264,7 @@ h1 {
   flex-wrap: wrap;
   align-items: center;
   gap: 12px;
-  margin-top: 36px;
+  margin-top: 30px;
 }
 .hero-cta.center {
   justify-content: center;
@@ -277,8 +277,29 @@ h1 {
   border-radius: 10px;
   border: 1px dashed var(--line-2);
 }
+.wrap-wide {
+  max-width: 1368px;
+}
 .hero-frame {
-  margin-top: clamp(64px, 9vw, 104px);
+  position: relative;
+  margin-top: clamp(44px, 5vw, 60px);
+  padding: 7px;
+  border-radius: 20px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0.015) 40%);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.07),
+    0 50px 140px -40px rgba(0, 0, 0, 0.95),
+    0 -30px 120px -60px rgba(255, 122, 69, 0.18);
+}
+.hero-frame::before {
+  /* a hairline of light along the top edge, as if the orbit's core catches the glass */
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 18%;
+  right: 18%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 176, 143, 0.55), transparent);
 }
 
 /* ─────────────────────────────── product frames ── */
