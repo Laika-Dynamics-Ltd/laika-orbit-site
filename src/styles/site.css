@@ -192,6 +192,20 @@ kbd {
   -webkit-mask-image: linear-gradient(to bottom, #000 55%, transparent 96%);
   mask-image: linear-gradient(to bottom, #000 55%, transparent 96%);
 }
+/* wide screens: the copy column sits on flat black; the orbit lives only to the right of it */
+@media (min-width: 1024px) {
+  .orbit,
+  .orbit-poster {
+    -webkit-mask-image:
+      linear-gradient(to right, transparent 50%, #000 78%),
+      linear-gradient(to bottom, #000 50%, transparent 88%);
+    -webkit-mask-composite: source-in;
+    mask-image:
+      linear-gradient(to right, transparent 50%, #000 78%),
+      linear-gradient(to bottom, #000 50%, transparent 88%);
+    mask-composite: intersect;
+  }
+}
 .orbit {
   opacity: 0;
   transition: opacity 1.4s ease;
@@ -241,15 +255,12 @@ kbd {
 }
 h1 {
   margin: 24px 0 0;
-  font-size: clamp(46px, 5.6vw, 80px);
-  line-height: 1;
-  font-weight: 590;
-  letter-spacing: -0.045em;
-  background: linear-gradient(180deg, #ffffff 40%, #cfd3dc 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  max-width: 12ch;
+  font-size: clamp(46px, 5.8vw, 84px);
+  line-height: 1.04;
+  font-weight: 540;
+  letter-spacing: -0.028em;
+  color: var(--text);
+  text-wrap: balance;
 }
 .lede {
   margin: 22px 0 0;
