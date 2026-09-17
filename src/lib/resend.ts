@@ -54,8 +54,9 @@ export async function sendConfirmation(email: string) {
         text: [
           "Thanks for signing up. You're on the list for Laika Orbit Pro.",
           '',
-          'Pro adds the signed, notarised Mac app with automatic updates, settings and workspaces',
-          'synced across your Macs, managed build runners, and priority support.',
+          'Pro adds the signed, notarised Mac app with automatic updates and email support',
+          'answered within 2 working days. Sync across your Macs is being built: we are aiming for',
+          'the first half of 2027, and it lands for founding members at no extra cost.',
           '',
           'Laika Orbit itself is free and open source, and you can run it today:',
           'https://laikaorbit.com/docs/getting-started/',
