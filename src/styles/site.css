@@ -1146,7 +1146,7 @@ h3 {
 
 /* ─────────────────────────────── agents (Many agents. One view.) ── */
 .section.agents {
-  padding-top: 72px;
+  padding-top: 64px;
   margin-top: clamp(24px, 8vw, 96px);
 }
 .agents-head {
@@ -1163,14 +1163,14 @@ h3 {
 }
 .agents-head p {
   margin: 0 0 4px;
-  max-width: 27rem;
+  max-width: 31rem;
   font-size: 16px;
   line-height: 1.55;
   color: var(--muted);
 }
 .agents-stage {
   position: relative;
-  padding: 30px 72px 30px;
+  padding: 28px 64px 26px;
   border-radius: 20px;
   border: 1px solid var(--line);
   background:
@@ -1200,6 +1200,18 @@ h3 {
     inset 0 1px 0 rgba(255, 255, 255, 0.06),
     0 30px 80px -24px rgba(0, 0, 0, 0.85),
     0 0 0 1px rgba(0, 0, 0, 0.5);
+}
+/* at this crop the earlier turns of each chat would sit half-faded under the log's top edge;
+   show each chat from its latest whole turn instead */
+@media (min-width: 721px) {
+  .agents-frame .c1 .log > :not(.m-ask),
+  .agents-frame .c2 .log > .m-user,
+  .agents-frame .c3 .log > .m-user,
+  .agents-frame .c3 .log > .m-think,
+  .agents-frame .c4 .log > .m-user,
+  .agents-frame .c4 .log > .m-think {
+    display: none;
+  }
 }
 @media (max-width: 960px) {
   .agents-head {
