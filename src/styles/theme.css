@@ -1,0 +1,12 @@
+/* Laika Orbit: deep space with the app's orange accent */
+:root {
+  --sl-color-accent-low: #3a1a0c;
+  --sl-color-accent: #ff7a45;
+  --sl-color-accent-high: #ff8a5c;
+  --sl-color-black: #07080d;
+}
+:root[data-theme='light'] {
+  --sl-color-accent-low: #ffe1d3;
+  --sl-color-accent: #c2461a;
+  --sl-color-accent-high: #5c1f08;
+}
