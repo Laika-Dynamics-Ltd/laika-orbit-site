@@ -1,0 +1,382 @@
+---
+import { Image } from 'astro:assets'
+import type { ImageMetadata } from 'astro'
+import Site from '../layouts/Site.astro'
+
+// product stills are captured from the real app on a fictional workspace; any that are missing
+// fall back to a framed placeholder so the page still builds
+const shots = import.meta.glob<{ default: ImageMetadata }>('../assets/product/*.png', { eager: true })
+const shot = (name: string) => shots[`../assets/product/${name}.png`]?.default
+
+const GITHUB = 'https://github.com/Laika-Dynamics-Ltd/laika-orbit'
+const hero = shot('hero-workspace')
+const grid = shot('claude-grid')
+const map = shot('knowledge-map')
+
+const compare: { row: string; editors: string; apps: string; orbit: string }[] = [
+  { row: 'Several agents running side by side', editors: 'yes', apps: 'yes', orbit: 'yes' },
+  { row: 'A browser with a profile per account, and extensions', editors: 'partial', apps: 'partial', orbit: 'yes' },
+  { row: 'Inbox and calendar in the same window', editors: 'no', apps: 'no', orbit: 'yes' },
+  { row: 'A map of your files, repos and chats', editors: 'partial', apps: 'partial', orbit: 'yes' },
+  { row: 'Retrieval with zero model calls', editors: 'no', apps: 'no', orbit: 'yes' },
+  { row: 'Several Claude accounts at once, with usage', editors: 'partial', apps: 'no', orbit: 'yes' },
+  { row: 'Runs on your machines, not a vendor cloud', editors: 'partial', apps: 'partial', orbit: 'yes' },
+  { row: 'Open source', editors: 'partial', apps: 'no', orbit: 'yes' },
+]
+const mark = { yes: '●', partial: '◐', no: '—' } as const
+---
+
+<Site
+  title="Laika Orbit — mission control for your AI work"
+  description="Parallel Claude Code agents, a real browser, your inbox and calendar, and a live map of everything you know, in one local window. Open source."
+>
+  <header class="nav">
+    <div class="wrap nav-in">
+      <a class="brand" href="/" aria-label="Laika Orbit home">
+        <svg viewBox="0 0 32 32" width="22" height="22" aria-hidden="true"><ellipse cx="16" cy="16" rx="13" ry="5.5" fill="none" stroke="currentColor" stroke-width="1.8" transform="rotate(-28 16 16)"/><circle cx="16" cy="16" r="4.2" fill="var(--accent)"/></svg>
+        <span>Laika Orbit</span>
+      </a>
+      <nav class="nav-links" aria-label="Main">
+        <a href="#product">Product</a>
+        <a href="#1brain">1brain</a>
+        <a href="#compare">Compare</a>
+        <a href="/docs/">Docs</a>
+      </nav>
+      <div class="nav-cta">
+        <a class="nav-gh" href={GITHUB}>
+          <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38v-1.34c-2.23.48-2.7-1.07-2.7-1.07-.36-.92-.89-1.17-.89-1.17-.73-.5.06-.49.06-.49.8.06 1.23.83 1.23.83.72 1.22 1.87.87 2.33.66.07-.52.28-.87.5-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.6 7.6 0 0 1 4 0c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48v2.19c0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>
+          <span>GitHub</span>
+        </a>
+        <a class="btn btn-light btn-sm" href="/docs/getting-started/">Get started</a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- ───────────────────────────────── hero ── -->
+    <section class="hero">
+      <canvas class="orbit" aria-hidden="true"></canvas>
+      <div class="orbit-poster" aria-hidden="true"></div>
+      <div class="wrap hero-in">
+        <a class="pill" href="/docs/1brain/mcp/">
+          <span class="pill-tag">New</span>
+          <span>1brain for Claude Code<span class="pill-more">: recall with zero model calls</span></span>
+          <span aria-hidden="true">→</span>
+        </a>
+        <h1>Mission control<br />for your AI work</h1>
+        <p class="lede">
+          Run Claude Code agents side by side, with your browser, your inbox and a live map of
+          everything you know, in one window on your own machine.
+        </p>
+        <div class="hero-cta">
+          <a class="btn btn-light" href="/docs/getting-started/">Get started for free</a>
+          <a class="btn btn-ghost" href={GITHUB}>Star on GitHub</a>
+          <code class="cmd"><span class="dim">$</span> npx 1brain mcp</code>
+        </div>
+      </div>
+
+      <div class="wrap">
+        <div class="frame hero-frame">
+          <div class="frame-bar"><i></i><i></i><i></i><span>Laika Orbit</span></div>
+          {hero ? (
+            <Image src={hero} alt="Laika Orbit with Claude Code chats working side by side over the knowledge map" widths={[960, 1600, 2400]} sizes="(max-width: 1240px) 100vw, 1200px" loading="eager" fetchpriority="high" />
+          ) : (
+            <div class="shot-missing">hero-workspace.png</div>
+          )}
+        </div>
+      </div>
+    </section>
+
+    <!-- ─────────────────────────────── proof strip ── -->
+    <section class="strip wrap" aria-label="At a glance">
+      <span>Runs Claude Code</span><span>MCP native</span><span>macOS</span><span>MIT licensed</span><span>Local-first</span><span>No telemetry</span>
+    </section>
+
+    <!-- ─────────────────────────────── the problem ── -->
+    <section class="section wrap problem">
+      <div class="eyebrow">The problem</div>
+      <h2>Your editor runs an agent.<br /><span class="muted">Your day runs on twelve windows.</span></h2>
+      <div class="sprawl">
+        <figure class="scene before" aria-label="Before: a dozen windows">
+          <div class="desk">
+            <div class="win w1"><div class="wb">Editor · agent panel</div></div>
+            <div class="win w2"><div class="wb">zsh — claude</div><div class="lines"><i></i><i></i><i></i></div></div>
+            <div class="win w3"><div class="wb">zsh — claude (2)</div><div class="lines"><i></i><i></i></div></div>
+            <div class="win w4"><div class="wb">Chrome · Work</div></div>
+            <div class="win w5"><div class="wb">Chrome · Client</div></div>
+            <div class="win w6"><div class="wb">Mail</div></div>
+            <div class="win w7"><div class="wb">Calendar</div></div>
+            <div class="win w8"><div class="wb">notes.md</div></div>
+            <div class="win w9"><div class="wb">Usage · Settings</div></div>
+          </div>
+          <figcaption><b>Today</b> An editor, six terminals, three browser profiles, mail, calendar and notes, and you as the glue.</figcaption>
+        </figure>
+        <figure class="scene after" aria-label="After: one Laika Orbit window">
+          <div class="desk">
+            <div class="orbitwin">
+              <div class="wb">Laika Orbit</div>
+              <div class="ow">
+                <div class="rail"><i class="on"></i><i></i><i></i><i></i></div>
+                <div class="chats"><div><b></b><i></i><i></i></div><div><b></b><i></i><i></i></div><div><b></b><i></i></div><div><b></b><i></i><i></i></div></div>
+                <div class="side"><span>Needs you · 3</span><span>14:00 Design review</span><span>Work 62%</span></div>
+              </div>
+            </div>
+          </div>
+          <figcaption><b>With Orbit</b> Your agents, browser, inbox, calendar and knowledge in one window, in orbit around the work.</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <!-- ─────────────────────────────── agents ── -->
+    <section class="section wrap" id="product">
+      <div class="eyebrow">Agents</div>
+      <div class="split-head">
+        <h2>Many agents.<br />One view.</h2>
+        <p class="muted">
+          Split chats like editor groups, or run four in a grid. Every chat is a real Claude Code
+          session, per repo or across a whole project folder, with its tasks and sub-agents in
+          view.
+        </p>
+      </div>
+      <div class="frame">
+        <div class="frame-bar"><i></i><i></i><i></i><span>Claude · 4 chats</span></div>
+        {grid ? (
+          <Image src={grid} alt="Four Claude Code chats in a two by two grid" widths={[960, 1600, 2400]} sizes="(max-width: 1240px) 100vw, 1200px" />
+        ) : (
+          <div class="shot-missing">claude-grid.png</div>
+        )}
+      </div>
+    </section>
+
+    <!-- ─────────────────────────────── bento ── -->
+    <section class="section wrap">
+      <div class="bento">
+        <article class="card">
+          <div class="card-visual accounts" aria-hidden="true">
+            <div class="acct"><span class="dot" style="--c:#ff7a45"></span>Work<div class="bar"><b style="width:62%"></b></div><small>62% this week</small></div>
+            <div class="acct"><span class="dot" style="--c:#7c8cff"></span>Personal<div class="bar"><b style="width:18%"></b></div><small>18% this week</small></div>
+            <div class="acct"><span class="dot" style="--c:#4fd1a5"></span>Client<div class="bar"><b style="width:41%"></b></div><small>41% this week</small></div>
+          </div>
+          <h3>Every account, side by side</h3>
+          <p>Keep work, personal and client accounts apart, with each chat showing which one it's on and what it has used.</p>
+        </article>
+
+        <article class="card">
+          <div class="card-visual recover" aria-hidden="true">
+            <div class="ev"><span class="t">09:41</span><span class="ok">●</span>Refactor webhook retries</div>
+            <div class="ev bad"><span class="t">09:43</span><span>●</span>Claude Code exited</div>
+            <div class="ev"><span class="t">09:43</span><span class="ok">●</span>Restarted · history intact</div>
+            <div class="ev"><span class="t">09:44</span><span class="ok">●</span>Tests pass</div>
+          </div>
+          <h3>Crashes don't cost you the chat</h3>
+          <p>Chats run in a background host. If Claude Code or the app restarts, every chat comes back where it was, and duplicates are closed for you.</p>
+        </article>
+
+        <article class="card">
+          <div class="card-visual browser" aria-hidden="true">
+            <div class="tabs"><span class="tab on" style="--c:#ff7a45">Work · Vercel</span><span class="tab" style="--c:#7c8cff">Client · Stripe</span><span class="tab" style="--c:#4fd1a5">Personal · Mail</span></div>
+            <div class="addr"><span>🔒</span>dashboard.stripe.com/test/webhooks</div>
+            <div class="page"><i></i><i></i><i></i></div>
+          </div>
+          <h3>A real browser, every login</h3>
+          <p>Chromium tabs with a profile per account, signed in at once, side by side. Chrome extensions included.</p>
+        </article>
+
+        <article class="card">
+          <div class="card-visual inbox" aria-hidden="true">
+            <div class="needs">NEEDS YOU · 3 UNREAD FROM PEOPLE</div>
+            <div class="mail"><b>Sam Rivera</b><span>Launch checklist review</span><small>9:12</small></div>
+            <div class="mail"><b>Priya Shah</b><span>Invoice question</span><small>8:47</small></div>
+            <div class="cal"><span class="now"></span><b>14:00</b> Design review <small>in 25 min</small></div>
+          </div>
+          <h3>Your day, in the loop</h3>
+          <p>Inbox, calendar and routines on the rails, so the meeting in 25 minutes doesn't sneak up on you mid-refactor.</p>
+        </article>
+
+        <article class="card wide">
+          <div class="card-visual machines" aria-hidden="true">
+            <div class="node you"><b>MacBook Pro</b><small>you</small></div>
+            <svg viewBox="0 0 300 60" preserveAspectRatio="none"><path d="M0 30 C 100 30, 200 10, 300 10" /><path d="M0 30 C 100 30, 200 50, 300 50" /></svg>
+            <div class="nodes">
+              <div class="node"><b>studio-mini</b><small>2 chats · Unity build</small></div>
+              <div class="node"><b>build-box</b><small>1 chat · tests</small></div>
+            </div>
+          </div>
+          <h3>Put the heavy work on another machine <span class="soon">Coming soon</span></h3>
+          <p>Run chats and terminals on other machines on your network over SSH, so builds and test suites don't slow your laptop. No vendor cloud in between.</p>
+        </article>
+      </div>
+    </section>
+
+    <!-- ─────────────────────────────── knowledge ── -->
+    <section class="section wrap">
+      <div class="eyebrow">Knowledge</div>
+      <div class="split-head">
+        <h2>Everything you know,<br />one keystroke away.</h2>
+        <p class="muted">
+          Files, repos, notes, chats and routines, drawn as a map you can fly through. Press
+          <kbd>⌘</kbd><kbd>K</kbd> and the answer is there, with the file it came from.
+        </p>
+      </div>
+      <div class="frame">
+        <div class="frame-bar"><i></i><i></i><i></i><span>Knowledge map</span></div>
+        {map ? (
+          <Image src={map} alt="The knowledge map with search results" widths={[960, 1600, 2400]} sizes="(max-width: 1240px) 100vw, 1200px" />
+        ) : (
+          <div class="shot-missing">knowledge-map.png</div>
+        )}
+      </div>
+    </section>
+
+    <!-- ─────────────────────────────── 1brain ── -->
+    <section class="section wrap onebrain" id="1brain">
+      <div class="onebrain-copy">
+        <div class="eyebrow">1brain</div>
+        <h2>Context without<br />the token bill.</h2>
+        <p class="muted">
+          Agents answer questions about your work by grepping and reading whole files. 1brain finds
+          the exact section in plain code, then hands Claude one small answer. It's the engine inside
+          Orbit, and it works in any Claude Code session today.
+        </p>
+        <dl class="stats">
+          <div><dt>~1ms</dt><dd>to answer</dd></div>
+          <div><dt>0</dt><dd>model calls to search</dd></div>
+          <div><dt>97.8%</dt><dd>fewer tokens than grep-and-read<sup><a href="https://github.com/Laika-Dynamics-Ltd/laika-orbit/blob/main/bench/RESULTS.md">1</a></sup></dd></div>
+        </dl>
+        <a class="link" href="/docs/1brain/">How 1brain works →</a>
+      </div>
+      <div class="term" role="img" aria-label="Terminal: adding 1brain to Claude Code and recalling an answer">
+        <div class="term-bar"><i></i><i></i><i></i><span>zsh</span></div>
+<pre><span class="dim">$</span> claude mcp add 1brain -- npx -y 1brain mcp
+<span class="ok">Added stdio MCP server 1brain</span>
+
+<span class="dim">$</span> npx 1brain recall "how do I roll back a deploy"
+<span class="dim">tokens: roll, back, deploy · margin 82%</span>
+   11  100%  <span class="hl">notes/deploy.md</span>
+    2   18%  brain/routers/OPS.md
+
+<span class="acc">notes/deploy.md › Rolling back</span> <span class="dim">(lines 3-6)</span>
+  Run `make rollback TAG=&lt;previous&gt;` and watch the
+  canary for ten minutes.
+
+<span class="dim">151B read · 0 hop · total 0.9ms · 0 tokens</span></pre>
+      </div>
+    </section>
+
+    <!-- ─────────────────────────────── compare ── -->
+    <section class="section wrap" id="compare">
+      <div class="eyebrow">Compare</div>
+      <div class="split-head">
+        <h2>Not another editor.<br /><span class="muted">The cockpit around your agents.</span></h2>
+        <p class="muted">
+          AI editors and agent apps are great at one repo and one conversation. Orbit is built for
+          everything around them. Use it alongside the editor you already love.
+        </p>
+      </div>
+      <div class="table-wrap">
+        <table class="compare">
+          <thead>
+            <tr><th></th><th>AI code editors<small>VS Code, Cursor</small></th><th>Agent apps<small>Claude Code desktop, Codex</small></th><th class="us">Laika Orbit</th></tr>
+          </thead>
+          <tbody>
+            {compare.map((c) => (
+              <tr>
+                <td>{c.row}</td>
+                <td class={c.editors}>{mark[c.editors as keyof typeof mark]}</td>
+                <td class={c.apps}>{mark[c.apps as keyof typeof mark]}</td>
+                <td class={`us ${c.orbit}`}>{mark[c.orbit as keyof typeof mark]}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        <p class="footnote">● yes · ◐ partly · — no. From each product's public docs, September 2026. Laika Orbit runs Claude Code and is not affiliated with Anthropic.</p>
+      </div>
+    </section>
+
+    <!-- ─────────────────────────────── open source ── -->
+    <section class="section wrap oss">
+      <div class="oss-card">
+        <div>
+          <div class="eyebrow">Open source</div>
+          <h2>Yours to read, run and change.</h2>
+          <p class="muted">MIT licensed. Local-first: the server listens only on your machine, and nothing is sent to us. Bring your own Claude account.</p>
+        </div>
+        <div class="oss-actions">
+          <a class="btn btn-light" href={GITHUB}>View on GitHub</a>
+          <a class="btn btn-ghost" href="/docs/reference/security/">Privacy and security</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─────────────────────────────── final CTA ── -->
+    <section class="final wrap">
+      <h2>Ready for liftoff?</h2>
+      <p class="muted">Clone it, run it, and put your whole working day in one orbit.</p>
+      <div class="hero-cta center">
+        <a class="btn btn-light" href="/docs/getting-started/">Get started for free</a>
+        <a class="btn btn-ghost" href="/docs/">Read the docs</a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="wrap foot-in">
+      <div class="foot-brand">
+        <a class="brand" href="/"><svg viewBox="0 0 32 32" width="20" height="20" aria-hidden="true"><ellipse cx="16" cy="16" rx="13" ry="5.5" fill="none" stroke="currentColor" stroke-width="1.8" transform="rotate(-28 16 16)"/><circle cx="16" cy="16" r="4.2" fill="var(--accent)"/></svg><span>Laika Orbit</span></a>
+        <p>Named for Laika, the first to reach orbit.</p>
+      </div>
+      <div class="foot-cols">
+        <div><h4>Product</h4><a href="#product">Agents</a><a href="#1brain">1brain</a><a href="#compare">Compare</a><a href="/docs/getting-started/">Install</a></div>
+        <div><h4>Docs</h4><a href="/docs/claude-panel/">Claude panel</a><a href="/docs/1brain/mcp/">1brain for Claude Code</a><a href="/docs/reference/keyboard-shortcuts/">Shortcuts</a><a href="/docs/reference/security/">Security</a></div>
+        <div><h4>Open source</h4><a href={GITHUB}>GitHub</a><a href="https://www.npmjs.com/package/1brain">npm</a><a href={`${GITHUB}/blob/main/LICENSE`}>MIT licence</a></div>
+      </div>
+    </div>
+    <div class="wrap foot-legal">
+      <span>© 2026 Laika Dynamics Limited</span>
+      <span>Claude and Claude Code are trademarks of Anthropic. Laika Orbit is not affiliated with Anthropic.</span>
+    </div>
+  </footer>
+
+  <script>
+    // Load three.js only when the hero can use it; the poster covers everyone else.
+    const canvas = document.querySelector<HTMLCanvasElement>('.hero .orbit')
+    const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches
+    const conn = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection
+    const weak = (navigator.hardwareConcurrency ?? 8) <= 4 || conn?.saveData
+    if (canvas && !reduce && !weak) {
+      const start = async () => {
+        const { createOrbitScene } = await import('../scripts/orbit-scene.ts')
+        let scene
+        try {
+          scene = createOrbitScene(canvas)
+        } catch {
+          return
+        }
+        const fit = () => scene.resize(canvas.clientWidth, canvas.clientHeight)
+        fit()
+        addEventListener('resize', fit)
+        addEventListener('pointermove', (e) => scene.pointer(e.clientX / innerWidth - 0.5, e.clientY / innerHeight - 0.5))
+        // ?frame=<seconds> draws that one moment and stops: posters, captures and video renders
+        const still = new URLSearchParams(location.search).get('frame')
+        if (still !== null) {
+          scene.render(Number(still) || 40)
+          document.documentElement.classList.add('orbit-live')
+          return
+        }
+        let visible = true
+        new IntersectionObserver(([e]) => (visible = e.isIntersecting)).observe(canvas)
+        const t0 = performance.now()
+        const loop = (now: number) => {
+          if (visible && !document.hidden) scene.render((now - t0) / 1000 + 40)
+          requestAnimationFrame(loop)
+        }
+        requestAnimationFrame((now) => {
+          loop(now)
+          document.documentElement.classList.add('orbit-live')
+        })
+      }
+      if ('requestIdleCallback' in window) requestIdleCallback(() => start(), { timeout: 1200 })
+      else setTimeout(start, 300)
+    }
+  </script>
+</Site>
