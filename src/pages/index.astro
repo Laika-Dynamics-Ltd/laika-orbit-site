@@ -56,20 +56,23 @@ const mark = { yes: '●', partial: '◐', no: '—' } as const
           <span>1brain for Claude Code<span class="pill-more">: recall with zero model calls</span></span>
           <span aria-hidden="true">→</span>
         </a>
-        <h1>Mission control<br />for your AI work</h1>
+        <h1>Mission control<br />for your AI agents</h1>
         <p class="lede">
-          Run Claude Code agents side by side, with your browser, your inbox and a live map of
-          everything you know, in one window on your own machine.
+          Run Claude Code agents side by side, with a real browser, your inbox and calendar, and a
+          live map of everything you know. One window, on your own Mac.<span class="lede-tail"> Open source.</span>
         </p>
         <div class="hero-cta">
           <a class="btn btn-light" href="/docs/getting-started/">Get started for free</a>
           <a class="btn btn-ghost" href={GITHUB}>Star on GitHub</a>
-          <code class="cmd"><span class="dim">$</span> npx 1brain mcp</code>
         </div>
+        <p class="hero-note">
+          Already in Claude Code? Add 1brain recall with
+          <code class="cmd"><span class="dim">$</span> npx 1brain mcp</code>
+        </p>
       </div>
 
-      <div class="wrap">
-        <div class="frame frame-bare hero-frame"><HeroWorkspace /></div>
+      <div class="wrap wrap-wide">
+        <div class="hero-frame"><HeroWorkspace /></div>
       </div>
     </section>
 
