@@ -1175,6 +1175,49 @@ h3 {
     display: none;
   }
 }
+/* phone hero: a tighter copy stack, and the product window set large enough to read, bleeding off the right edge */
+@media (max-width: 560px) {
+  .hero {
+    padding-top: 36px;
+    overflow-x: clip;
+  }
+  .pill {
+    font-size: 13px;
+  }
+  h1 {
+    margin-top: 20px;
+    font-size: 34px;
+    line-height: 1.08;
+    letter-spacing: -0.03em;
+  }
+  .lede {
+    margin-top: 16px;
+    font-size: 16px;
+    line-height: 1.5;
+  }
+  .lede-tail,
+  .hero-note {
+    display: none;
+  }
+  .hero-cta {
+    margin-top: 24px;
+    gap: 10px;
+  }
+  .hero-cta .btn {
+    height: 44px;
+    padding: 0 18px;
+  }
+  .hero-frame {
+    width: 560px;
+    margin-top: 36px;
+    padding: 5px;
+    border-radius: 16px;
+  }
+  .hero-frame::before {
+    left: 8%;
+    right: 40%;
+  }
+}
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;

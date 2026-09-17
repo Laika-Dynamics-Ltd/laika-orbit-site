@@ -2111,4 +2111,26 @@ const stars = [0, 90, 180, 270].map((a) => pt(40, a + 45))
       display: none;
     }
   }
+
+  /* ---------------- phone: nav, the chat, then the map running off the edge ---------------- */
+  @container (max-width: 600px) {
+    .main {
+      grid-template-columns: 52px 270px 394px;
+    }
+    .hw-nav {
+      order: 1;
+    }
+    .ss {
+      order: 2;
+      border-left: 0;
+      border-right: 1px solid var(--n16);
+      box-shadow: 20px 0 40px -20px rgba(0, 0, 0, 0.8);
+    }
+    .stage {
+      order: 3;
+    }
+    .hud.l {
+      display: none;
+    }
+  }
 </style>
