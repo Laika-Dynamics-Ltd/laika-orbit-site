@@ -6,6 +6,10 @@ description: Inbox, calendar and your own widgets, each a JSON file.
 Widgets sit on the side rails (<kbd>[</kbd> and <kbd>]</kbd> toggle them). Every widget is one JSON
 file in `brain/widgets/`, so **adding a widget is adding a file**. No code, no rebuild.
 
+![The side rails: micro apps, a calendar widget and an index summary beside the map](../../../assets/product/widgets.webp)
+
+*Widgets on the side rails: micro apps, the calendar and what the index holds.*
+
 ## Calendar
 
 Put your calendar's secret iCal address in `.env.local`:

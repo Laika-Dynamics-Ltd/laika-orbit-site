@@ -12,6 +12,11 @@ description: What Laika Orbit and its recall engine are, and where to start.
 - **A real browser:** Chromium tabs with one storage profile per account, and Chrome extensions.
 - **Widgets:** inbox, calendar, agents, routines and anything else you describe in a JSON file.
 
+![The Laika Orbit window: the knowledge map on the left, the Claude panel on the right](../../../assets/product/workspace.webp)
+
+*One window: the knowledge map beside the Claude panel. Every screenshot in these docs is taken on a
+demo workspace of made-up repos and files.*
+
 Underneath is **Laika Orbit recall**, a retrieval engine that answers questions about your files without calling
 a model. It ships on its own too, as a CLI and an MCP server for Claude Code.
 

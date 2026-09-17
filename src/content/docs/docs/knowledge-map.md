@@ -6,6 +6,10 @@ description: The 3D map of your files, repos, chats and routines, and what gets 
 The map draws everything Laika Orbit recall has indexed, grouped by what it is (plans, specs, legal, code…) and
 where it lives. Chats and routines orbit alongside.
 
+![The knowledge map: files grouped in rings by kind, with repos around the edge](../../../assets/product/knowledge-map.webp)
+
+*Files, chats and routines grouped in rings by what they are, with each repo's chats around the edge.*
+
 ## Moving around
 
 | Keys | Action |

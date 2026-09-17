@@ -6,6 +6,12 @@ description: Running Claude Code chats side by side, across repos, project folde
 The Claude panel runs Claude Code chats inside Laika Orbit. Each chat is a real Claude Code session:
 the same tools, permissions, `CLAUDE.md` files and MCP servers you get in the terminal.
 
+![A Claude chat in a repo workspace, reading a file and asking a question, with a second chat beside it](../../../assets/product/claude-panel.webp)
+
+*A chat in the `atlas-api` workspace: Claude reads a file, asks a question with numbered options, and a
+second chat sits beside it. (This demo has no Claude account connected, so it runs the offline demo
+agent.)*
+
 ## Workspaces: repos and project folders
 
 Each repo gets its own workspace tab, in its own colour, with its chats, files, changes and a

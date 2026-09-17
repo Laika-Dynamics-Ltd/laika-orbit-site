@@ -6,6 +6,11 @@ description: Zero-model recall over your files, as a CLI and an MCP server.
 Laika Orbit recall answers questions about a folder of files without calling a model. Ask a question and it
 returns the exact section that answers it and the file it came from, in about a millisecond.
 
+![A recall search in Laika Orbit: ranked candidates, a confidence margin, and the matching section](../../../../assets/product/recall.webp)
+
+*Asking the workspace a question: ranked candidates, a confidence margin, the matching section, and the
+cost — 1.6ms and no model tokens.*
+
 It exists because agents answer questions about a workspace by grepping and then reading whole files,
 and every line they open costs context whether or not it was relevant. Laika Orbit recall does the searching and
 narrowing in plain code, then hands the model one small, packed answer. Measured against a

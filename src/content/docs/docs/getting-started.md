@@ -10,6 +10,10 @@ description: Requirements, installing from source, and what happens on first lau
 - **A Claude account** for chats (you can try the panel with an offline demo agent first).
 - Optional: `brew install poppler` so PDFs are indexed (`pdftotext`).
 
+![First run: a list of repos to open, and Claude sessions to pick up](../../../assets/product/first-run.webp)
+
+*First run: pick a repo to open, or pick up a Claude session where you left it.*
+
 ## Install
 
 ```bash

@@ -218,3 +218,18 @@ button.sl-menu-button:has(~ :popover-open) {
 .starlight-aside--danger .starlight-aside__title {
   color: #ff9e9e;
 }
+
+/* screenshots: framed like the app's own panels, with the caption under them */
+.sl-markdown-content img:not(:where(.not-content *)) {
+  border-radius: 12px;
+  border: 1px solid var(--sl-color-hairline-light);
+  background: #0d0e11;
+}
+.sl-markdown-content img + em,
+.sl-markdown-content p > em:only-child {
+  display: block;
+  margin-top: -0.6rem;
+  color: var(--sl-color-gray-3);
+  font-size: 0.875rem;
+  line-height: 1.6;
+}
