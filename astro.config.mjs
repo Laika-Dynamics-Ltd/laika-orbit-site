@@ -4,6 +4,8 @@ import { defineConfig } from 'astro/config'
 
 export default defineConfig({
   site: 'https://laikaorbit.com',
+  // the dev toolbar sits over the page in every capture
+  devToolbar: { enabled: false },
   integrations: [
     starlight({
       title: 'Laika Orbit',

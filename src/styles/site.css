@@ -323,6 +323,14 @@ h1 {
   margin: 0 auto;
   transform: translateX(-24px);
 }
+.frame-bare {
+  border: 0;
+  background: none;
+  box-shadow: 0 40px 120px -40px rgba(0, 0, 0, 0.9);
+}
+.frame-bare::after {
+  display: none;
+}
 .shot-missing {
   display: grid;
   place-items: center;

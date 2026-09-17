@@ -1,0 +1,823 @@
+---
+/**
+ * Product shot: the knowledge map (ARMS layout) with ⌘K spotlight open over it.
+ * Pure SVG + HTML + CSS. Every dot is placed here, at build time, from a fixed seed,
+ * so the picture is identical on every render and ships no client JS.
+ * Drawn on a 1200×720 design grid; HTML sizes are multiples of --u (1/1200 of the width).
+ */
+
+// ---- deterministic randomness ------------------------------------------------
+function mulberry32(seed: number) {
+  let a = seed
+  return () => {
+    a = (a + 0x6d2b79f5) | 0
+    let t = Math.imul(a ^ (a >>> 15), 1 | a)
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296
+  }
+}
+const rand = mulberry32(0x1b7a1)
+
+// ---- projection: a flat disc seen at a slight tilt ----------------------------
+const CX = 600
+const CY = 452
+const TILT = 0.56
+const rad = (d: number) => (d * Math.PI) / 180
+const proj = (r: number, deg: number): [number, number] => [
+  CX + r * Math.cos(rad(deg)),
+  CY + r * Math.sin(rad(deg)) * TILT,
+]
+const f = (n: number) => Math.round(n * 10) / 10
+
+// ---- rings --------------------------------------------------------------------
+const RINGS = [
+  { r: 96, o: 0.1, dash: '2 5' },
+  { r: 138, o: 0.06, dash: '' },
+  { r: 378, o: 0.16, dash: '' },
+  { r: 440, o: 0.1, dash: '1 6' },
+  { r: 520, o: 0.13, dash: '' },
+  { r: 610, o: 0.07, dash: '' },
+]
+
+// ---- arms ---------------------------------------------------------------------
+// angles are screen degrees, clockwise from 3 o'clock; the gap at 12 o'clock is the index
+type Arm = { id: string; count: number; dots: number; a0: number; a1: number; c: string; depth: number; la?: number }
+const ARMS: Arm[] = [
+  { id: 'REPOS', count: 18, dots: 18, a0: 292, a1: 311, c: '#6f9fff', depth: 120 },
+  { id: 'SKILLS', count: 12, dots: 12, a0: 318, a1: 334, c: '#e98bc0', depth: 96 },
+  { id: 'NOTES', count: 230, dots: 112, a0: 341, a1: 423, c: '#b48cff', depth: 205, la: 368 },
+  { id: 'DOCUMENTS', count: 412, dots: 156, a0: 431, a1: 552, c: '#5fcfa0', depth: 215 },
+  { id: 'CHATS', count: 64, dots: 44, a0: 559, a1: 593, c: '#5cc9ea', depth: 160 },
+  { id: 'ROUTINES', count: 9, dots: 9, a0: 600, a1: 616, c: '#e9bd5a', depth: 90 },
+]
+const R_IN = 152
+
+type Dot = { x: number; y: number; r: number; o: number; c: string; arm: string; wr: number; wa: number }
+const dots: Dot[] = []
+for (const arm of ARMS) {
+  const span = rad(arm.a1 - arm.a0)
+  const rMid = R_IN + arm.depth / 2
+  const s = Math.sqrt((span * rMid * arm.depth) / arm.dots)
+  let placed = 0
+  let row = 0
+  while (placed < arm.dots) {
+    const r = R_IN + s * 0.5 + row * s * 0.92
+    const cap = Math.max(1, Math.floor((span * r) / s))
+    const take = Math.min(cap, arm.dots - placed)
+    const step = (arm.a1 - arm.a0) / cap
+    const offset = ((cap - take) * step) / 2 + (row % 2 ? step * 0.5 : step * 0.25)
+    for (let k = 0; k < take; k++) {
+      const wa = arm.a0 + offset + k * step + (rand() - 0.5) * step * 0.35
+      const wr = r + (rand() - 0.5) * s * 0.3
+      const [x, y] = proj(wr, wa)
+      const near = Math.sin(rad(wa)) // +1 at the bottom (closest to the viewer)
+      const big = rand() < 0.07
+      dots.push({
+        x,
+        y,
+        r: (big ? 3.1 : 1.9 + rand() * 0.7) * (1 + 0.2 * near),
+        o: (big ? 0.95 : 0.42 + rand() * 0.38) * (0.82 + 0.18 * near),
+        c: arm.c,
+        arm: arm.id,
+        wr,
+        wa,
+      })
+    }
+    placed += take
+    row++
+  }
+}
+
+// faint dust on the memory disc, so the arms sit on something
+const dust: { x: number; y: number; r: number; o: number }[] = []
+for (let i = 0; i < 150; i++) {
+  const wr = 40 + Math.sqrt(rand()) * 400
+  const wa = rand() * 360
+  const [x, y] = proj(wr, wa)
+  dust.push({ x, y, r: 0.6 + rand() * 0.9, o: 0.06 + rand() * 0.12 })
+}
+
+// arcs that name each arm on the band's outer edge
+const arcPath = (r: number, a0: number, a1: number) => {
+  const pts: string[] = []
+  const n = Math.max(4, Math.ceil((a1 - a0) / 2))
+  for (let i = 0; i <= n; i++) {
+    const [x, y] = proj(r, a0 + ((a1 - a0) * i) / n)
+    pts.push(`${i ? 'L' : 'M'}${f(x)} ${f(y)}`)
+  }
+  return pts.join(' ')
+}
+
+// labels: on an outer ring at the arm's middle, pushed clear of the spotlight panel
+const PANEL = { x0: 306, x1: 894, bottom: 452 }
+const labels = ARMS.map((arm) => {
+  const mid = arm.la ?? (arm.a0 + arm.a1) / 2
+  const [ex, ey] = proj(R_IN + arm.depth + 16, mid)
+  let [lx, ly] = proj(432, mid)
+  let anchor: 'start' | 'end' | 'middle' = lx > CX + 40 ? 'start' : lx < CX - 40 ? 'end' : 'middle'
+  if (ly < PANEL.bottom && lx > PANEL.x0 - 10 && lx < PANEL.x1 + 10) {
+    lx = lx > CX ? PANEL.x1 + 22 : PANEL.x0 - 22
+    anchor = lx > CX ? 'start' : 'end'
+  }
+  const [bx, by] = [anchor === 'start' ? lx - 6 : anchor === 'end' ? lx + 6 : lx, ly - 4]
+  return { ...arm, lx, ly, anchor, ex, ey, bx, by }
+})
+
+// ---- the pick and its neighbours --------------------------------------------------
+const nearest = (arm: string, wr: number, wa: number) =>
+  dots
+    .filter((d) => d.arm === arm)
+    .reduce((best, d) => {
+      const dd = Math.hypot(d.wr - wr, (d.wa - wa) * 3)
+      return dd < best.dd ? { d, dd } : best
+    }, { d: dots[0], dd: Infinity }).d
+
+const pick = nearest('NOTES', 262, 392)
+const neighbours = [
+  { d: nearest('NOTES', 336, 372), name: 'release-checklist.md', dx: 12, dy: 20, anchor: 'start' },
+  { d: nearest('DOCUMENTS', 330, 470), name: 'runbooks/canary.md', dx: 10, dy: 18, anchor: 'start' },
+  { d: nearest('DOCUMENTS', 236, 512), name: 'postmortem-0612.md', dx: -10, dy: 14, anchor: 'end' },
+  { d: nearest('CHATS', 250, 578), name: '', dx: 0, dy: 0, anchor: 'end' },
+  { d: nearest('DOCUMENTS', 340, 548), name: 'deploy-policy.pdf', dx: -4, dy: -14, anchor: 'end' },
+]
+const curve = (a: Dot, b: Dot) => {
+  const mx = (a.x + b.x) / 2
+  const my = (a.y + b.y) / 2
+  // pull the control point toward the hub, so connectors bow inward like the app's
+  const k = 0.32
+  return `M${f(a.x)} ${f(a.y)} Q${f(mx + (CX - mx) * k)} ${f(my + (CY - my) * k)} ${f(b.x)} ${f(b.y)}`
+}
+
+// hub glyph: small four-point stars round the inner ring
+const stars = Array.from({ length: 8 }, (_, i) => proj(118, i * 45 + 22.5))
+const star = (x: number, y: number, s: number) =>
+  `M${f(x)} ${f(y - s)} Q${f(x)} ${f(y)} ${f(x + s)} ${f(y)} Q${f(x)} ${f(y)} ${f(x)} ${f(y + s)} Q${f(x)} ${f(y)} ${f(x - s)} ${f(y)} Q${f(x)} ${f(y)} ${f(x)} ${f(y - s)}Z`
+
+const total = ARMS.reduce((n, a) => n + a.count, 0)
+---
+
+<figure class="km-wrap">
+  <p class="km-sr">
+    Laika Orbit's knowledge map: {total} indexed files arranged in six coloured arms (documents, notes, chats,
+    repos, skills and routines) around a tilted ring. The spotlight is open with the query "how do we roll back a
+    deploy". Its top answer is notes/deploy.md, section Rolling back: "Run make rollback TAG=previous and watch
+    the canary for ten minutes", lines 3 to 6, found in 0.9 milliseconds with 0 model tokens. On the map that note
+    glows orange, with curved connectors to five related files.
+  </p>
+  <div class="km" aria-hidden="true">
+    <svg class="km-map" viewBox="0 0 1200 720" preserveAspectRatio="xMidYMid slice">
+      <defs>
+        <radialGradient id="km-bg" cx="50%" cy="62%" r="62%">
+          <stop offset="0" stop-color="#121826" />
+          <stop offset="0.55" stop-color="#0b0e15" />
+          <stop offset="1" stop-color="#08090a" />
+        </radialGradient>
+        <radialGradient id="km-disc" cx="50%" cy="50%" r="50%">
+          <stop offset="0" stop-color="#1a2233" stop-opacity="0.55" />
+          <stop offset="0.8" stop-color="#121826" stop-opacity="0.25" />
+          <stop offset="1" stop-color="#121826" stop-opacity="0" />
+        </radialGradient>
+        <radialGradient id="km-halo">
+          <stop offset="0" stop-color="#ff7a45" stop-opacity="0.55" />
+          <stop offset="0.35" stop-color="#ff7a45" stop-opacity="0.18" />
+          <stop offset="1" stop-color="#ff7a45" stop-opacity="0" />
+        </radialGradient>
+        <radialGradient id="km-vig" cx="50%" cy="50%" r="72%">
+          <stop offset="0.6" stop-color="#08090a" stop-opacity="0" />
+          <stop offset="1" stop-color="#08090a" stop-opacity="0.9" />
+        </radialGradient>
+        <pattern id="km-hex" width="24" height="41.57" patternUnits="userSpaceOnUse">
+          <path
+            d="M12 0 L24 6.93 L24 20.78 L12 27.71 L0 20.78 L0 6.93 Z M12 27.71 L12 41.57"
+            fill="none"
+            stroke="#8fa3c8"
+            stroke-width="0.6"
+          />
+        </pattern>
+        <clipPath id="km-disc-clip">
+          <ellipse cx={CX} cy={CY} rx="378" ry={378 * TILT} />
+        </clipPath>
+        <linearGradient id="km-link" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0" stop-color="#ff7a45" stop-opacity="0.9" />
+          <stop offset="1" stop-color="#ff9e78" stop-opacity="0.5" />
+        </linearGradient>
+      </defs>
+
+      <rect width="1200" height="720" fill="url(#km-bg)" />
+
+      <!-- disc -->
+      <ellipse cx={CX} cy={CY} rx="378" ry={378 * TILT} fill="url(#km-disc)" />
+      <g clip-path="url(#km-disc-clip)" opacity="0.07">
+        <g transform={`translate(${CX} ${CY}) scale(1 ${TILT}) translate(${-CX} ${-CY})`}>
+          <rect x="180" y="40" width="840" height="840" fill="url(#km-hex)" />
+        </g>
+      </g>
+
+      <!-- rings -->
+      {
+        RINGS.map((ring) => (
+          <ellipse
+            cx={CX}
+            cy={CY}
+            rx={ring.r}
+            ry={f(ring.r * TILT)}
+            fill="none"
+            stroke="#9fb0d4"
+            stroke-opacity={ring.o}
+            stroke-width="1"
+            stroke-dasharray={ring.dash || undefined}
+          />
+        ))
+      }
+      <!-- ring ticks on the outer ring -->
+      {
+        Array.from({ length: 72 }, (_, i) => {
+          const [x0, y0] = proj(520, i * 5)
+          const [x1, y1] = proj(i % 6 ? 526 : 534, i * 5)
+          return (
+            <line x1={f(x0)} y1={f(y0)} x2={f(x1)} y2={f(y1)} stroke="#9fb0d4" stroke-opacity={i % 6 ? 0.1 : 0.22} />
+          )
+        })
+      }
+
+      <!-- arm arcs on the disc edge -->
+      {
+        ARMS.map((arm) => (
+          <>
+            <path d={arcPath(378, arm.a0, arm.a1)} fill="none" stroke={arm.c} stroke-opacity="0.7" stroke-width="2.4" stroke-linecap="round" />
+            <path d={arcPath(390, arm.a0, arm.a1)} fill="none" stroke={arm.c} stroke-opacity="0.16" stroke-width="7" />
+          </>
+        ))
+      }
+
+      <!-- dust -->
+      {dust.map((d) => <circle cx={f(d.x)} cy={f(d.y)} r={f(d.r)} fill="#b8c4de" fill-opacity={f(d.o * 100) / 100} />)}
+
+      <!-- hub -->
+      <circle cx={CX} cy={CY} r="16" fill="#ff7a45" fill-opacity="0.05" />
+      <ellipse cx={CX} cy={CY} rx="22" ry={22 * TILT} fill="none" stroke="#ff7a45" stroke-opacity="0.35" />
+      <circle cx={CX} cy={CY} r="3" fill="#ffb08f" />
+      {stars.map(([x, y]) => <path d={star(x, y, 4)} fill="#ff9e78" fill-opacity="0.55" />)}
+
+      <!-- label leaders -->
+      {
+        labels.map((l) => (
+          <path
+            class="km-leader"
+            d={`M${f(l.ex)} ${f(l.ey)} L${f(l.bx)} ${f(l.by)}`}
+            stroke={l.c}
+            stroke-opacity="0.28"
+            stroke-width="1"
+            fill="none"
+          />
+        ))
+      }
+
+      <!-- nodes -->
+      <g>
+        {
+          dots.map((d) => (
+            <circle cx={f(d.x)} cy={f(d.y)} r={f(d.r)} fill={d.c} fill-opacity={f(d.o * 100) / 100} />
+          ))
+        }
+      </g>
+
+      <!-- connectors from the pick -->
+      <g class="km-links">
+        {
+          neighbours.map((n) => (
+            <path d={curve(pick, n.d)} fill="none" stroke="#ff7a45" stroke-opacity="0.16" stroke-width="4" />
+          ))
+        }
+        {
+          neighbours.map((n) => (
+            <path d={curve(pick, n.d)} fill="none" stroke="#ff8a5c" stroke-opacity="0.8" stroke-width="1.1" />
+          ))
+        }
+      </g>
+      {
+        neighbours.map((n) => (
+          <g>
+            <circle cx={f(n.d.x)} cy={f(n.d.y)} r="7" fill="none" stroke={n.d.c} stroke-opacity="0.75" stroke-width="1" />
+            <circle cx={f(n.d.x)} cy={f(n.d.y)} r="3.2" fill={n.d.c} />
+            {n.name && <text
+              class="km-nlabel"
+              x={f(n.d.x + n.dx)}
+              y={f(n.d.y + n.dy)}
+              text-anchor={n.anchor}
+            >
+              {n.name}
+            </text>}
+          </g>
+        ))
+      }
+
+      <!-- the pick -->
+      <circle cx={f(pick.x)} cy={f(pick.y)} r="46" fill="url(#km-halo)" />
+      <circle class="km-pulse" cx={f(pick.x)} cy={f(pick.y)} r="12" fill="none" stroke="#ff7a45" stroke-width="1.2" />
+      <ellipse cx={f(pick.x)} cy={f(pick.y)} rx="17" ry={f(17 * 0.7)} fill="none" stroke="#ff7a45" stroke-opacity="0.35" stroke-dasharray="3 3" />
+      <circle cx={f(pick.x)} cy={f(pick.y)} r="5.2" fill="#ff7a45" />
+      <circle cx={f(pick.x)} cy={f(pick.y)} r="2.2" fill="#fff4ee" />
+
+      <!-- pick card, as the app's hover card -->
+      <g transform={`translate(${f(pick.x + 16)} ${f(pick.y + 24)})`}>
+        <rect width="178" height="50" rx="6" fill="#0d1119" fill-opacity="0.94" stroke="#ff7a45" stroke-opacity="0.45" />
+        <text x="12" y="20" class="km-card-t">deploy.md</text>
+        <text x="12" y="37" class="km-card-s">notes/deploy.md · 2.4 KB</text>
+      </g>
+
+      <!-- arm labels -->
+      {
+        labels.map((l) => (
+          <text class="km-label" x={f(l.lx)} y={f(l.ly)} text-anchor={l.anchor} fill={l.c}>
+            {l.id}
+            <tspan class="km-count"> · {l.count}</tspan>
+          </text>
+        ))
+      }
+
+      <rect width="1200" height="720" fill="url(#km-vig)" pointer-events="none" />
+
+      <!-- HUD -->
+      <g class="km-hud">
+        <path d="M24 44 V24 H44 M1156 24 H1176 V44 M1176 676 V696 H1156 M44 696 H24 V676" fill="none" stroke="#9fb0d4" stroke-opacity="0.22" />
+        <circle cx="42" cy="672" r="3" fill="#3ddc97" />
+        <text x="52" y="676" class="km-hud-t">LIVE</text>
+        <text x="42" y="692" class="km-hud-s">LAYOUT ARMS · 6 GROUPS · 4 RINGS</text>
+        <text x="1158" y="676" text-anchor="end" class="km-hud-t">{total} NODES · 1,206 LINKS</text>
+        <text x="1158" y="692" text-anchor="end" class="km-hud-s">TRACKING · 5 LINKS</text>
+      </g>
+    </svg>
+
+    <div class="sp">
+      <div class="sp-bar">
+        <svg class="sp-glass" viewBox="0 0 20 20" width="20" height="20"><circle cx="8.5" cy="8.5" r="5.8" fill="none" stroke="currentColor" stroke-width="1.7" /><path d="M13 13 L17.5 17.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" /></svg>
+        <span class="sp-q">how do we roll back a deploy<span class="sp-caret"></span></span>
+        <kbd>esc</kbd>
+      </div>
+      <div class="sp-list">
+        <div class="sp-sec">Answer</div>
+        <div class="sp-row on sp-ans">
+          <span class="sp-ask">✦</span>
+          <div class="sp-ans-body">
+            <div class="sp-ans-head">
+              <span class="sp-path">notes/deploy.md <span class="sp-crumb">›</span> <b>Rolling back</b></span>
+              <span class="sp-meta">lines 3–6 · 0.9ms · 0 tokens</span>
+            </div>
+            <p class="sp-ex">
+              Run <code>make rollback TAG=&lt;previous&gt;</code> and watch the<br class="sp-br" /> <mark>canary</mark> for ten minutes.
+            </p>
+          </div>
+          <kbd class="sp-enter">↵</kbd>
+        </div>
+
+        <div class="sp-sec">Files</div>
+        <div class="sp-row">
+          <span class="sp-dot" style="--c:#b48cff"></span>
+          <span class="sp-t"><mark>deploy</mark>.md</span>
+          <span class="sp-r">~/brain/notes</span>
+        </div>
+        <div class="sp-row">
+          <span class="sp-dot" style="--c:#6f9fff"></span>
+          <span class="sp-t"><mark>rollback</mark>.sh</span>
+          <span class="sp-r">harbor-web/scripts</span>
+        </div>
+        <div class="sp-row sp-wide">
+          <span class="sp-dot" style="--c:#5fcfa0"></span>
+          <span class="sp-t">canary-<mark>deploy</mark>s.md</span>
+          <span class="sp-r">docs/runbooks</span>
+        </div>
+
+        <div class="sp-sec">Actions</div>
+        <div class="sp-row">
+          <span class="sp-cmd">›</span>
+          <span class="sp-t">Show deploy.md on the map</span>
+          <span class="sp-keys"><kbd>⌘</kbd><kbd>↵</kbd></span>
+        </div>
+        <div class="sp-row">
+          <span class="sp-cmd">›</span>
+          <span class="sp-t">Ask Claude with this answer</span>
+          <span class="sp-keys"><kbd>⌘</kbd><kbd>⇧</kbd><kbd>↵</kbd></span>
+        </div>
+      </div>
+      <div class="sp-foot">
+        <span><kbd>↑</kbd><kbd>↓</kbd> navigate</span>
+        <span><kbd>↵</kbd> open</span>
+        <span><kbd>esc</kbd> close</span>
+        <span class="sp-count">recall · 0 model calls</span>
+      </div>
+    </div>
+  </div>
+</figure>
+
+<style>
+  .km-wrap {
+    container-type: inline-size;
+    margin: 0;
+    width: 100%;
+  }
+  .km-sr {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+    border: 0;
+  }
+  .km {
+    /* one design pixel on the 1200-wide grid */
+    --u: calc(100cqw / 1200);
+    --acc: #ff7a45;
+    --cyan: #56d8ff;
+    --mono: 'JetBrains Mono Variable', ui-monospace, Menlo, monospace;
+    --sans: 'Inter Variable', system-ui, -apple-system, sans-serif;
+    position: relative;
+    width: 100%;
+    aspect-ratio: 5 / 3;
+    overflow: hidden;
+    border-radius: calc(14 * var(--u));
+    background: #08090a;
+    box-shadow:
+      inset 0 0 0 1px rgba(255, 255, 255, 0.07),
+      0 40px 120px -40px rgba(0, 0, 0, 0.9);
+    isolation: isolate;
+  }
+  .km::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06), inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+  }
+  .km-map {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  /* ---- map type ---- */
+  .km-label {
+    font: 600 11.5px var(--mono);
+    letter-spacing: 0.14em;
+  }
+  .km-count {
+    fill: #7c88a8;
+    font-weight: 500;
+  }
+  .km-nlabel {
+    font: 500 10px var(--mono);
+    fill: #aab6d3;
+    letter-spacing: 0.01em;
+    paint-order: stroke;
+    stroke: #0a0d14;
+    stroke-width: 3px;
+    stroke-linejoin: round;
+  }
+  .km-card-t {
+    font: 600 12.5px var(--sans);
+    fill: #f3f5fb;
+  }
+  .km-card-s {
+    font: 400 10px var(--mono);
+    fill: #8892ad;
+  }
+  .km-hud-t {
+    font: 600 10px var(--mono);
+    letter-spacing: 0.14em;
+    fill: #56d8ff;
+    fill-opacity: 0.85;
+  }
+  .km-hud-s {
+    font: 500 9.5px var(--mono);
+    letter-spacing: 0.12em;
+    fill: #5c6680;
+  }
+  .km-pulse {
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: km-pulse 2.8s cubic-bezier(0.2, 0.7, 0.3, 1) infinite;
+  }
+  @keyframes km-pulse {
+    0% {
+      transform: scale(0.7);
+      opacity: 0.9;
+    }
+    100% {
+      transform: scale(2.6);
+      opacity: 0;
+    }
+  }
+
+  /* ---- spotlight ---- */
+  .sp {
+    position: absolute;
+    left: 50%;
+    top: calc(40 * var(--u));
+    width: calc(588 * var(--u));
+    transform: translateX(-50%);
+    background: rgba(16, 21, 32, 0.84);
+    backdrop-filter: blur(calc(26 * var(--u))) saturate(1.5);
+    -webkit-backdrop-filter: blur(calc(26 * var(--u))) saturate(1.5);
+    border-radius: calc(14 * var(--u));
+    box-shadow:
+      inset 0 0 0 1px rgba(255, 255, 255, 0.11),
+      inset 0 1px 0 rgba(255, 255, 255, 0.08),
+      0 calc(34 * var(--u)) calc(90 * var(--u)) calc(-18 * var(--u)) rgba(0, 0, 0, 0.8),
+      0 calc(8 * var(--u)) calc(24 * var(--u)) calc(-10 * var(--u)) rgba(0, 0, 0, 0.6);
+    overflow: hidden;
+    font-family: var(--sans);
+    color: #dfe4f0;
+  }
+  .sp-bar {
+    display: flex;
+    align-items: center;
+    gap: calc(12 * var(--u));
+    height: calc(56 * var(--u));
+    padding: 0 calc(18 * var(--u));
+    border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  }
+  .sp-glass {
+    flex: none;
+    width: calc(19 * var(--u));
+    height: calc(19 * var(--u));
+    color: #7c88a8;
+  }
+  .sp-q {
+    flex: 1;
+    min-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    font-size: calc(20 * var(--u));
+    font-weight: 350;
+    letter-spacing: -0.012em;
+    color: #f3f5fb;
+  }
+  .sp-caret {
+    display: inline-block;
+    width: calc(2 * var(--u));
+    height: calc(22 * var(--u));
+    margin-left: calc(2 * var(--u));
+    vertical-align: calc(-4 * var(--u));
+    background: var(--acc);
+    border-radius: 1px;
+    animation: sp-blink 1.1s steps(1) infinite;
+  }
+  @keyframes sp-blink {
+    50% {
+      opacity: 0;
+    }
+  }
+  .sp kbd {
+    display: inline-grid;
+    place-items: center;
+    min-width: calc(17 * var(--u));
+    height: calc(17 * var(--u));
+    padding: 0 calc(4 * var(--u));
+    font: 600 calc(9.5 * var(--u)) / 1 var(--mono);
+    color: #8892ad;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-bottom-width: calc(2 * var(--u));
+    border-radius: calc(4 * var(--u));
+  }
+  .sp-list {
+    padding: calc(4 * var(--u)) calc(7 * var(--u)) calc(7 * var(--u));
+  }
+  .sp-sec {
+    font: 700 calc(9 * var(--u)) / 1 var(--mono);
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: #5c6680;
+    padding: calc(11 * var(--u)) calc(11 * var(--u)) calc(6 * var(--u));
+  }
+  .sp-row {
+    display: flex;
+    align-items: center;
+    gap: calc(11 * var(--u));
+    padding: 0 calc(11 * var(--u));
+    height: calc(32 * var(--u));
+    border-radius: calc(8 * var(--u));
+    min-width: 0;
+  }
+  .sp-row.on {
+    background: linear-gradient(90deg, rgba(86, 216, 255, 0.16), rgba(86, 216, 255, 0.08));
+    box-shadow: inset 0 0 0 1px rgba(86, 216, 255, 0.16);
+  }
+  .sp-ans {
+    align-items: flex-start;
+    height: auto;
+    padding: calc(10 * var(--u)) calc(11 * var(--u)) calc(11 * var(--u));
+  }
+  .sp-ask {
+    flex: none;
+    width: calc(14 * var(--u));
+    margin-top: calc(1 * var(--u));
+    color: var(--acc);
+    font-size: calc(13 * var(--u));
+    line-height: calc(17 * var(--u));
+    text-align: center;
+    text-shadow: 0 0 calc(10 * var(--u)) rgba(255, 122, 69, 0.6);
+  }
+  .sp-ans-body {
+    flex: 1;
+    min-width: 0;
+  }
+  .sp-ans-head {
+    display: flex;
+    align-items: baseline;
+    gap: calc(12 * var(--u));
+    min-width: 0;
+  }
+  .sp-path {
+    flex: 1;
+    min-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font: 500 calc(12 * var(--u)) / calc(17 * var(--u)) var(--mono);
+    color: #aab6d3;
+  }
+  .sp-path b {
+    font-family: var(--sans);
+    font-size: calc(13.5 * var(--u));
+    font-weight: 600;
+    color: #fff;
+  }
+  .sp-crumb {
+    color: #5c6680;
+    padding: 0 calc(2 * var(--u));
+  }
+  .sp-meta {
+    flex: none;
+    font: 500 calc(10 * var(--u)) / 1 var(--mono);
+    color: #8fb8c8;
+    letter-spacing: 0.01em;
+  }
+  .sp-ex {
+    margin: calc(7 * var(--u)) 0 0;
+    padding-left: calc(10 * var(--u));
+    border-left: calc(2 * var(--u)) solid rgba(255, 122, 69, 0.55);
+    font-size: calc(13 * var(--u));
+    line-height: calc(20 * var(--u));
+    color: #cbd3e6;
+  }
+  .sp-ex code {
+    font: 500 calc(11.5 * var(--u)) / 1 var(--mono);
+    color: #ffd3c0;
+    background: rgba(255, 122, 69, 0.12);
+    border: 1px solid rgba(255, 122, 69, 0.22);
+    padding: calc(2 * var(--u)) calc(5 * var(--u));
+    border-radius: calc(4 * var(--u));
+    white-space: nowrap;
+  }
+  .sp mark {
+    background: none;
+    color: var(--cyan);
+    font-weight: 650;
+  }
+  .sp-ex mark {
+    color: #d2f4fe;
+    font-weight: 500;
+  }
+  .sp-enter {
+    flex: none;
+    align-self: center;
+  }
+  .sp-dot {
+    flex: none;
+    width: calc(14 * var(--u));
+    display: grid;
+    place-items: center;
+  }
+  .sp-dot::before {
+    content: '';
+    width: calc(8 * var(--u));
+    height: calc(8 * var(--u));
+    border-radius: 50%;
+    background: var(--c);
+    box-shadow: 0 0 calc(8 * var(--u)) color-mix(in srgb, var(--c) 55%, transparent);
+  }
+  .sp-cmd {
+    flex: none;
+    width: calc(14 * var(--u));
+    text-align: center;
+    color: var(--cyan);
+    font-size: calc(16 * var(--u));
+    line-height: 1;
+    margin-top: calc(-2 * var(--u));
+  }
+  .sp-t {
+    flex: 1 1 auto;
+    min-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: calc(13 * var(--u));
+    font-weight: 500;
+    color: #dfe4f0;
+  }
+  .sp-r {
+    flex: 0 1 auto;
+    min-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font: 400 calc(10.5 * var(--u)) / 1 var(--mono);
+    color: #6b7691;
+  }
+  .sp-keys {
+    display: flex;
+    gap: calc(3 * var(--u));
+  }
+  .sp-foot {
+    display: flex;
+    align-items: center;
+    gap: calc(16 * var(--u));
+    height: calc(34 * var(--u));
+    padding: 0 calc(16 * var(--u));
+    border-top: 1px solid rgba(255, 255, 255, 0.07);
+    background: rgba(0, 0, 0, 0.14);
+    font-size: calc(11 * var(--u));
+    font-weight: 500;
+    color: #6b7691;
+  }
+  .sp-foot > span {
+    display: inline-flex;
+    align-items: center;
+    gap: calc(3 * var(--u));
+    white-space: nowrap;
+  }
+  .sp-foot kbd:last-of-type {
+    margin-right: calc(3 * var(--u));
+  }
+  .sp-count {
+    margin-left: auto;
+    font-family: var(--mono);
+    font-size: calc(10 * var(--u));
+    color: #5c6680;
+  }
+
+  /* ---- phones: real pixel sizes, spotlight full width, the map shows below it ---- */
+  @container (max-width: 700px) {
+    .km {
+      --u: 1px;
+      aspect-ratio: auto;
+      height: 720px;
+      border-radius: 14px;
+    }
+    .sp {
+      left: 12px;
+      right: 12px;
+      top: 12px;
+      width: auto;
+      transform: none;
+    }
+    .sp-q {
+      font-size: 17px;
+    }
+    .sp-ans-head {
+      flex-direction: column;
+      gap: 4px;
+    }
+    .sp-path {
+      width: 100%;
+    }
+    .sp-r,
+    .sp-foot > span:nth-child(3),
+    .sp-foot > .sp-count,
+    .sp-br,
+    .sp-wide {
+      display: none;
+    }
+    .km-map {
+      /* keep the design at 1:1 and slide it so the pick sits just left of centre, its card in view */
+      width: 1200px;
+      height: 720px;
+      left: calc(40% - 822px);
+    }
+    /* cropped map: stray edge labels and the HUD read as clutter at this size */
+    .km-hud,
+    .km-leader,
+    .km-label,
+    .km-nlabel {
+      display: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .km-pulse,
+    .sp-caret {
+      animation: none;
+    }
+    .km-pulse {
+      opacity: 0.5;
+      transform: scale(1.5);
+    }
+  }
+</style>

@@ -1,0 +1,1279 @@
+---
+/**
+ * Laika Orbit's Claude panel, four chats in a two by two grid, drawn in HTML and CSS for the
+ * marketing site (it stands in for a screenshot). The look follows the app's own panel:
+ * sessions.css and session-groups.css in the Midnight theme.
+ *
+ * Every size is written against a 1200px-wide design and multiplied by --u, so the whole panel
+ * scales with its container. Below 700px the grid becomes two chats stacked, at close to real size.
+ */
+const repo = { atlas: '#56d8ff', pocket: '#ffc94f', harbor: '#5ee0c1', project: '#c792ea' }
+const acct = { work: '#7aa2ff', personal: '#ff7eb6' }
+
+const icon = {
+  plus: '<path d="M8 3v10M3 8h10"/>',
+  split: '<rect x="1.5" y="2.5" width="13" height="11" rx="2"/><path d="M8 2.5v11"/>',
+  quad: '<rect x="1.5" y="2.5" width="13" height="11" rx="2"/><path d="M8 2.5v11M1.5 8h13"/>',
+  more: '<circle cx="3.5" cy="8" r=".9" fill="currentColor"/><circle cx="8" cy="8" r=".9" fill="currentColor"/><circle cx="12.5" cy="8" r=".9" fill="currentColor"/>',
+  chat: '<path d="M3 3.5h10a1 1 0 0 1 1 1v6a1 1 0 0 1-1 1H8l-3 2.2v-2.2H3a1 1 0 0 1-1-1v-6a1 1 0 0 1 1-1Z"/>',
+  file: '<path d="M4 2h5l3 3v9H4zM9 2v3h3"/>',
+  diff: '<circle cx="4.5" cy="4" r="1.6"/><circle cx="4.5" cy="12" r="1.6"/><circle cx="11.5" cy="6" r="1.6"/><path d="M4.5 5.6v4.8M11.5 7.6c0 2.4-2 3-5.4 3.6"/>',
+  term: '<path d="m3 4.5 3.5 3.5L3 11.5M8.5 12h5"/>',
+  send: '<path fill="currentColor" stroke="none" d="M8 2.5 13 7.4l-1 1-3.3-3.2V13.5H7.3V5.2L4 8.4l-1-1z"/>',
+}
+const mode = {
+  edit: '<path d="m8 8-4 4 4 4m8-8 4 4-4 4m-2.5-11-3 14"/>',
+  plan: '<path d="M8 4h9a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H8m0-16v16m0-16H6a1 1 0 0 0-1 1v2m3 13H6a1 1 0 0 1-1-1v-2m6-9h4m-4 4h4m-4 4h2"/>',
+  auto: '<path d="M13 3 5 13.5h6L10.5 21 19 10.5h-6z"/>',
+}
+const svg = (body: string, cls = 'ico') =>
+  `<svg class="${cls}" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">${body}</svg>`
+const msvg = (body: string) =>
+  `<svg class="mi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">${body}</svg>`
+
+type Composer = { placeholder: string; mode: keyof typeof mode; modeLabel: string; model: string; account: keyof typeof acct; busy?: boolean }
+---
+
+<div class="cg-wrap">
+  <p class="cg-sr">
+    Laika Orbit's Claude panel with four Claude Code chats in a two by two grid: one asks how failed
+    webhooks should be retried, one is running a checkout test, one has finished an accessibility
+    audit with all 13 checks passing, and one is writing retry docs against a three-item task list.
+  </p>
+  <div class="cg" aria-hidden="true">
+    <!-- the panel's header: workspace tabs, views, plan usage -->
+    <header class="bar">
+      <nav class="tabs">
+        <span class="tab project on" style={`--ws:${repo.project}`}><i></i><span>platform</span><small>4</small></span>
+        <span class="tab need" style={`--ws:${repo.atlas}`}><i></i><span>atlas-api</span></span>
+        <span class="tab" style={`--ws:${repo.pocket}`}><i></i><span>pocket-app</span></span>
+        <span class="tab done" style={`--ws:${repo.harbor}`}><i></i><span>harbor-web</span></span>
+        <span class="ic add" set:html={svg(icon.plus)}></span>
+      </nav>
+      <div class="acts">
+        <span class="cu">
+          <span class="cu-a" style={`--ac:${acct.work}`}>
+            <b>Work</b>
+            <span class="cu-rows">
+              <span class="cu-row"><em>5h</em><span class="cu-bar"><i style="width:34%"></i></span><small>34%</small></span>
+              <span class="cu-row"><em>wk</em><span class="cu-bar"><i style="width:62%"></i></span><small>62%</small></span>
+            </span>
+          </span>
+          <span class="cu-a" style={`--ac:${acct.personal}`}>
+            <b>Personal</b>
+            <span class="cu-rows">
+              <span class="cu-row"><em>5h</em><span class="cu-bar"><i style="width:6%"></i></span><small>6%</small></span>
+              <span class="cu-row"><em>wk</em><span class="cu-bar"><i style="width:18%"></i></span><small>18%</small></span>
+            </span>
+          </span>
+        </span>
+        <i class="vsep"></i>
+        <span class="seg">
+          <span class="on"><Fragment set:html={svg(icon.chat)}></Fragment>Chats</span>
+          <span><Fragment set:html={svg(icon.file)}></Fragment>Files</span>
+          <span><Fragment set:html={svg(icon.diff)}></Fragment>Changes<b>3</b></span>
+        </span>
+        <span class="ic" set:html={svg(icon.term)}></span>
+        <span class="ic on" set:html={svg(icon.quad)}></span>
+      </div>
+    </header>
+
+    <div class="grid" style={`--ws:${repo.project}`}>
+      <!-- 1 · atlas-api · Claude asks a question -->
+      <section class="col focus c1" style={`--ws:${repo.atlas}`}>
+        <div class="gbar">
+          <span class="chat on st-waiting"><i class="st"></i><span class="t">Add exponential backoff to webhook retries</span><em class="rp">atlas-api</em></span>
+          <span class="chat st-idle"><i class="st"></i><span class="t">Rate-limit the export API</span></span>
+          <span class="btn new" set:html={svg(icon.plus)}></span>
+          <span class="fill"></span>
+          <span class="btn" set:html={svg(icon.split)}></span>
+          <span class="btn" set:html={svg(icon.more)}></span>
+        </div>
+        <div class="log">
+          <div class="m-user">Add exponential backoff to webhook retries. Slow endpoints are piling up in the queue.</div>
+          <div class="m-tool done"><i class="bul"></i><b>Read</b><code>src/webhooks/deliver.ts</code></div>
+          <div class="m-claude between">Retries run on a fixed 10s loop today. One choice before I change it:</div>
+          <div class="m-ask">
+            <div class="ask-h"><span class="q-tag">Retries</span>How should failed webhooks be retried?</div>
+            <div class="ask-opts">
+              <span class="opt on"><kbd>1</kbd><span><b>Exponential backoff</b><em>1s, 2s, 4s… capped at 5 minutes, with jitter</em></span></span>
+              <span class="opt"><kbd>2</kbd><span><b>Fixed delay</b><em>Every 30s, up to 10 attempts</em></span></span>
+              <span class="opt"><kbd>3</kbd><span><b>No retries</b><em>Log the failure and move on</em></span></span>
+            </div>
+          </div>
+        </div>
+        {[{ placeholder: 'Reply to Claude…', mode: 'edit', modeLabel: 'Edit automatically', model: 'Opus', account: 'work' }].map((c: Composer) => (
+        <div class="cx">
+          <div class="cx-in">{c.placeholder}</div>
+          <div class="cx-bar">
+            <span class="cx-mode"><Fragment set:html={msvg(mode[c.mode])}></Fragment>{c.modeLabel}<small class="chev"></small></span>
+            <span class="cx-mode"><i class="mdl"></i>{c.model}<small class="chev"></small></span>
+            <span class="cx-chip" style={`--ac:${acct[c.account]}`}><i></i>{c.account === 'work' ? 'Work' : 'Personal'}<small class="chev"></small></span>
+            {c.busy ? <span class="cx-send stop"></span> : <span class="cx-send off" set:html={svg(icon.send, 'ico send')}></span>}
+          </div>
+        </div>
+        ))}
+      </section>
+
+      <!-- 2 · pocket-app · a command running -->
+      <section class="col c2" style={`--ws:${repo.pocket}`}>
+        <div class="gbar">
+          <span class="chat on st-running"><i class="st"></i><span class="t">Fix flaky checkout test</span><em class="rp">pocket-app</em></span>
+          <span class="btn new" set:html={svg(icon.plus)}></span>
+          <span class="fill"></span>
+        </div>
+        <div class="log">
+          <div class="m-user">Fix flaky checkout test</div>
+          <div class="m-claude between">It fails when the payment mock resolves after the cart timer fires. Running the suite on its own first.</div>
+          <div class="m-tool running bash">
+            <div class="m-tool-h"><i class="bul"></i><b>Bash</b><span>Run the checkout tests</span></div>
+            <div class="m-io">
+              <div class="io in"><span>IN</span><pre><i class="k">npm</i> test -- checkout</pre></div>
+              <div class="io out"><span>OUT</span><pre>PASS  src/cart/cart.test.ts (2.1 s)
+RUNS  src/checkout/checkout.test.ts
+  ✓ applies a promo code (412 ms)
+  ✓ keeps the basket after a failed payment</pre></div>
+            </div>
+          </div>
+          <div class="m-working"><b>✻</b><span class="verb">Testing…</span><span class="meta">41s · ↓ 1.8k tokens</span></div>
+        </div>
+        {[{ placeholder: 'Queue another message…', mode: 'auto', modeLabel: 'Auto', model: 'Sonnet', account: 'personal', busy: true }].map((c: Composer) => (
+        <div class="cx">
+          <div class="cx-in">{c.placeholder}</div>
+          <div class="cx-bar">
+            <span class="cx-mode"><Fragment set:html={msvg(mode[c.mode])}></Fragment>{c.modeLabel}<small class="chev"></small></span>
+            <span class="cx-mode"><i class="mdl"></i>{c.model}<small class="chev"></small></span>
+            <span class="cx-chip" style={`--ac:${acct[c.account]}`}><i></i>{c.account === 'work' ? 'Work' : 'Personal'}<small class="chev"></small></span>
+            {c.busy ? <span class="cx-send stop"></span> : <span class="cx-send off" set:html={svg(icon.send, 'ico send')}></span>}
+          </div>
+        </div>
+        ))}
+      </section>
+
+      <!-- 3 · harbor-web · finished -->
+      <section class="col c3" style={`--ws:${repo.harbor}`}>
+        <div class="gbar">
+          <span class="chat on st-unread"><i class="st"></i><span class="t">Audit form accessibility</span><em class="rp">harbor-web</em></span>
+          <span class="btn new" set:html={svg(icon.plus)}></span>
+          <span class="fill"></span>
+        </div>
+        <div class="log">
+          <div class="m-user">Audit form accessibility</div>
+          <div class="m-think">Thought for 8s</div>
+          <div class="m-tool done"><i class="bul"></i><b>Edit</b><code>src/forms/SignupForm.tsx</code><span class="m-stat"><ins>+6</ins> <del>−2</del><i class="chev r"></i></span></div>
+          <div class="m-tool done"><i class="bul"></i><b>Bash</b><span class="lbl">Run the axe checks</span></div>
+          <div class="m-note"><span>✓</span>13 of 13 checks pass</div>
+          <div class="m-claude">All three forms pass now. Every field has a label tied to its input, errors are announced through an <code>aria-live</code> region, and focus rings meet 3:1 contrast.</div>
+        </div>
+        {[{ placeholder: 'Reply to Claude…', mode: 'edit', modeLabel: 'Edit automatically', model: 'Opus', account: 'work' }].map((c: Composer) => (
+        <div class="cx">
+          <div class="cx-in">{c.placeholder}</div>
+          <div class="cx-bar">
+            <span class="cx-mode"><Fragment set:html={msvg(mode[c.mode])}></Fragment>{c.modeLabel}<small class="chev"></small></span>
+            <span class="cx-mode"><i class="mdl"></i>{c.model}<small class="chev"></small></span>
+            <span class="cx-chip" style={`--ac:${acct[c.account]}`}><i></i>{c.account === 'work' ? 'Work' : 'Personal'}<small class="chev"></small></span>
+            {c.busy ? <span class="cx-send stop"></span> : <span class="cx-send off" set:html={svg(icon.send, 'ico send')}></span>}
+          </div>
+        </div>
+        ))}
+      </section>
+
+      <!-- 4 · atlas-api · streaming a reply, with tasks and the track -->
+      <section class="col c4 has-track" style={`--ws:${repo.atlas}`}>
+        <div class="gbar">
+          <span class="chat on st-running"><i class="st"></i><span class="t">Document the retry schedule</span><em class="rp">atlas-api</em></span>
+          <span class="btn new" set:html={svg(icon.plus)}></span>
+          <span class="fill"></span>
+        </div>
+        <div class="chatbox">
+          <div class="track">
+            <span class="pt s-done" style="top:8%"><i></i></span>
+            <span class="pt s-done" style="top:30%"><i></i></span>
+            <span class="pt pin" style="top:52%"><i></i></span>
+            <span class="pt ring" style="top:82%;--p:33"><i></i></span>
+          </div>
+          <div class="log">
+            <div class="m-user">Document the retry schedule</div>
+            <div class="m-think">Thought for 4s</div>
+            <div class="m-tool done"><i class="bul"></i><b>Read</b><code>src/webhooks/retry.ts</code></div>
+            <div class="m-claude live">Failed deliveries retry after <strong>1s</strong>, then double each attempt up to a <strong>5 minute</strong> cap, with ±20% jitter so bursts don't line up. After 8 attempts a delivery moves to the dead-letter queue, where<span class="caret"></span></div>
+          </div>
+        </div>
+        <div class="tasks">
+          <div class="tk-h"><small class="chev"></small>Tasks <b>1/3</b></div>
+          <ol>
+            <li class="completed"><i></i><span>Read the retry worker</span></li>
+            <li class="in_progress"><i></i><span>Writing docs/webhooks.md</span></li>
+            <li class="pending"><i></i><span>Link it from the README</span></li>
+          </ol>
+        </div>
+        {[{ placeholder: 'Queue another message…', mode: 'plan', modeLabel: 'Plan', model: 'Opus', account: 'work', busy: true }].map((c: Composer) => (
+        <div class="cx">
+          <div class="cx-in">{c.placeholder}</div>
+          <div class="cx-bar">
+            <span class="cx-mode"><Fragment set:html={msvg(mode[c.mode])}></Fragment>{c.modeLabel}<small class="chev"></small></span>
+            <span class="cx-mode"><i class="mdl"></i>{c.model}<small class="chev"></small></span>
+            <span class="cx-chip" style={`--ac:${acct[c.account]}`}><i></i>{c.account === 'work' ? 'Work' : 'Personal'}<small class="chev"></small></span>
+            {c.busy ? <span class="cx-send stop"></span> : <span class="cx-send off" set:html={svg(icon.send, 'ico send')}></span>}
+          </div>
+        </div>
+        ))}
+      </section>
+    </div>
+  </div>
+</div>
+
+<style>
+  .cg-wrap {
+    container-type: inline-size;
+    width: 100%;
+  }
+  .cg-sr {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  /* ------------------------------------------------------------ tokens: Midnight */
+  .cg {
+    --u: calc(100cqw / 1200);
+    --n1: #07090d;
+    --n2: #0a0c12;
+    --n3: #0b0e16;
+    --n4: #0d1016;
+    --n5: #0e1119;
+    --n6: #0f1420;
+    --n7: #111624;
+    --n8: #121724;
+    --n10: #151b29;
+    --n12: #1a202e;
+    --n13: #1b2130;
+    --n16: #232938;
+    --n18: #262d40;
+    --n19: #2a3248;
+    --n21: #3a4560;
+    --n23: #4e5870;
+    --n24: #5c6680;
+    --n26: #7c88a8;
+    --n27: #8892ad;
+    --n30: #aab6d3;
+    --n31: #b9c2d9;
+    --n32: #cbd3e6;
+    --n34: #dfe4f0;
+    --n35: #e8edf8;
+    --acc: #ff7a45;
+    --acc-lt: #ff9e78;
+    --acc-ink: #1f0c04;
+    --ok: #3ddc97;
+    --warn: #ffc94f;
+    --err: #ff6b7a;
+    --err-lt: #ff9ea8;
+    --err-bg: #260d0f;
+    --cyan: #56d8ff;
+    --violet: #c792ea;
+    --line: var(--n16);
+    --soft: var(--n6);
+    --text: var(--n34);
+    --dim: var(--n27);
+    --faint: var(--n24);
+    --sans: 'Inter Variable', ui-sans-serif, system-ui, -apple-system, sans-serif;
+    --mono: 'JetBrains Mono Variable', ui-monospace, Menlo, monospace;
+
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    aspect-ratio: 5 / 3;
+    overflow: hidden;
+    background: var(--n2);
+    color: var(--text);
+    font: 400 calc(14 * var(--u))/1.55 var(--sans);
+    font-feature-settings: 'cv11', 'ss03';
+    letter-spacing: -0.003em;
+    text-align: left;
+    -webkit-font-smoothing: antialiased;
+    user-select: none;
+  }
+  .cg *,
+  .cg *::before,
+  .cg *::after {
+    box-sizing: border-box;
+  }
+  .cg :is(pre, code, kbd) {
+    font-family: var(--mono);
+  }
+  .cg :global(.ico) {
+    flex: none;
+    width: calc(14 * var(--u));
+    height: calc(14 * var(--u));
+  }
+
+  /* ------------------------------------------------------------ header */
+  .bar {
+    flex: none;
+    display: flex;
+    align-items: center;
+    gap: calc(8 * var(--u));
+    height: calc(44 * var(--u));
+    padding: 0 calc(8 * var(--u)) 0 calc(6 * var(--u));
+    border-bottom: 1px solid var(--line);
+  }
+  .tabs {
+    display: flex;
+    align-items: stretch;
+    gap: calc(2 * var(--u));
+    min-width: 0;
+    height: 100%;
+    overflow: hidden;
+  }
+  .tab {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: calc(7 * var(--u));
+    padding: 0 calc(12 * var(--u)) 0 calc(10 * var(--u));
+    color: var(--dim);
+    font-size: calc(12.5 * var(--u));
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  .tab > i {
+    flex: none;
+    width: calc(8 * var(--u));
+    height: calc(8 * var(--u));
+    border-radius: calc(2 * var(--u));
+    background: var(--ws);
+  }
+  .tab.project > i {
+    border-radius: 50%;
+    box-shadow: inset 0 0 0 calc(2 * var(--u)) color-mix(in srgb, black 35%, var(--ws));
+  }
+  .tab small {
+    padding: 0 calc(5 * var(--u));
+    border-radius: 999px;
+    background: var(--n12);
+    font-size: calc(10.5 * var(--u));
+    line-height: 1.5;
+    color: var(--dim);
+  }
+  .tab.on {
+    color: var(--text);
+    background: color-mix(in srgb, var(--ws) 9%, transparent);
+  }
+  .tab.on::after {
+    content: '';
+    position: absolute;
+    left: calc(6 * var(--u));
+    right: calc(6 * var(--u));
+    bottom: 0;
+    height: calc(2 * var(--u));
+    border-radius: calc(2 * var(--u));
+    background: var(--ws);
+  }
+  .tab.need::before,
+  .tab.done::before {
+    content: '';
+    position: absolute;
+    top: calc(10 * var(--u));
+    right: calc(4 * var(--u));
+    width: calc(6 * var(--u));
+    height: calc(6 * var(--u));
+    border-radius: 50%;
+    background: var(--acc);
+    box-shadow: 0 0 calc(6 * var(--u)) var(--acc);
+  }
+  .tab.done::before {
+    background: var(--ok);
+    box-shadow: 0 0 calc(6 * var(--u)) var(--ok);
+  }
+  .ic {
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    align-self: center;
+    width: calc(28 * var(--u));
+    height: calc(28 * var(--u));
+    border-radius: calc(6 * var(--u));
+    color: var(--dim);
+  }
+  .ic.on {
+    background: var(--n12);
+    color: var(--text);
+  }
+  .acts {
+    flex: none;
+    display: flex;
+    align-items: center;
+    gap: calc(4 * var(--u));
+    margin-left: auto;
+  }
+  .seg {
+    display: inline-flex;
+    padding: calc(2 * var(--u));
+    border: 1px solid var(--line);
+    border-radius: calc(8 * var(--u));
+  }
+  .seg > span {
+    display: inline-flex;
+    align-items: center;
+    gap: calc(5 * var(--u));
+    height: calc(24 * var(--u));
+    padding: 0 calc(9 * var(--u));
+    border-radius: calc(6 * var(--u));
+    color: var(--dim);
+    font-size: calc(12 * var(--u));
+  }
+  .seg :global(.ico) {
+    width: calc(13 * var(--u));
+    height: calc(13 * var(--u));
+  }
+  .seg > span.on {
+    background: var(--n12);
+    color: var(--text);
+  }
+  .seg > span.on :global(.ico) {
+    color: var(--violet);
+  }
+  .seg b {
+    color: var(--warn);
+    font-weight: 600;
+  }
+  .vsep {
+    width: 1px;
+    height: calc(18 * var(--u));
+    margin: 0 calc(6 * var(--u));
+    background: var(--line);
+  }
+  .cu {
+    display: flex;
+    gap: calc(6 * var(--u));
+  }
+  .cu-a {
+    display: inline-flex;
+    align-items: center;
+    gap: calc(9 * var(--u));
+    height: calc(32 * var(--u));
+    padding: 0 calc(9 * var(--u)) 0 calc(9 * var(--u));
+    border: 1px solid var(--n13);
+    border-radius: calc(8 * var(--u));
+    color: var(--n27);
+    font: 500 calc(11 * var(--u))/1 var(--sans);
+  }
+  .cu-a > b {
+    position: relative;
+    padding-left: calc(12 * var(--u));
+    font-weight: 600;
+    color: var(--n34);
+  }
+  .cu-a > b::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    width: calc(6 * var(--u));
+    height: calc(6 * var(--u));
+    margin-top: calc(-3 * var(--u));
+    border-radius: 50%;
+    background: var(--ac);
+  }
+  .cu-rows {
+    display: grid;
+    gap: calc(4 * var(--u));
+  }
+  .cu-row {
+    display: grid;
+    grid-template-columns: calc(15 * var(--u)) calc(38 * var(--u)) calc(26 * var(--u));
+    align-items: center;
+    gap: calc(5 * var(--u));
+  }
+  .cu-row em {
+    font-style: normal;
+    font-size: calc(9.5 * var(--u));
+    letter-spacing: 0.04em;
+    color: var(--n24);
+  }
+  .cu-row small {
+    font: 600 calc(9.5 * var(--u))/1 var(--mono);
+    text-align: right;
+    color: var(--n27);
+  }
+  .cu-bar {
+    height: calc(4 * var(--u));
+    border-radius: calc(4 * var(--u));
+    background: color-mix(in srgb, var(--ac) 16%, transparent);
+    overflow: hidden;
+  }
+  .cu-bar i {
+    display: block;
+    height: 100%;
+    border-radius: calc(4 * var(--u));
+    background: var(--ac);
+  }
+
+  /* ------------------------------------------------------------ the grid */
+  .grid {
+    flex: 1;
+    min-height: 0;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-rows: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 1px;
+    border-top: calc(2 * var(--u)) solid var(--ws);
+    background: var(--line);
+  }
+  .col {
+    position: relative;
+    min-width: 0;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    background: var(--n2);
+  }
+  .gbar {
+    flex: none;
+    display: flex;
+    align-items: center;
+    gap: calc(2 * var(--u));
+    height: calc(40 * var(--u));
+    padding: 0 calc(6 * var(--u)) 0 calc(6 * var(--u));
+    border-bottom: 1px solid var(--line);
+    background: var(--n2);
+    box-shadow: inset 0 calc(2 * var(--u)) 0 color-mix(in srgb, var(--ws) 55%, transparent);
+  }
+  .col.focus .gbar {
+    background: var(--n4);
+    box-shadow: inset 0 calc(2 * var(--u)) 0 var(--ws);
+  }
+  .fill {
+    flex: 1;
+  }
+  .chat {
+    position: relative;
+    flex: 0 1 auto;
+    min-width: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: calc(7 * var(--u));
+    height: calc(28 * var(--u));
+    padding: 0 calc(10 * var(--u)) 0 calc(9 * var(--u));
+    border: 1px solid transparent;
+    border-radius: calc(7 * var(--u));
+    color: var(--dim);
+    font-size: calc(12.5 * var(--u));
+    white-space: nowrap;
+  }
+  .chat .t {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .chat.on {
+    flex-shrink: 0.4;
+    color: var(--n31);
+    background: var(--n7);
+    border-color: var(--n16);
+  }
+  .col.focus .chat.on {
+    color: var(--text);
+    background: color-mix(in srgb, var(--ws) 11%, var(--n7));
+    border-color: color-mix(in srgb, var(--ws) 42%, transparent);
+  }
+  .col.focus .chat.on::after {
+    content: '';
+    position: absolute;
+    left: calc(10 * var(--u));
+    right: calc(10 * var(--u));
+    bottom: calc(-7 * var(--u));
+    height: calc(2 * var(--u));
+    border-radius: calc(2 * var(--u));
+    background: var(--ws);
+  }
+  .chat.st-waiting {
+    color: var(--acc);
+  }
+  .col.focus .chat.st-waiting .t {
+    color: var(--text);
+  }
+  .chat.st-unread .t {
+    color: var(--text);
+    font-weight: 600;
+  }
+  .rp {
+    flex: none;
+    padding: calc(1 * var(--u)) calc(5 * var(--u));
+    border-radius: calc(4 * var(--u));
+    background: color-mix(in srgb, var(--ws) 14%, transparent);
+    color: color-mix(in srgb, var(--ws) 80%, var(--n34));
+    font: 600 calc(10.5 * var(--u))/1.4 var(--mono);
+    font-style: normal;
+  }
+  .st {
+    flex: none;
+    position: relative;
+    width: calc(8 * var(--u));
+    height: calc(8 * var(--u));
+    border-radius: 50%;
+    border: calc(1.5 * var(--u)) solid var(--n23);
+  }
+  .st-idle .st {
+    border-color: color-mix(in srgb, var(--ws) 70%, transparent);
+  }
+  .st-running .st {
+    width: calc(10 * var(--u));
+    height: calc(10 * var(--u));
+    border: calc(1.6 * var(--u)) solid color-mix(in srgb, var(--ws) 25%, transparent);
+    border-top-color: var(--ws);
+    animation: cg-spin 0.8s linear infinite;
+  }
+  .st-waiting .st {
+    border: 0;
+    background: var(--acc);
+    box-shadow: 0 0 0 calc(3 * var(--u)) color-mix(in srgb, var(--acc) 22%, transparent);
+  }
+  .st-unread .st {
+    border: 0;
+    background: var(--ok);
+    box-shadow: 0 0 calc(6 * var(--u)) color-mix(in srgb, var(--ok) 60%, transparent);
+  }
+  .btn {
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: calc(28 * var(--u));
+    height: calc(28 * var(--u));
+    border-radius: calc(7 * var(--u));
+    color: var(--faint);
+  }
+  .btn :global(.ico) {
+    width: calc(15 * var(--u));
+    height: calc(15 * var(--u));
+  }
+
+  /* ------------------------------------------------------------ a chat's log */
+  .chatbox {
+    position: relative;
+    flex: 1;
+    min-height: 0;
+    display: flex;
+  }
+  .log {
+    flex: 1;
+    min-height: 0;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    gap: calc(11 * var(--u));
+    padding: calc(14 * var(--u)) calc(16 * var(--u)) calc(12 * var(--u)) calc(14 * var(--u));
+    overflow: hidden;
+    -webkit-mask-image: linear-gradient(transparent, black calc(34 * var(--u)));
+    mask-image: linear-gradient(transparent, black calc(34 * var(--u)));
+  }
+  .log > * {
+    flex-shrink: 0;
+  }
+  .has-track .log {
+    padding-left: calc(34 * var(--u));
+  }
+  .m-user {
+    padding: calc(8 * var(--u)) calc(12 * var(--u));
+    border: 1px solid var(--n18);
+    border-radius: calc(8 * var(--u));
+    background: var(--n8);
+    color: var(--n35);
+    font-size: calc(14 * var(--u));
+    line-height: 1.5;
+  }
+  .m-claude,
+  .m-think,
+  .m-note {
+    position: relative;
+    padding-left: calc(22 * var(--u));
+  }
+  .m-claude::before,
+  .m-think::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.62em;
+    width: calc(7 * var(--u));
+    height: calc(7 * var(--u));
+    border-radius: 50%;
+    background: var(--n23);
+  }
+  .m-claude {
+    font-size: calc(14 * var(--u));
+    line-height: 1.62;
+    color: var(--text);
+  }
+  .m-claude.between {
+    font-size: calc(13.5 * var(--u));
+    color: color-mix(in srgb, var(--text) 84%, var(--dim));
+  }
+  .m-claude.live::before {
+    background: var(--acc);
+  }
+  .m-claude strong {
+    color: #f6ece5;
+    font-weight: 650;
+  }
+  .m-claude code {
+    padding: 0.05em 0.35em;
+    border-radius: calc(4 * var(--u));
+    background: color-mix(in srgb, var(--text) 8%, transparent);
+    color: color-mix(in srgb, var(--text) 92%, var(--dim));
+    font-size: 0.86em;
+  }
+  .caret {
+    display: inline-block;
+    width: calc(7 * var(--u));
+    height: 1.05em;
+    margin-left: calc(2 * var(--u));
+    border-radius: calc(1 * var(--u));
+    vertical-align: -0.15em;
+    background: var(--acc);
+    animation: cg-blink 1s steps(1) infinite;
+  }
+  .m-think {
+    font-size: calc(13.5 * var(--u));
+    color: var(--faint);
+  }
+  .m-think::after {
+    content: ' ›';
+    color: var(--n23);
+  }
+
+  /* steps */
+  .m-tool,
+  .m-tool-h {
+    display: flex;
+    align-items: baseline;
+    min-width: 0;
+    white-space: nowrap;
+  }
+  .m-tool.bash {
+    display: block;
+  }
+  .bul {
+    flex: none;
+    align-self: center;
+    width: calc(7 * var(--u));
+    height: calc(7 * var(--u));
+    margin-right: calc(15 * var(--u));
+    border-radius: 50%;
+    background: var(--ok);
+    opacity: 0.85;
+  }
+  .m-tool.running .bul {
+    background: var(--cyan);
+    opacity: 1;
+    box-shadow: 0 0 0 calc(3 * var(--u)) color-mix(in srgb, var(--cyan) 18%, transparent);
+  }
+  .m-tool b {
+    flex: none;
+    margin-right: calc(9 * var(--u));
+    font-size: calc(14 * var(--u));
+    font-weight: 600;
+    color: var(--n32);
+  }
+  .m-tool code {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: calc(12.5 * var(--u));
+    color: var(--dim);
+  }
+  .m-tool .lbl,
+  .m-tool-h > span {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: calc(13.5 * var(--u));
+    color: var(--dim);
+  }
+  .m-stat {
+    flex: none;
+    margin-left: auto;
+    padding-left: calc(10 * var(--u));
+    font: calc(11.5 * var(--u)) var(--mono);
+    color: var(--faint);
+  }
+  .m-stat ins {
+    color: var(--ok);
+    text-decoration: none;
+  }
+  .m-stat del {
+    color: var(--err);
+    text-decoration: none;
+  }
+  .m-stat em {
+    margin-left: calc(8 * var(--u));
+    font: calc(12 * var(--u)) var(--sans);
+    font-style: normal;
+    color: var(--faint);
+  }
+  .m-note {
+    display: flex;
+    align-items: center;
+    gap: calc(8 * var(--u));
+    padding-left: calc(22 * var(--u));
+    font-size: calc(13 * var(--u));
+    color: var(--n30);
+  }
+  .m-note span {
+    position: absolute;
+    left: calc(-2 * var(--u));
+    display: grid;
+    place-items: center;
+    width: calc(12 * var(--u));
+    height: calc(12 * var(--u));
+    border-radius: 50%;
+    background: color-mix(in srgb, var(--ok) 18%, transparent);
+    color: var(--ok);
+    font-size: calc(8.5 * var(--u));
+    font-weight: 700;
+  }
+  .m-io {
+    margin: calc(8 * var(--u)) 0 0 calc(22 * var(--u));
+    border: 1px solid var(--line);
+    border-radius: calc(8 * var(--u));
+    background: var(--n3);
+    overflow: hidden;
+  }
+  .io {
+    display: grid;
+    grid-template-columns: calc(40 * var(--u)) minmax(0, 1fr);
+  }
+  .io + .io {
+    border-top: 1px solid var(--line);
+  }
+  .io > span {
+    padding: calc(8 * var(--u)) 0 0 calc(12 * var(--u));
+    font: 600 calc(10 * var(--u))/1 var(--mono);
+    letter-spacing: 0.04em;
+    color: var(--faint);
+  }
+  .io pre {
+    margin: 0;
+    padding: calc(5 * var(--u)) calc(12 * var(--u)) calc(5 * var(--u)) calc(2 * var(--u));
+    font-size: calc(12 * var(--u));
+    line-height: 1.55;
+    white-space: pre;
+    overflow: hidden;
+    color: var(--text);
+  }
+  .io pre .k {
+    font-style: normal;
+    color: var(--violet);
+  }
+  .io.out pre {
+    max-height: calc(3 * 1.55em + calc(10 * var(--u)));
+    background: color-mix(in srgb, var(--ok) 7%, transparent);
+    color: color-mix(in srgb, var(--text) 88%, var(--dim));
+    -webkit-mask-image: linear-gradient(black calc(100% - 1.1em), transparent);
+    mask-image: linear-gradient(black calc(100% - 1.1em), transparent);
+  }
+  .m-working {
+    display: flex;
+    align-items: baseline;
+    gap: calc(7 * var(--u));
+    padding: 0 0 0 calc(1 * var(--u));
+    color: var(--dim);
+    font-size: calc(12.5 * var(--u));
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+  }
+  .m-working b {
+    display: inline-block;
+    width: calc(14 * var(--u));
+    text-align: center;
+    color: var(--acc);
+    font-weight: 400;
+    animation: cg-spin 3s linear infinite;
+  }
+  .m-working .verb {
+    color: var(--acc);
+    font-weight: 550;
+  }
+  .m-working .meta {
+    color: var(--faint);
+  }
+
+  /* a question from Claude */
+  .m-ask {
+    border: 1px solid #3b2d20;
+    border-radius: calc(9 * var(--u));
+    background: #13110f;
+    overflow: hidden;
+  }
+  .ask-h {
+    padding: calc(10 * var(--u)) calc(12 * var(--u)) calc(5 * var(--u));
+    font-weight: 600;
+    font-size: calc(13.5 * var(--u));
+    line-height: 1.4;
+    color: var(--n35);
+  }
+  .q-tag {
+    margin-right: calc(8 * var(--u));
+    padding: calc(1 * var(--u)) calc(6 * var(--u));
+    border-radius: calc(4 * var(--u));
+    background: color-mix(in srgb, var(--acc) 14%, transparent);
+    color: var(--acc);
+    font: 600 calc(10.5 * var(--u)) var(--mono);
+    vertical-align: calc(1 * var(--u));
+  }
+  .ask-opts {
+    display: flex;
+    flex-direction: column;
+    padding: calc(2 * var(--u)) calc(6 * var(--u)) calc(7 * var(--u));
+  }
+  .opt {
+    display: flex;
+    align-items: flex-start;
+    gap: calc(10 * var(--u));
+    padding: calc(5 * var(--u)) calc(8 * var(--u));
+    border-radius: calc(6 * var(--u));
+    font-size: calc(13 * var(--u));
+    line-height: 1.45;
+  }
+  .opt.on {
+    background: #261b12;
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--acc) 22%, transparent);
+  }
+  .opt kbd {
+    flex: none;
+    min-width: calc(18 * var(--u));
+    margin-top: calc(1 * var(--u));
+    padding: 0 calc(5 * var(--u));
+    border: 1px solid var(--line);
+    border-bottom-width: calc(2 * var(--u));
+    border-radius: calc(4 * var(--u));
+    background: var(--soft);
+    color: var(--dim);
+    font: 500 calc(11 * var(--u))/calc(16 * var(--u)) var(--mono);
+    text-align: center;
+  }
+  .opt.on kbd {
+    border-color: var(--acc);
+    color: var(--acc);
+  }
+  .opt b {
+    display: block;
+    font-weight: 600;
+    color: var(--n34);
+  }
+  .opt.on b {
+    color: #fff3ea;
+  }
+  .opt em {
+    display: block;
+    font-style: normal;
+    font-size: calc(12 * var(--u));
+    color: var(--dim);
+  }
+
+  /* ------------------------------------------------------------ the track beside a chat */
+  .track {
+    position: absolute;
+    left: calc(8 * var(--u));
+    top: calc(12 * var(--u));
+    bottom: calc(12 * var(--u));
+    width: calc(18 * var(--u));
+  }
+  .track::before {
+    content: '';
+    position: absolute;
+    left: calc(8 * var(--u));
+    top: calc(4 * var(--u));
+    bottom: calc(4 * var(--u));
+    width: calc(2 * var(--u));
+    border-radius: calc(2 * var(--u));
+    background: color-mix(in srgb, var(--ws) 16%, transparent);
+  }
+  .pt {
+    position: absolute;
+    left: 0;
+    width: calc(18 * var(--u));
+    height: calc(14 * var(--u));
+    margin-top: calc(-7 * var(--u));
+  }
+  .pt i {
+    position: absolute;
+    left: calc(5 * var(--u));
+    top: calc(3 * var(--u));
+    width: calc(8 * var(--u));
+    height: calc(8 * var(--u));
+    border-radius: 50%;
+    background: var(--n2);
+    box-shadow: inset 0 0 0 calc(1.5 * var(--u)) color-mix(in srgb, var(--ws) 60%, var(--n23));
+  }
+  .pt.s-done i {
+    box-shadow: inset 0 0 0 calc(1.5 * var(--u)) color-mix(in srgb, var(--ok) 70%, var(--n23));
+  }
+  .pt.pin i {
+    left: calc(4 * var(--u));
+    top: calc(2 * var(--u));
+    width: calc(10 * var(--u));
+    height: calc(10 * var(--u));
+    border-radius: calc(2 * var(--u));
+    transform: rotate(45deg);
+    background: var(--warn);
+    box-shadow: 0 0 calc(8 * var(--u)) color-mix(in srgb, var(--warn) 45%, transparent);
+  }
+  .pt.ring i {
+    left: calc(3 * var(--u));
+    top: calc(1 * var(--u));
+    width: calc(12 * var(--u));
+    height: calc(12 * var(--u));
+    background: conic-gradient(var(--ok) calc(var(--p) * 1%), color-mix(in srgb, var(--ws) 25%, var(--n2)) 0);
+    box-shadow: 0 0 0 calc(2 * var(--u)) var(--n2);
+  }
+
+  /* ------------------------------------------------------------ tasks, folded above the input */
+  .tasks {
+    flex: none;
+    margin: 0 calc(10 * var(--u));
+    border: 1px solid var(--line);
+    border-bottom: 0;
+    border-radius: calc(8 * var(--u)) calc(8 * var(--u)) 0 0;
+    background: var(--n4);
+  }
+  .tk-h {
+    display: flex;
+    align-items: baseline;
+    gap: calc(6 * var(--u));
+    padding: calc(5 * var(--u)) calc(10 * var(--u)) calc(3 * var(--u));
+    font-size: calc(12.5 * var(--u));
+    color: var(--dim);
+  }
+  .tk-h .chev {
+    margin: 0 calc(4 * var(--u)) calc(3 * var(--u)) calc(2 * var(--u));
+  }
+  .tk-h {
+    align-items: center;
+  }
+  .tk-h b {
+    color: var(--text);
+    font-weight: 600;
+  }
+  .tasks ol {
+    display: grid;
+    gap: calc(3 * var(--u));
+    margin: 0;
+    padding: 0 calc(10 * var(--u)) calc(8 * var(--u)) calc(26 * var(--u));
+    list-style: none;
+  }
+  .tasks li {
+    display: grid;
+    grid-template-columns: calc(12 * var(--u)) 1fr;
+    gap: calc(8 * var(--u));
+    font-size: calc(12.5 * var(--u));
+    line-height: 1.5;
+  }
+  .tasks li i {
+    width: calc(10 * var(--u));
+    height: calc(10 * var(--u));
+    margin-top: calc(4 * var(--u));
+    border-radius: 50%;
+    border: calc(1.5 * var(--u)) solid var(--faint);
+  }
+  .tasks li.completed {
+    color: var(--faint);
+    text-decoration: line-through;
+    text-decoration-color: color-mix(in srgb, var(--faint) 70%, transparent);
+  }
+  .tasks li.completed i {
+    background: var(--ok);
+    border-color: var(--ok);
+  }
+  .tasks li.in_progress {
+    color: var(--text);
+  }
+  .tasks li.in_progress i {
+    border-color: var(--cyan);
+    border-top-color: transparent;
+    animation: cg-spin 1s linear infinite;
+  }
+  .tasks li.pending {
+    color: var(--dim);
+  }
+  .tasks + .cx {
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+  }
+
+  /* ------------------------------------------------------------ composer */
+  .cx {
+    flex: none;
+    margin: 0 calc(10 * var(--u)) calc(10 * var(--u));
+    border: 1px solid var(--n19);
+    border-radius: calc(10 * var(--u));
+    background: var(--soft);
+  }
+  .col.focus .cx {
+    border-color: color-mix(in srgb, var(--ws) 45%, var(--n19));
+  }
+  .cx-in {
+    padding: calc(9 * var(--u)) calc(12 * var(--u)) calc(1 * var(--u));
+    font-size: calc(14 * var(--u));
+    line-height: 1.5;
+    color: var(--faint);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .col.focus .cx-in::before {
+    content: '';
+    display: inline-block;
+    width: calc(1.5 * var(--u));
+    height: 1.15em;
+    margin-right: calc(1 * var(--u));
+    vertical-align: -0.2em;
+    background: var(--ws);
+  }
+  .cx-bar {
+    display: flex;
+    align-items: center;
+    gap: calc(2 * var(--u));
+    padding: calc(3 * var(--u)) calc(6 * var(--u)) calc(6 * var(--u));
+  }
+  .cx-mode,
+  .cx-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: calc(6 * var(--u));
+    height: calc(26 * var(--u));
+    padding: 0 calc(8 * var(--u));
+    border-radius: calc(6 * var(--u));
+    color: var(--dim);
+    font-size: calc(12 * var(--u));
+    white-space: nowrap;
+  }
+  .chev {
+    flex: none;
+    display: inline-block;
+    width: calc(5 * var(--u));
+    height: calc(5 * var(--u));
+    margin: 0 calc(1 * var(--u)) calc(3 * var(--u)) calc(1 * var(--u));
+    border-right: calc(1.3 * var(--u)) solid var(--faint);
+    border-bottom: calc(1.3 * var(--u)) solid var(--faint);
+    transform: rotate(45deg);
+  }
+  .chev.r {
+    margin: 0 0 calc(1 * var(--u)) calc(8 * var(--u));
+    transform: rotate(-45deg);
+  }
+  .cx-mode :global(.mi) {
+    width: calc(13 * var(--u));
+    height: calc(13 * var(--u));
+    color: var(--dim);
+  }
+  .mdl {
+    width: calc(7 * var(--u));
+    height: calc(7 * var(--u));
+    border-radius: 50%;
+    background: var(--violet);
+  }
+  .cx-chip {
+    margin-left: calc(4 * var(--u));
+    border: 1px solid var(--line);
+  }
+  .cx-chip i {
+    width: calc(7 * var(--u));
+    height: calc(7 * var(--u));
+    border-radius: 50%;
+    background: var(--ac);
+  }
+  .cx-send {
+    display: grid;
+    place-items: center;
+    width: calc(28 * var(--u));
+    height: calc(28 * var(--u));
+    margin-left: auto;
+    border-radius: calc(7 * var(--u));
+    background: var(--acc);
+    color: var(--acc-ink);
+  }
+  .cx-send.off {
+    background: var(--n16);
+    color: var(--faint);
+  }
+  .cx-send.stop {
+    background: var(--err-bg);
+    color: var(--err-lt);
+  }
+  .cx-send.stop::before {
+    content: '';
+    width: calc(9 * var(--u));
+    height: calc(9 * var(--u));
+    border-radius: calc(2 * var(--u));
+    background: currentColor;
+  }
+
+  @keyframes cg-spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  @keyframes cg-blink {
+    50% {
+      opacity: 0;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .cg *,
+    .cg *::before,
+    .cg *::after {
+      animation: none !important;
+    }
+  }
+
+  /* ------------------------------------------------------------ narrow: two chats stacked */
+  @container (max-width: 699px) {
+    .cg {
+      --u: min(1px, calc(100cqw / 390));
+      aspect-ratio: auto;
+    }
+    .grid {
+      grid-template-columns: minmax(0, 1fr);
+      grid-template-rows: none;
+      grid-auto-rows: calc(330 * var(--u));
+    }
+    .c3,
+    .c4 {
+      display: none;
+    }
+    .gbar .chat:not(.on),
+    .gbar .btn:not(.new) {
+      display: none;
+    }
+    .acts .seg,
+    .acts .vsep,
+    .acts > .ic,
+    .cu-a + .cu-a,
+    .tabs .add,
+    .tab:nth-child(n + 3) {
+      display: none;
+    }
+    .cu-row {
+      grid-template-columns: calc(15 * var(--u)) calc(30 * var(--u)) calc(26 * var(--u));
+    }
+    .rp {
+      display: none;
+    }
+    .log {
+      padding-inline: calc(12 * var(--u));
+    }
+    .cx-mode:first-child {
+      display: none;
+    }
+  }
+</style>

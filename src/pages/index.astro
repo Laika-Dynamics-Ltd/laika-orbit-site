@@ -1,6 +1,8 @@
 ---
 import { Image } from 'astro:assets'
 import type { ImageMetadata } from 'astro'
+import ClaudeGrid from '../components/ClaudeGrid.astro'
+import KnowledgeMap from '../components/KnowledgeMap.astro'
 import Site from '../layouts/Site.astro'
 
 // product stills are captured from the real app on a fictional workspace; any that are missing
@@ -10,8 +12,6 @@ const shot = (name: string) => shots[`../assets/product/${name}.png`]?.default
 
 const GITHUB = 'https://github.com/Laika-Dynamics-Ltd/laika-orbit'
 const hero = shot('hero-workspace')
-const grid = shot('claude-grid')
-const map = shot('knowledge-map')
 
 const compare: { row: string; editors: string; apps: string; orbit: string }[] = [
   { row: 'Several agents running side by side', editors: 'yes', apps: 'yes', orbit: 'yes' },
@@ -139,12 +139,7 @@ const mark = { yes: '●', partial: '◐', no: '—' } as const
         </p>
       </div>
       <div class="frame">
-        <div class="frame-bar"><i></i><i></i><i></i><span>Claude · 4 chats</span></div>
-        {grid ? (
-          <Image src={grid} alt="Four Claude Code chats in a two by two grid" widths={[960, 1600, 2400]} sizes="(max-width: 1240px) 100vw, 1200px" />
-        ) : (
-          <div class="shot-missing">claude-grid.png</div>
-        )}
+        <ClaudeGrid />
       </div>
     </section>
 
@@ -218,14 +213,7 @@ const mark = { yes: '●', partial: '◐', no: '—' } as const
           <kbd>⌘</kbd><kbd>K</kbd> and the answer is there, with the file it came from.
         </p>
       </div>
-      <div class="frame">
-        <div class="frame-bar"><i></i><i></i><i></i><span>Knowledge map</span></div>
-        {map ? (
-          <Image src={map} alt="The knowledge map with search results" widths={[960, 1600, 2400]} sizes="(max-width: 1240px) 100vw, 1200px" />
-        ) : (
-          <div class="shot-missing">knowledge-map.png</div>
-        )}
-      </div>
+      <div class="frame frame-bare"><KnowledgeMap /></div>
     </section>
 
     <!-- ─────────────────────────────── 1brain ── -->
