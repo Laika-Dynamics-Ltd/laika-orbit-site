@@ -1,0 +1,54 @@
+---
+import Page from '../../layouts/Page.astro'
+---
+
+<Page title="Welcome to Orbit Pro — Laika Orbit" description="Your Orbit Pro licence key." noindex>
+  <section class="wrap narrow">
+    <div class="eyebrow">Orbit Pro</div>
+    <h1 class="page-title" data-title>Finishing your purchase…</h1>
+    <p class="muted" data-lede>Fetching your licence key. This takes a second.</p>
+    <div class="license-box" data-box hidden>
+      <label for="license-key">Your licence key</label>
+      <div class="key-row">
+        <input id="license-key" readonly data-key />
+        <button type="button" class="btn btn-ghost" data-copy>Copy</button>
+      </div>
+      <p class="form-note">Keep it somewhere safe. It's also how you manage billing from your <a class="link" href="/pro/account/">account page</a>.</p>
+    </div>
+    <ol class="steps" data-steps hidden>
+      <li>Open Laika Orbit → Settings → Licence, and paste the key.</li>
+      <li>Receipts come from Stripe by email. Manage your card, invoices or plan from your <a class="link" href="/pro/account/">account page</a>.</li>
+    </ol>
+  </section>
+  <script>
+    const $ = <T extends HTMLElement>(s: string) => document.querySelector<T>(s)!
+    const id = new URLSearchParams(location.search).get('session_id')
+    const fail = (text: string) => {
+      $('[data-title]').textContent = 'We could not find that purchase'
+      $('[data-lede]').textContent = text
+    }
+    const load = async (tries = 0): Promise<void> => {
+      if (!id) return fail('This page needs the link from checkout. If you paid, email laika@laikadynamics.com and we will sort it out.')
+      const r = await fetch(`/api/license?session_id=${encodeURIComponent(id)}`)
+      const d = await r.json().catch(() => ({}))
+      if (r.status === 402 && tries < 5) {
+        await new Promise((ok) => setTimeout(ok, 1500))
+        return load(tries + 1)
+      }
+      if (!r.ok) return fail(`${d.error ?? 'Something went wrong'}. If you paid, email laika@laikadynamics.com and we will sort it out.`)
+      $('[data-title]').textContent = 'Welcome to Orbit Pro'
+      $('[data-lede]').textContent = d.email ? `Thanks! A receipt is on its way to ${d.email}.` : 'Thanks for your purchase.'
+      $<HTMLInputElement>('[data-key]').value = d.key
+      $('[data-box]').hidden = false
+      $('[data-steps]').hidden = false
+      try {
+        localStorage.setItem('laika.orbitLicense', d.key)
+      } catch {}
+    }
+    $('[data-copy]').addEventListener('click', async (e) => {
+      await navigator.clipboard.writeText($<HTMLInputElement>('[data-key]').value)
+      ;(e.currentTarget as HTMLButtonElement).textContent = 'Copied'
+    })
+    void load()
+  </script>
+</Page>

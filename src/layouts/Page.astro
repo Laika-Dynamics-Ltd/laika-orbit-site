@@ -1,0 +1,18 @@
+---
+import Footer from '../components/Footer.astro'
+import Nav from '../components/Nav.astro'
+import Site from './Site.astro'
+
+interface Props {
+  title: string
+  description: string
+  noindex?: boolean
+}
+const { title, description, noindex = false } = Astro.props
+---
+
+<Site title={title} description={description} noindex={noindex}>
+  <Nav />
+  <main class="page"><slot /></main>
+  <Footer />
+</Site>

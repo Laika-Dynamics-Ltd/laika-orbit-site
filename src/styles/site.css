@@ -1084,7 +1084,7 @@ h3 {
 }
 .foot-cols {
   display: grid;
-  grid-template-columns: repeat(3, minmax(140px, auto));
+  grid-template-columns: repeat(4, minmax(130px, auto));
   gap: 48px;
 }
 .foot-cols h4 {
@@ -1320,5 +1320,234 @@ h3 {
   }
   .agents-frame {
     --cg-aspect: auto;
+  }
+}
+
+/* ─────────────────────────────── inner pages ── */
+.page {
+  padding-top: clamp(56px, 8vw, 96px);
+  padding-bottom: clamp(80px, 10vw, 140px);
+}
+.narrow {
+  max-width: 760px;
+}
+.page-title {
+  margin: 0;
+  font-size: clamp(36px, 5vw, 56px);
+  line-height: 1.05;
+  font-weight: 570;
+  letter-spacing: -0.04em;
+  max-width: 20ch;
+}
+.lede-sm {
+  margin: 20px 0 0;
+  max-width: 40rem;
+  font-size: 17px;
+}
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+}
+.period {
+  display: inline-flex;
+  margin-top: 36px;
+  padding: 4px;
+  border-radius: 12px;
+  border: 1px solid var(--line-2);
+  background: var(--bg-2);
+}
+.period button {
+  appearance: none;
+  border: 0;
+  background: none;
+  color: var(--muted);
+  font: 510 14px/1 var(--sans);
+  padding: 10px 16px;
+  border-radius: 9px;
+  cursor: pointer;
+}
+.period button[aria-selected='true'] {
+  background: #1a1b20;
+  color: var(--text);
+}
+.save {
+  margin-left: 6px;
+  color: #ffb08f;
+  font-size: 12px;
+}
+.plans {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-top: 40px;
+}
+.plan {
+  padding: 32px;
+  border-radius: 20px;
+  border: 1px solid var(--line);
+  background: linear-gradient(180deg, #0f1013, #0b0c0e);
+}
+.plan.pro {
+  border-color: rgba(255, 122, 69, 0.3);
+  background:
+    radial-gradient(80% 50% at 50% 0%, rgba(255, 122, 69, 0.08), transparent 70%),
+    linear-gradient(180deg, #0f1013, #0b0c0e);
+}
+.plan-top {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.plan h2 {
+  font-size: 20px;
+  letter-spacing: -0.02em;
+}
+.price {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin: 18px 0 6px;
+}
+.price b {
+  font-size: 44px;
+  font-weight: 580;
+  letter-spacing: -0.04em;
+}
+.price span {
+  color: var(--muted);
+}
+.plan > p {
+  margin: 0 0 22px;
+}
+.btn.wide {
+  width: 100%;
+  justify-content: center;
+}
+.plan ul {
+  list-style: none;
+  margin: 26px 0 0;
+  padding: 22px 0 0;
+  border-top: 1px solid var(--line);
+  display: grid;
+  gap: 12px;
+  color: var(--text-2);
+  font-size: 15px;
+}
+.plan li::before {
+  content: '✓';
+  margin-right: 10px;
+  color: var(--accent);
+}
+.waitlist {
+  display: flex;
+  gap: 8px;
+}
+.waitlist input,
+.key-row input {
+  flex: 1;
+  min-width: 0;
+  height: 40px;
+  padding: 0 12px;
+  border-radius: 10px;
+  border: 1px solid var(--line-2);
+  background: #0a0b0d;
+  color: var(--text);
+  font: 15px var(--sans);
+}
+.key-row input {
+  font: 13px var(--mono);
+}
+.waitlist input:focus,
+.key-row input:focus {
+  outline: 2px solid rgba(255, 122, 69, 0.5);
+  outline-offset: 1px;
+}
+.form-note {
+  min-height: 1.5em;
+  margin: 10px 0 0;
+  color: var(--faint);
+  font-size: 13.5px;
+}
+.form-note.bad {
+  color: #ff8a8a;
+}
+.faq {
+  max-width: 820px;
+  margin-top: clamp(80px, 10vw, 120px);
+}
+.faq h2 {
+  font-size: clamp(28px, 3.4vw, 40px);
+  margin-bottom: 24px;
+}
+.faq details {
+  border-top: 1px solid var(--line);
+  padding: 18px 0;
+}
+.faq summary {
+  cursor: pointer;
+  font-weight: 540;
+  font-size: 16.5px;
+}
+.faq details p {
+  margin: 10px 0 0;
+  color: var(--muted);
+}
+.license-box {
+  margin-top: 32px;
+  padding: 24px;
+  border-radius: 16px;
+  border: 1px solid var(--line-2);
+  background: var(--bg-2);
+  display: grid;
+  gap: 10px;
+}
+.license-box label {
+  font-size: 13px;
+  color: var(--muted);
+}
+.key-row {
+  display: flex;
+  gap: 8px;
+}
+.steps {
+  margin: 28px 0 0;
+  padding-left: 20px;
+  display: grid;
+  gap: 10px;
+  color: var(--text-2);
+}
+.legal h2 {
+  margin-top: 40px;
+  font-size: 21px;
+  letter-spacing: -0.02em;
+}
+.legal p,
+.legal li {
+  color: var(--text-2);
+  font-size: 16px;
+  line-height: 1.7;
+}
+.legal ul {
+  padding-left: 20px;
+}
+.draft-notice {
+  margin-bottom: 32px;
+  padding: 14px 18px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 184, 77, 0.35);
+  background: rgba(255, 184, 77, 0.08);
+  color: #ffd79a;
+  font-size: 14.5px;
+}
+@media (max-width: 760px) {
+  .plans {
+    grid-template-columns: 1fr;
+  }
+  .waitlist,
+  .key-row {
+    flex-direction: column;
   }
 }

@@ -1,0 +1,32 @@
+---
+import DraftNotice from '../../components/DraftNotice.astro'
+import Page from '../../layouts/Page.astro'
+---
+
+<Page title="Privacy policy (draft) — Laika Orbit" description="Draft privacy policy for Laika Orbit and laikaorbit.com." noindex>
+  <article class="wrap narrow legal">
+    <DraftNotice />
+    <h1 class="page-title">Privacy policy</h1>
+    <p class="muted">Laika Dynamics Limited, New Zealand · Last updated: not yet in effect</p>
+
+    <h2>The short version</h2>
+    <p>Laika Orbit runs on your machine. Your files, chats, inbox and calendar stay there. We collect only what we need to sell and support Orbit Pro.</p>
+
+    <h2>What we collect</h2>
+    <ul>
+      <li><b>Purchases:</b> your name, email, billing address and tax ID (if given), processed by Stripe. Stripe handles card details; we never see them.</li>
+      <li><b>Waitlist:</b> your email address, stored with our email provider.</li>
+      <li><b>Licence checks:</b> when the app checks your licence it sends the licence key to laikaorbit.com. We use it only to confirm your subscription.</li>
+      <li><b>Website analytics:</b> aggregate, cookie-free page statistics (page views, referrers, country). No personal profiles.</li>
+    </ul>
+
+    <h2>What we don't collect</h2>
+    <p>The app has no telemetry. We don't receive your code, files, prompts, chats, emails or calendar.</p>
+
+    <h2>Who we share it with</h2>
+    <p>Stripe (payments and tax), Vercel (website hosting), and our email provider (waitlist and receipts). We don't sell personal information.</p>
+
+    <h2>Your rights</h2>
+    <p>You can ask to see, correct or delete your personal information under the New Zealand Privacy Act 2020, and the GDPR or UK GDPR where they apply. Email <a class="link" href="mailto:laika@laikadynamics.com">laika@laikadynamics.com</a>. We keep billing records for as long as tax law requires.</p>
+  </article>
+</Page>

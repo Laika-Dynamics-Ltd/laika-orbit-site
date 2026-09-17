@@ -1,9 +1,12 @@
 // @ts-check
 import starlight from '@astrojs/starlight'
+import vercel from '@astrojs/vercel'
 import { defineConfig } from 'astro/config'
 
 export default defineConfig({
   site: 'https://laikaorbit.com',
+  // pages stay static; the checkout, webhook and licence routes run as Vercel functions
+  adapter: vercel(),
   // the dev toolbar sits over the page in every capture
   devToolbar: { enabled: false },
   integrations: [

@@ -1,0 +1,52 @@
+---
+import Page from '../../layouts/Page.astro'
+---
+
+<Page title="Your Orbit Pro account — Laika Orbit" description="Check your Orbit Pro licence and manage billing." noindex>
+  <section class="wrap narrow">
+    <div class="eyebrow">Account</div>
+    <h1 class="page-title">Your Orbit Pro licence</h1>
+    <p class="muted">Paste your licence key to check its status, or to change your card, download invoices, switch plan or cancel.</p>
+    <form class="license-box" data-form>
+      <label for="key">Licence key</label>
+      <div class="key-row">
+        <input id="key" name="key" required placeholder="LO1.…" autocomplete="off" spellcheck="false" />
+        <button type="submit" class="btn btn-ghost">Check</button>
+      </div>
+      <p class="form-note" data-note aria-live="polite"></p>
+      <button type="button" class="btn btn-light" data-portal hidden>Manage billing</button>
+    </form>
+  </section>
+  <script>
+    const form = document.querySelector<HTMLFormElement>('[data-form]')!
+    const input = form.elements.namedItem('key') as HTMLInputElement
+    const note = document.querySelector<HTMLElement>('[data-note]')!
+    const portal = document.querySelector<HTMLButtonElement>('[data-portal]')!
+    try {
+      input.value = localStorage.getItem('laika.orbitLicense') ?? ''
+    } catch {}
+    const post = (path: string) =>
+      fetch(path, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ key: input.value.trim() }) }).then((r) => r.json())
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault()
+      note.textContent = 'Checking…'
+      const d = await post('/api/license/verify').catch(() => ({ error: 'Could not check right now.' }))
+      if (d.error) {
+        note.textContent = d.error
+        portal.hidden = true
+        return
+      }
+      const renews = d.renewsAt ? new Date(d.renewsAt).toLocaleDateString() : null
+      note.textContent = d.valid
+        ? `Active${d.cancelAtPeriodEnd ? `, cancels on ${renews}` : renews ? `, renews on ${renews}` : ''}.`
+        : `Not active: ${d.reason ?? d.status}.`
+      portal.hidden = !(d.valid || d.status)
+    })
+    portal.addEventListener('click', async () => {
+      note.textContent = 'Opening the billing portal…'
+      const d = await post('/api/portal').catch(() => ({ error: 'Could not open billing right now.' }))
+      if (d.url) location.href = d.url
+      else note.textContent = d.error
+    })
+  </script>
+</Page>

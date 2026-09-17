@@ -1,0 +1,119 @@
+---
+import { FREE_FEATURES, PRO, PRO_FEATURES } from '../lib/pricing'
+import Page from '../layouts/Page.astro'
+
+// On-demand, so SALES_OPEN switches checkout on and off without a rebuild
+export const prerender = false
+const open = (import.meta.env.SALES_OPEN ?? process.env.SALES_OPEN) === '1'
+const GITHUB = 'https://github.com/Laika-Dynamics-Ltd/laika-orbit'
+---
+
+<Page title="Pricing — Laika Orbit" description="Laika Orbit is free and open source. Orbit Pro adds the signed Mac app, sync and managed build runners.">
+  <section class="wrap pricing-head">
+    <div class="eyebrow">Pricing</div>
+    <h1 class="page-title">Free to run. Pro when you want it done for you.</h1>
+    <p class="muted lede-sm">The whole app is open source. Pro pays for the parts that cost us to run: signed builds, sync and build machines. Your Claude account stays yours; we never resell model usage.</p>
+    <div class="period" role="tablist" aria-label="Billing period">
+      <button type="button" role="tab" aria-selected="false" data-period="monthly">Monthly</button>
+      <button type="button" role="tab" aria-selected="true" data-period="yearly">Yearly <span class="save">{PRO.yearly.saving}</span></button>
+    </div>
+  </section>
+
+  <section class="wrap plans">
+    <article class="plan">
+      <h2>Free</h2>
+      <div class="price"><b>$0</b><span>forever</span></div>
+      <p class="muted">For builders happy to run it from source.</p>
+      <a class="btn btn-ghost wide" href="/docs/getting-started/">Install from source</a>
+      <ul>{FREE_FEATURES.map((f) => <li>{f}</li>)}</ul>
+    </article>
+
+    <article class="plan pro">
+      <div class="plan-top"><h2>Pro</h2>{!open && <span class="soon">Coming soon</span>}</div>
+      <div class="price">
+        <b data-show="yearly">{PRO.yearly.label}</b><b data-show="monthly" hidden>{PRO.monthly.label}</b>
+        <span data-show="yearly">{PRO.yearly.per}</span><span data-show="monthly" hidden>{PRO.monthly.per}</span>
+      </div>
+      <p class="muted">For people who want the app to just work, everywhere.</p>
+      {open ? (
+        <button type="button" class="btn btn-light wide" data-checkout>Get Orbit Pro</button>
+      ) : (
+        <form class="waitlist" data-waitlist>
+          <label class="sr-only" for="wl-email">Email</label>
+          <input id="wl-email" type="email" name="email" required placeholder="you@company.com" autocomplete="email" />
+          <button type="submit" class="btn btn-light">Join the waitlist</button>
+        </form>
+      )}
+      <p class="form-note" data-note aria-live="polite">{open ? 'Taxes are calculated at checkout. Cancel any time.' : 'Be first to hear when Pro opens. No spam.'}</p>
+      <ul>{PRO_FEATURES.map((f) => <li>{f}</li>)}</ul>
+    </article>
+  </section>
+
+  <section class="wrap faq">
+    <h2>Questions</h2>
+    <details><summary>Do I need a Claude account?</summary><p>Yes. Chats run Claude Code under your own Claude account. Laika Orbit never provides, resells or meters Claude usage, on Free or Pro.</p></details>
+    <details><summary>What happens if I stop paying?</summary><p>Pro features stop at the end of your billing period, and the app carries on as the free, open-source version. Your data stays on your machine.</p></details>
+    <details><summary>Can I cancel or change plans?</summary><p>Any time, from the billing portal linked in your account. Yearly plans can switch to monthly at renewal.</p></details>
+    <details><summary>Do you charge tax?</summary><p>Where the law requires it, such as GST in New Zealand or VAT in the UK and EU, tax is calculated at checkout from your address. Business customers can add a tax ID.</p></details>
+    <details><summary>Is there a refund?</summary><p>See the <a class="link" href="/legal/refunds/">refund policy</a>.</p></details>
+    <details><summary>Is the code really open source?</summary><p>Yes, MIT licensed, on <a class="link" href={GITHUB}>GitHub</a>.</p></details>
+  </section>
+
+  <script>
+    const root = document.documentElement
+    const note = document.querySelector<HTMLElement>('[data-note]')
+    let period: 'monthly' | 'yearly' = 'yearly'
+    const paint = () => {
+      document.querySelectorAll<HTMLElement>('[data-show]').forEach((el) => (el.hidden = el.dataset.show !== period))
+      document.querySelectorAll<HTMLButtonElement>('[data-period]').forEach((b) => b.setAttribute('aria-selected', String(b.dataset.period === period)))
+    }
+    document.querySelectorAll<HTMLButtonElement>('[data-period]').forEach((b) =>
+      b.addEventListener('click', () => {
+        period = b.dataset.period as typeof period
+        paint()
+      }),
+    )
+    paint()
+
+    const say = (text: string, bad = false) => {
+      if (!note) return
+      note.textContent = text
+      note.classList.toggle('bad', bad)
+    }
+    document.querySelector<HTMLButtonElement>('[data-checkout]')?.addEventListener('click', async (e) => {
+      const btn = e.currentTarget as HTMLButtonElement
+      btn.disabled = true
+      say('Opening secure checkout…')
+      try {
+        const r = await fetch('/api/checkout', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ plan: period }) })
+        const d = await r.json()
+        if (r.ok && d.url) {
+          root.dataset.checkout = period
+          location.href = d.url
+          return
+        }
+        say(d.error ?? 'Checkout is unavailable right now.', true)
+      } catch {
+        say('Checkout is unavailable right now.', true)
+      }
+      btn.disabled = false
+    })
+    document.querySelector<HTMLFormElement>('[data-waitlist]')?.addEventListener('submit', async (e) => {
+      e.preventDefault()
+      const form = e.currentTarget as HTMLFormElement
+      const email = (form.elements.namedItem('email') as HTMLInputElement).value
+      say('Adding you…')
+      try {
+        const r = await fetch('/api/waitlist', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ email, plan: period }) })
+        const d = await r.json()
+        if (r.ok) {
+          form.reset()
+          say("You're on the list. We'll email you when Pro opens.")
+        } else say(d.error ?? 'Could not add you right now.', true)
+      } catch {
+        say('Could not add you right now.', true)
+      }
+    })
+    if (new URLSearchParams(location.search).has('cancelled')) say('Checkout cancelled. Nothing was charged.')
+  </script>
+</Page>

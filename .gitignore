@@ -23,3 +23,5 @@ pnpm-debug.log*
 
 # gauntlet runs: third-party reference captures stay local
 .gauntlet/
+.env.*
+!.env.example
