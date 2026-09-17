@@ -1551,3 +1551,22 @@ h3 {
     flex-direction: column;
   }
 }
+
+/* the waitlist honeypot: off-screen for people, still fillable by bots */
+.hp {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+.waitlist-done {
+  margin: 0;
+  padding: 11px 14px;
+  border-radius: 10px;
+  border: 1px solid rgba(79, 209, 165, 0.35);
+  background: rgba(79, 209, 165, 0.08);
+  color: #8fe6c6;
+  font-size: 15px;
+}

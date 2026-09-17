@@ -41,6 +41,8 @@ const GITHUB = 'https://github.com/Laika-Dynamics-Ltd/laika-orbit'
         <form class="waitlist" data-waitlist>
           <label class="sr-only" for="wl-email">Email</label>
           <input id="wl-email" type="email" name="email" required placeholder="you@company.com" autocomplete="email" />
+          {/* bots fill this in; people never see it */}
+          <input class="hp" type="text" name="company" tabindex="-1" autocomplete="off" aria-hidden="true" />
           <button type="submit" class="btn btn-light">Join the waitlist</button>
         </form>
       )}
@@ -98,21 +100,37 @@ const GITHUB = 'https://github.com/Laika-Dynamics-Ltd/laika-orbit'
       }
       btn.disabled = false
     })
-    document.querySelector<HTMLFormElement>('[data-waitlist]')?.addEventListener('submit', async (e) => {
+    const waitlist = document.querySelector<HTMLFormElement>('[data-waitlist]')
+    waitlist?.addEventListener('submit', async (e) => {
       e.preventDefault()
       const form = e.currentTarget as HTMLFormElement
+      const button = form.querySelector('button')!
       const email = (form.elements.namedItem('email') as HTMLInputElement).value
+      const company = (form.elements.namedItem('company') as HTMLInputElement).value
+      button.disabled = true
       say('Adding you…')
       try {
-        const r = await fetch('/api/waitlist', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ email, plan: period }) })
+        const r = await fetch('/api/waitlist', {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ email, company }),
+        })
         const d = await r.json()
         if (r.ok) {
-          form.reset()
-          say("You're on the list. We'll email you when Pro opens.")
-        } else say(d.error ?? 'Could not add you right now.', true)
+          form.replaceWith(
+            Object.assign(document.createElement('p'), {
+              className: 'waitlist-done',
+              textContent: d.alreadyOnList ? "You're already on the list." : "You're on the list.",
+            }),
+          )
+          say(d.alreadyOnList ? 'We only email once, when Pro opens.' : "Check your inbox — we'll email you once, when Pro opens.")
+          return
+        }
+        say(d.error ?? 'Could not add you right now.', true)
       } catch {
         say('Could not add you right now.', true)
       }
+      button.disabled = false
     })
     if (new URLSearchParams(location.search).has('cancelled')) say('Checkout cancelled. Nothing was charged.')
   </script>

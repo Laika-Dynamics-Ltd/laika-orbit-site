@@ -10,7 +10,8 @@
     "astro": "astro",
     "test": "node --test test/*.test.ts",
     "e2e:buy": "node scripts/e2e-buy.mjs",
-    "license:keygen": "node scripts/license-keygen.mjs"
+    "license:keygen": "node scripts/license-keygen.mjs",
+    "resend:setup": "node scripts/resend-setup.mjs"
   },
   "dependencies": {
     "@astrojs/starlight": "^0.42.1",
