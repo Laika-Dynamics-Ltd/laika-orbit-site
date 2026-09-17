@@ -1,0 +1,31 @@
+---
+import '@fontsource-variable/inter'
+import '@fontsource-variable/jetbrains-mono'
+import '../../styles/site.css'
+import HeroWorkspace from '../../components/HeroWorkspace.astro'
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex" />
+    <title>Hero workspace · lab</title>
+  </head>
+  <body>
+    <main class="lab">
+      <HeroWorkspace />
+    </main>
+  </body>
+</html>
+
+<style>
+  body {
+    background: #08090a;
+  }
+  .lab {
+    width: min(1200px, 100% - 32px);
+    margin: 60px auto;
+  }
+</style>
