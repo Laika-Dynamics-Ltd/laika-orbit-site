@@ -1212,6 +1212,12 @@ h3 {
   .agents-frame .c4 .log > .m-think {
     display: none;
   }
+  .agents-frame .log {
+    padding-top: 0.5%;
+    padding-bottom: 0.6%;
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
 }
 @media (max-width: 960px) {
   .agents-head {
