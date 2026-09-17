@@ -269,20 +269,28 @@ h1 {
 .hero-cta.center {
   justify-content: center;
 }
+.hero-note {
+  margin: 18px 0 0;
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: var(--muted);
+}
 .cmd {
-  margin-left: 8px;
-  font: 450 13.5px/1 var(--mono);
+  margin-left: 4px;
+  font: 450 12.5px/1 var(--mono);
   color: var(--text-2);
-  padding: 12px 14px;
-  border-radius: 10px;
-  border: 1px dashed var(--line-2);
+  padding: 3px 7px;
+  border-radius: 6px;
+  border: 1px solid var(--line-2);
+  background: rgba(255, 255, 255, 0.03);
+  white-space: nowrap;
 }
 .wrap-wide {
   max-width: 1368px;
 }
 .hero-frame {
   position: relative;
-  margin-top: clamp(44px, 5vw, 60px);
+  margin-top: clamp(36px, 3.4vw, 48px);
   padding: 7px;
   border-radius: 20px;
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0.015) 40%);
@@ -1124,9 +1132,6 @@ h3 {
   }
   .nav-gh span {
     display: none;
-  }
-  .cmd {
-    margin-left: 0;
   }
   .pill-more {
     display: none;
