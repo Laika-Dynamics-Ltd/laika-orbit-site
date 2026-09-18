@@ -11,8 +11,8 @@ export default defineConfig({
   // the dev toolbar sits over the page in every capture
   devToolbar: { enabled: false },
   integrations: [
-    // pages marked noindex stay out of the sitemap: the draft legal pages and the Pro account pages
-    sitemap({ filter: (page) => !/\/(legal|pro)\//.test(new URL(page).pathname) }),
+    // pages marked noindex stay out of the sitemap: the Pro account pages
+    sitemap({ filter: (page) => !new URL(page).pathname.startsWith('/pro/') }),
     starlight({
       title: 'Laika Orbit',
       description:

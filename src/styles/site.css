@@ -1873,15 +1873,6 @@ h3 {
 .legal ul {
   padding-left: 20px;
 }
-.draft-notice {
-  margin-bottom: 32px;
-  padding: 14px 18px;
-  border-radius: 12px;
-  border: 1px solid rgba(255, 184, 77, 0.35);
-  background: rgba(255, 184, 77, 0.08);
-  color: #ffd79a;
-  font-size: 14.5px;
-}
 @media (max-width: 760px) {
   .waitlist,
   .key-row {
