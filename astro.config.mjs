@@ -23,6 +23,7 @@ export default defineConfig({
         { tag: 'meta', attrs: { property: 'og:image:width', content: '1200' } },
         { tag: 'meta', attrs: { property: 'og:image:height', content: '630' } },
         { tag: 'meta', attrs: { name: 'twitter:image', content: 'https://laikaorbit.com/og.png' } },
+        { tag: 'link', attrs: { rel: 'apple-touch-icon', href: '/apple-touch-icon.png' } },
       ],
       social: [
         { icon: 'github', label: 'GitHub', href: 'https://github.com/Laika-Dynamics-Ltd/laika-orbit' },
