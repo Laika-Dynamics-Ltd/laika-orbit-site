@@ -23,18 +23,8 @@ export const PRO_FEATURES = [
   'Price locked for as long as you stay subscribed',
 ]
 
-/** Named on the pricing page as not built yet, so nobody buys on the strength of them. */
-export const PRO_COMING = [
-  {
-    short: 'Sync across your Macs',
-    title: 'Settings, workspaces and pins synced across your Macs, end-to-end encrypted',
-    detail: 'Aiming for the first half of 2027, at no extra cost for founding members.',
-  },
-]
+/** The one thing Pro does not have yet, said plainly under the plans so nobody buys on the strength of it. */
+export const SYNC_NOTE = 'Sync is not built yet — aiming for the first half of 2027, at no extra cost for founding members.'
 
-/** The founding terms, in plain words. */
-export const TERMS = [
-  '30 days to change your mind while sync is missing',
-  'Cancel any time; the free app carries on',
-  'Your Claude account stays yours. We never resell model usage.',
-]
+/** The founding terms as one compact row. The longer answers live in the questions below. */
+export const TERMS = ['Prices in US dollars, tax added at checkout', '30 days to change your mind', 'Cancel any time; the free app carries on']

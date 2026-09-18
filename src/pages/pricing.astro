@@ -1,23 +1,16 @@
 ---
-import { FREE_FEATURES, PRO, PRO_COMING, PRO_FEATURES, TERMS } from '../lib/pricing'
+import { FREE_FEATURES, PRO, PRO_FEATURES, SYNC_NOTE, TERMS } from '../lib/pricing'
 import Page from '../layouts/Page.astro'
 
 // On-demand, so SALES_OPEN switches checkout on and off without a rebuild
 export const prerender = false
 const open = (import.meta.env.SALES_OPEN ?? process.env.SALES_OPEN) === '1'
-// the founding terms as one quiet footnote: every fact kept, none louder than the plans
-const fine = [
-  ...PRO_COMING.map((c) => `Sync is not built yet: ${c.title.charAt(0).toLowerCase()}${c.title.slice(1)}. ${c.detail}`),
-  ...TERMS.map((t) => `${t.replace(/\.$/, '')}.`),
-  'Prices in US dollars, tax added at checkout.',
-].join(' ')
 const GITHUB = 'https://github.com/Laika-Dynamics-Ltd/laika-orbit'
 ---
 
 <Page title="Pricing — Laika Orbit" description="Laika Orbit is free and MIT open source. Pro is a founding membership: the signed, notarised Mac app, automatic updates and email support.">
   <section class="wrap pr-head">
     <h1 class="pr-title">Pricing</h1>
-    <p class="pr-lede">The whole app is free and MIT open source, with nothing paywalled. Pro is a founding membership: the signed Mac app, updates and a person to email.</p>
   </section>
 
   <section class="wrap pr-plans" aria-label="Plans">
@@ -32,7 +25,7 @@ const GITHUB = 'https://github.com/Laika-Dynamics-Ltd/laika-orbit'
     </article>
 
     <article class="pr-col pr-pro">
-      <div class="pr-name"><h2>Pro</h2><span class="pr-tag">{open ? 'Founding' : 'Coming soon'}</span></div>
+      <div class="pr-name"><h2>Pro</h2><span class="pr-tag">{open ? 'Founding' : 'Not on sale yet'}</span></div>
       <div class="pr-price">
         <b data-show="yearly">{PRO.yearly.label}</b><b data-show="monthly" hidden>{PRO.monthly.label}</b>
         <span data-show="yearly">{PRO.currency} {PRO.yearly.per}</span><span data-show="monthly" hidden>{PRO.currency} {PRO.monthly.per}</span>
@@ -54,8 +47,7 @@ const GITHUB = 'https://github.com/Laika-Dynamics-Ltd/laika-orbit'
           </>
         ) : (
           <>
-            <a class="btn btn-ghost wide pr-soon" href="#waitlist" data-join><span>Not on sale yet</span><i aria-hidden="true">·</i>Join waitlist</a>
-            <p class="pr-status">Nothing can be bought yet. We email once, when it opens.</p>
+            <a class="btn btn-ghost wide" href="#waitlist" data-join>Join waitlist</a>
           </>
         )}
       </div>
@@ -64,9 +56,13 @@ const GITHUB = 'https://github.com/Laika-Dynamics-Ltd/laika-orbit'
   </section>
 
   <section class="wrap pr-foot" aria-label="Founding terms">
-    <p class="pr-fine">
-      {fine}{' '}<a href="/legal/refunds/">Refund policy</a> <i aria-hidden="true">·</i> <a href="#questions">Questions</a>
-    </p>
+    <div class="pr-terms">
+      <p class="pr-sync">{SYNC_NOTE}</p>
+      <p class="pr-fine">
+        {TERMS.map((t) => <><span>{t}</span><i aria-hidden="true">·</i></>)}
+        <a href="/legal/refunds/">Refund policy</a><i aria-hidden="true">·</i><a href="#questions">Questions</a>
+      </p>
+    </div>
     {!open && (
       <div class="pr-join" id="waitlist">
         <h3>Join the Pro waitlist</h3>
@@ -84,12 +80,13 @@ const GITHUB = 'https://github.com/Laika-Dynamics-Ltd/laika-orbit'
 
   <section class="wrap faq" id="questions" data-g="faq">
     <h2>Questions</h2>
-    <details><summary>Do I need a Claude account?</summary><p>Yes. Chats run Claude Code under your own Claude account. Laika Orbit never provides, resells or meters Claude usage, on Free or Pro.</p></details>
+    <details><summary>Do I need a Claude account?</summary><p>Yes. Chats run Claude Code under your own Claude account, and it stays yours. Laika Orbit never provides, resells or meters Claude usage, on Free or Pro.</p></details>
     <details><summary>What is a founding membership?</summary><p>Pro is early: today it is the signed, notarised app with automatic updates and email support answered within 2 working days. Sync is being built — we are aiming for the first half of 2027, and it lands for founding members at no extra cost. Your price stays the same for as long as you stay subscribed, and you have 30 days to ask for a refund while sync is still missing. If that is not enough yet, the app is free and open source — wait for us.</p></details>
+    <details><summary>When does sync arrive?</summary><p>Sync is not built yet. It will keep your settings, workspaces and pins in step across your Macs, end-to-end encrypted. We are aiming for the first half of 2027, and founding members get it at no extra cost.</p></details>
     <details><summary>What happens if I stop paying?</summary><p>Pro features stop at the end of your billing period, and the app carries on as the free, open-source version. Your data stays on your machine.</p></details>
     <details><summary>Can I cancel or change plans?</summary><p>Any time, from the billing portal linked in your account. Yearly plans can switch to monthly at renewal.</p></details>
     <details><summary>What currency, and do you charge tax?</summary><p>Prices are in US dollars. Where the law requires it, such as GST in New Zealand or VAT in the UK and EU, tax is calculated at checkout from your address. Business customers can add a tax ID.</p></details>
-    <details><summary>Is there a refund?</summary><p>See the <a class="link" href="/legal/refunds/">refund policy</a>.</p></details>
+    <details><summary>Is there a refund?</summary><p>Yes. While sync is missing you have 30 days to change your mind. The details are in the <a class="link" href="/legal/refunds/">refund policy</a>.</p></details>
     <details><summary>Is the code really open source?</summary><p>Yes, MIT licensed, on <a class="link" href={GITHUB}>GitHub</a>.</p></details>
   </section>
 

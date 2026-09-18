@@ -1362,14 +1362,6 @@ h3 {
   font-weight: 560;
   letter-spacing: -0.045em;
 }
-.pr-lede {
-  margin: 22px 0 0;
-  max-width: 40rem;
-  color: var(--muted);
-  text-wrap: pretty;
-  font-size: 17px;
-  line-height: 1.55;
-}
 .pr-plans {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1402,10 +1394,8 @@ h3 {
 .pr-tag {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  font: 500 11px/1 var(--mono);
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
+  gap: 7px;
+  font: 450 13px/1 var(--sans);
   color: var(--muted);
 }
 .pr-tag::before {
@@ -1517,11 +1507,11 @@ h3 {
 .pr-bill a:hover {
   color: var(--text);
 }
-/* the waitlist form lives under the terms it is joining for, below Pro */
+/* the waitlist form sits under Pro, level with the terms it is joining for */
 .pr-join {
   grid-column: 2;
-  margin-top: 32px;
-  padding-left: 49px;
+  padding: 28px 0 0 49px;
+  border-top: 1px solid var(--line);
   scroll-margin: 120px;
 }
 .pr-join h3 {
@@ -1539,25 +1529,37 @@ h3 {
 .pr-cta .form-note {
   margin: 10px 0 0;
 }
-/* the founding terms: a footnote under the grid, never louder than the plans */
+/* the founding terms: one sync line and one compact row under the grid */
 .pr-foot {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  margin-top: 56px;
+  margin-top: 64px;
+}
+.pr-terms {
+  padding: 28px 48px 0 0;
+  border-top: 1px solid var(--line);
+}
+.pr-sync {
+  margin: 0;
+  max-width: 34rem;
+  color: var(--text-2);
+  font-size: 14.5px;
+  line-height: 1.55;
+  text-wrap: pretty;
 }
 .pr-fine {
-  grid-column: 1 / -1;
-  margin: 0;
-  padding: 24px 12rem 0 0;
-  border-top: 1px solid var(--line);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  column-gap: 8px;
+  row-gap: 4px;
+  margin: 12px 0 0;
   color: var(--faint);
   font-size: 13px;
-  line-height: 1.65;
-  text-wrap: pretty;
+  line-height: 1.6;
 }
 .pr-fine i {
   font-style: normal;
-  padding: 0 4px;
 }
 .pr-fine a {
   color: var(--muted);
@@ -1566,23 +1568,6 @@ h3 {
 }
 .pr-fine a:hover {
   color: var(--text);
-}
-.pr-soon {
-  gap: 8px;
-}
-.pr-soon span {
-  color: var(--muted);
-  font-weight: 450;
-}
-.pr-soon i {
-  font-style: normal;
-  color: var(--faint);
-}
-.pr-status {
-  margin: 10px 0 0;
-  color: var(--faint);
-  font-size: 13px;
-  line-height: 1.5;
 }
 .btn.wide {
   width: 100%;
@@ -1596,15 +1581,13 @@ h3 {
   .pr-foot {
     grid-template-columns: 1fr;
   }
-  .pr-fine {
+  .pr-terms {
     padding-right: 0;
   }
   .pr-join {
-    padding: 0;
-  }
-  .pr-join {
     grid-column: auto;
-    margin-top: 12px;
+    margin-top: 32px;
+    padding-left: 0;
   }
   .pr-col,
   .pr-col:first-child {
