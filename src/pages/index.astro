@@ -188,40 +188,48 @@ const mark = { yes: '●', partial: '◐', no: '—' } as const
         </p>
       </div>
       <div class="frame frame-bare"><KnowledgeMap /></div>
+      <p class="recall-line" id="recall">
+        Search runs on <a href="/docs/recall/">Laika Orbit recall</a>: the exact section in about a
+        millisecond, with no model calls. It works in any Claude Code session today:
+        <code>claude mcp add laikaorbit -- npx -y laikaorbit mcp</code>
+      </p>
     </section>
 
-    <!-- ─────────────────────────────── recall ── -->
-    <section class="section wrap onebrain" id="recall">
-      <div class="onebrain-copy">
-        <div class="eyebrow">Laika Orbit recall</div>
-        <h2>Context without<br />the token bill.</h2>
+    <!-- ─────────────────────────────── away ── -->
+    <section class="section wrap away" id="away">
+      <div class="away-copy">
+        <div class="eyebrow">Away mode</div>
+        <h2>Walk away.<br /><span class="muted">Come back to one card.</span></h2>
         <p class="muted">
-          Agents answer questions about your work by grepping and reading whole files. Laika Orbit recall finds
-          the exact section in plain code, then hands Claude one small answer. It's the engine inside
-          the app, and it works in any Claude Code session today.
+          Say how long you'll be gone. Your chats keep moving: the plainly safe steps are approved for
+          you, chats that stall or hit a usage limit are brought back, and everything else waits. When
+          you're back, one card says what finished, what's still running and what needs you.
         </p>
-        <dl class="stats">
-          <div><dt>~1ms</dt><dd>to answer</dd></div>
-          <div><dt>0</dt><dd>model calls to search</dd></div>
-          <div><dt>97.8%</dt><dd>fewer tokens than grep-and-read<sup><a href="https://github.com/Laika-Dynamics-Ltd/laika-orbit/blob/main/bench/RESULTS.md">1</a></sup></dd></div>
-        </dl>
-        <a class="link" href="/docs/recall/">How recall works →</a>
+        <ul class="away-rules">
+          <li><b>Safe steps only.</b> Reading, editing and running tests inside each chat's own folder.</li>
+          <li><b>Never on its own.</b> Pushing, deploying, deleting, the web, or another machine.</li>
+          <li><b>Every decision logged</b>, and a budget you can set before you go.</li>
+        </ul>
+        <a class="link" href="/docs/away-mode/">How away mode works →</a>
       </div>
-      <div class="term" role="img" aria-label="Terminal: adding Laika Orbit recall to Claude Code and recalling an answer">
-        <div class="term-bar"><i></i><i></i><i></i><span>zsh</span></div>
-<pre><span class="dim">$</span> claude mcp add laikaorbit -- npx -y laikaorbit mcp
-<span class="ok">Added stdio MCP server laikaorbit</span>
-
-<span class="dim">$</span> npx laikaorbit recall "how do I roll back a deploy"
-<span class="dim">tokens: roll, back, deploy · margin 82%</span>
-   11  100%  <span class="hl">notes/deploy.md</span>
-    2   18%  brain/routers/OPS.md
-
-<span class="acc">notes/deploy.md › Rolling back</span> <span class="dim">(lines 3-6)</span>
-  Run `make rollback TAG=&lt;previous&gt;` and watch the
-  canary for ten minutes.
-
-<span class="dim">151B read · 0 hop · total 0.9ms · 0 tokens</span></pre>
+      <div class="away-card" role="img" aria-label="Example summary card: while you were away, six tasks finished, one chat is still running and two need you">
+        <div class="term-bar"><i></i><i></i><i></i><span>Summary</span></div>
+        <div class="sc">
+          <div class="sc-head">While you were away · 13:05–15:45 · 2h 40m</div>
+          <div class="sc-headline">6 tasks finished in 4 chats. 2 need you.</div>
+          <div class="sc-sec">needs you · 2</div>
+          <div class="sc-row need u-now"><i></i><span><b>api</b> Wants to run the database migration on staging</span><em>12m</em></div>
+          <div class="sc-row need u-soon"><i></i><span><b>web</b> Asks which pricing headline to ship</span><em>40m</em></div>
+          <div class="sc-sec">running · 1</div>
+          <div class="sc-row run"><i></i><span><b>mobile</b> Rebuilding the iOS app on box1 · 25m in<span class="sc-bar"><i style="width:70%"></i></span></span><em class="eta">~15:55</em></div>
+          <div class="sc-sec">finished · 6</div>
+          <div class="sc-row done"><i></i><span><b>web</b> Checkout tests · Flaky login test fixed</span><em>2✓</em></div>
+          <div class="sc-row done"><i></i><span><b>docs</b> Screenshots refreshed · Broken links fixed</span><em>2✓</em></div>
+          <div class="sc-row done"><i></i><span><b>api</b> Rate limiter · Error messages</span><em>2✓</em></div>
+          <div class="sc-sec">auto-approved 31 · recovered 1</div>
+          <div class="sc-row auto"><i></i><span><b>web</b> Edit, pnpm test</span><em>18</em></div>
+          <div class="sc-row rec"><i></i><span><b>mobile</b> Hit a usage limit, waited for the reset and carried on</span><em>14:20</em></div>
+        </div>
       </div>
     </section>
 
@@ -253,6 +261,16 @@ const mark = { yes: '●', partial: '◐', no: '—' } as const
         </table>
         <p class="footnote">● yes · ◐ partly · — no. From each product's public docs, September 2026. Laika Orbit runs Claude Code and is not affiliated with Anthropic.</p>
       </div>
+    </section>
+
+    <!-- ─────────────────────────────── built with orbit ── -->
+    <section class="section wrap proof" aria-label="Built with Orbit">
+      <div class="eyebrow">Built with Orbit</div>
+      <dl class="stats proof-stats">
+        <div><dt>27</dt><dd>Claude Code chats run in Orbit in one day</dd></div>
+        <div><dt>17</dt><dd>chats working in the same hour</dd></div>
+        <div><dt>1</dt><dd>window for the app, this site and its docs, all built by agents in Orbit</dd></div>
+      </dl>
     </section>
 
     <!-- ─────────────────────────────── open source ── -->

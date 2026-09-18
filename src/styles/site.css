@@ -885,18 +885,201 @@ h3 {
   font: 11.5px var(--mono);
 }
 
-/* ─────────────────────────────── recall ── */
-.onebrain {
+/* ─────────────────────────────── away ── */
+.away {
   display: grid;
   grid-template-columns: 1fr 1.1fr;
   gap: 56px;
   align-items: center;
 }
-.onebrain-copy p {
+.away-copy p {
   margin: 22px 0 0;
   font-size: 17px;
   max-width: 30rem;
 }
+.away-rules {
+  list-style: none;
+  margin: 30px 0 34px;
+  padding: 0;
+  display: grid;
+  gap: 12px;
+  max-width: 30rem;
+}
+.away-rules li {
+  position: relative;
+  padding-left: 22px;
+  color: var(--muted);
+  font-size: 14.5px;
+  line-height: 1.5;
+}
+.away-rules li::before {
+  content: '';
+  position: absolute;
+  left: 2px;
+  top: 0.62em;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+.away-rules b {
+  color: var(--text);
+  font-weight: 560;
+}
+.away-card {
+  border-radius: var(--radius);
+  border: 1px solid var(--line-2);
+  background: #0a0b0d;
+  box-shadow:
+    0 40px 100px -40px rgba(0, 0, 0, 0.9),
+    0 0 80px -30px rgba(255, 122, 69, 0.18);
+  overflow: hidden;
+}
+.term-bar {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  height: 34px;
+  padding: 0 14px;
+  border-bottom: 1px solid var(--line);
+  font: 12px var(--mono);
+  color: var(--faint);
+}
+
+/* the summary card, drawn like the app's (packages/app/src/summary-card.css) */
+.sc {
+  padding: 20px 22px 22px;
+  font-size: 14px;
+}
+.sc-head {
+  font: 11.5px var(--mono);
+  letter-spacing: 0.02em;
+  color: var(--faint);
+}
+.sc-headline {
+  margin-top: 6px;
+  font-size: 17px;
+  font-weight: 560;
+  letter-spacing: -0.01em;
+  color: var(--text);
+}
+.sc-sec {
+  margin: 16px 0 4px;
+  font: 11px var(--mono);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--faint);
+}
+.sc-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 6px 8px;
+  margin: 0 -8px;
+  border-radius: 8px;
+  line-height: 1.4;
+  color: var(--muted);
+}
+.sc-row > i {
+  flex: none;
+  width: 7px;
+  height: 7px;
+  margin-top: 0.5em;
+  border-radius: 50%;
+  background: var(--faint);
+}
+.sc-row > span {
+  flex: 1;
+  min-width: 0;
+}
+.sc-row b {
+  color: var(--text);
+  font-weight: 560;
+  margin-right: 4px;
+}
+.sc-row > em {
+  flex: none;
+  font: normal 12px var(--mono);
+  color: var(--faint);
+  margin-top: 2px;
+}
+.sc-row.need.u-now {
+  background: rgba(255, 92, 92, 0.08);
+}
+.sc-row.need.u-now > i {
+  background: #ff5c5c;
+  box-shadow: 0 0 0 3px rgba(255, 92, 92, 0.18);
+}
+.sc-row.need.u-soon > i {
+  background: #f5b54a;
+}
+.sc-row.run > i {
+  background: var(--accent);
+  animation: sc-pulse 2s ease-in-out infinite;
+}
+.sc-row.run > em.eta {
+  color: #ff9d73;
+  font-weight: 600;
+}
+.sc-bar {
+  display: block;
+  height: 2px;
+  margin-top: 7px;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+}
+.sc-bar > i {
+  display: block;
+  height: 100%;
+  background: var(--accent);
+}
+.sc-row.done > i {
+  background: var(--ok);
+}
+.sc-row.auto > i {
+  background: #5cc8e6;
+}
+.sc-row.rec > i {
+  background: #a88bfa;
+}
+@keyframes sc-pulse {
+  50% {
+    opacity: 0.35;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .sc-row.run > i {
+    animation: none;
+  }
+}
+
+/* recall, as one line under the knowledge map */
+.recall-line {
+  margin: 28px 0 0;
+  max-width: 52rem;
+  color: var(--muted);
+  font-size: 15px;
+  line-height: 1.7;
+}
+.recall-line a {
+  color: var(--text);
+  text-decoration: underline;
+  text-decoration-color: var(--line-2);
+  text-underline-offset: 3px;
+}
+.recall-line code {
+  font: 13px var(--mono);
+  color: var(--text-2);
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 2px 7px;
+  white-space: nowrap;
+}
+
+/* built with orbit */
 .stats {
   margin: 36px 0;
   display: grid;
@@ -916,44 +1099,23 @@ h3 {
   max-width: 12ch;
   line-height: 1.4;
 }
-.stats sup a {
-  color: var(--faint);
-  margin-left: 2px;
+.section.proof {
+  padding-top: clamp(64px, 8vw, 104px);
 }
-.term {
-  border-radius: var(--radius);
-  border: 1px solid var(--line-2);
-  background: #0a0b0d;
-  box-shadow:
-    0 40px 100px -40px rgba(0, 0, 0, 0.9),
-    0 0 80px -30px rgba(255, 122, 69, 0.18);
-  overflow: hidden;
+.proof-stats {
+  margin: 28px 0 0;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 48px;
+  padding-top: 32px;
+  border-top: 1px solid var(--line);
 }
-.term-bar {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  height: 34px;
-  padding: 0 14px;
-  border-bottom: 1px solid var(--line);
-  font: 12px var(--mono);
-  color: var(--faint);
+.proof-stats dd {
+  max-width: 22ch;
 }
-.term pre {
-  margin: 0;
-  padding: 22px 22px 26px;
-  font: 450 13.5px/1.7 var(--mono);
-  color: var(--text-2);
-  overflow-x: auto;
-}
-.term .ok {
-  color: var(--ok);
-}
-.term .hl {
-  color: var(--text);
-}
-.term .acc {
-  color: #ff9d73;
+@media (max-width: 720px) {
+  .proof-stats {
+    gap: 20px;
+  }
 }
 
 /* ─────────────────────────────── compare ── */
@@ -1116,7 +1278,7 @@ h3 {
     display: none;
   }
   .split-head,
-  .onebrain,
+  .away,
   .sprawl {
     grid-template-columns: 1fr;
     gap: 28px;

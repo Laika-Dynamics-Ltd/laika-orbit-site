@@ -50,6 +50,7 @@ export default defineConfig({
           items: [
             { label: 'Claude panel', slug: 'docs/claude-panel' },
             { label: 'Knowledge map', slug: 'docs/knowledge-map' },
+            { label: 'Away mode', slug: 'docs/away-mode' },
             { label: 'Browser', slug: 'docs/browser' },
             { label: 'Widgets', slug: 'docs/widgets' },
           ],

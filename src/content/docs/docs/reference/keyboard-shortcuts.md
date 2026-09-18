@@ -35,7 +35,7 @@ Press <kbd>?</kbd> in the app to see these at any time.
 | Drag | Pan |
 | <kbd>⌥</kbd> drag, or right/middle button | Orbit |
 | Scroll | Zoom to the pointer |
-| <kbd>W</kbd> <kbd>A</kbd> <kbd>S</kbd> <kbd>D</kbd> | Fly (hold <kbd>⇧</kbd> for speed) |
+| <kbd>W</kbd> <kbd>A</kbd> <kbd>S</kbd> <kbd>D</kbd> | Fly (hold <kbd>Shift</kbd> for speed) |
 | <kbd>Q</kbd> <kbd>E</kbd> · <kbd>↑</kbd> <kbd>↓</kbd> | Orbit · tilt |
 | <kbd>+</kbd> <kbd>-</kbd> | Zoom |
 | <kbd>0</kbd> | Reset the view |
