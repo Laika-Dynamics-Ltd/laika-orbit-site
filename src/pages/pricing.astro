@@ -1,5 +1,5 @@
 ---
-import { FREE_FEATURES, PRO, PRO_FEATURES, SYNC_NOTE, TERMS } from '../lib/pricing'
+import { FREE_FEATURES, PRO, PRO_FEATURES, SYNC_HONEST, SYNC_NOTE, TERMS } from '../lib/pricing'
 import Page from '../layouts/Page.astro'
 
 // On-demand, so SALES_OPEN switches checkout on and off without a rebuild
@@ -10,7 +10,9 @@ const GITHUB = 'https://github.com/Laika-Dynamics-Ltd/laika-orbit'
 
 <Page title="Pricing — Laika Orbit" description="Laika Orbit is free and MIT open source. Pro is a founding membership: the signed, notarised Mac app, automatic updates and email support.">
   <section class="wrap pr-head">
-    <h1 class="pr-title">Pricing</h1>
+    <div class="eyebrow">Pricing</div>
+    <h1 class="pr-title">Back Orbit early.<br /><span>Lock in your price.</span></h1>
+    <p class="pr-lede">The whole app is free and open source, and it stays that way. Pro is for people who'd rather not build it themselves.</p>
   </section>
 
   <section class="wrap pr-plans" aria-label="Plans">
@@ -57,7 +59,7 @@ const GITHUB = 'https://github.com/Laika-Dynamics-Ltd/laika-orbit'
 
   <section class="wrap pr-foot" aria-label="Founding terms">
     <div class="pr-terms">
-      <p class="pr-sync">{SYNC_NOTE}</p>
+      <p class="pr-sync"><b>{SYNC_NOTE}</b> {SYNC_HONEST}</p>
       <p class="pr-fine">
         {TERMS.map((t) => <><span>{t}</span><i aria-hidden="true">·</i></>)}
         <a href="/legal/refunds/">Refund policy</a><i aria-hidden="true">·</i><a href="#questions">Questions</a>

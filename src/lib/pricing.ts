@@ -25,6 +25,8 @@ export const PRO_FEATURES = [
 
 /** The one thing Pro does not have yet, said plainly under the plans so nobody buys on the strength of it. */
 export const SYNC_NOTE = 'Sync is not built yet — aiming for the first half of 2027, at no extra cost for founding members.'
+/** Said plainly, from the founding-membership story: join for what exists today. */
+export const SYNC_HONEST = "We'd rather you joined for what's here today. If sync is the reason you'd pay, the free app will do the job until it ships."
 
 /** The founding terms as one compact row. The longer answers live in the questions below. */
 export const TERMS = ['Prices in US dollars, tax added at checkout', '30 days to change your mind', 'Cancel any time; the free app carries on']

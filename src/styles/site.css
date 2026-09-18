@@ -1358,9 +1358,21 @@ h3 {
 .pr-title {
   margin: 0;
   font-size: clamp(44px, 5.6vw, 64px);
-  line-height: 1;
+  line-height: 1.02;
   font-weight: 560;
   letter-spacing: -0.045em;
+}
+/* the second line of the founding pitch, quieter than the first */
+.pr-title span {
+  color: var(--muted);
+}
+.pr-lede {
+  margin: 22px 0 0;
+  max-width: 34rem;
+  color: var(--text-2);
+  font-size: 17px;
+  line-height: 1.55;
+  text-wrap: pretty;
 }
 .pr-plans {
   display: grid;
@@ -1541,7 +1553,7 @@ h3 {
 }
 .pr-sync {
   margin: 0;
-  max-width: 34rem;
+  max-width: 36rem;
   color: var(--text-2);
   font-size: 14.5px;
   line-height: 1.55;
@@ -1727,4 +1739,8 @@ h3 {
   background: rgba(79, 209, 165, 0.08);
   color: #8fe6c6;
   font-size: 15px;
+}
+.pr-sync b {
+  color: var(--text);
+  font-weight: 540;
 }
