@@ -16,6 +16,9 @@ description: Requirements, installing from source, and what happens on first lau
 
 ## Install
 
+Laika Orbit is built from source for now. A signed, notarised Mac app that updates itself comes with
+[Orbit Pro](/pricing/), which isn't on sale yet; join the waitlist there to hear when it opens.
+
 ```bash
 git clone https://github.com/Laika-Dynamics-Ltd/laika-orbit.git
 cd laika-orbit

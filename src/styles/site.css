@@ -1116,6 +1116,10 @@ h3 {
   .proof-stats {
     gap: 20px;
   }
+  .recall-line code {
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
 }
 
 /* ─────────────────────────────── compare ── */
@@ -1297,7 +1301,8 @@ h3 {
 }
 @media (max-width: 720px) {
   .bento {
-    grid-template-columns: 1fr;
+    /* minmax(0, …): a card's wide visual must not stretch the column past the screen */
+    grid-template-columns: minmax(0, 1fr);
   }
   .card,
   .card.wide {

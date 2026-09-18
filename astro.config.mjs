@@ -1,4 +1,5 @@
 // @ts-check
+import sitemap from '@astrojs/sitemap'
 import starlight from '@astrojs/starlight'
 import vercel from '@astrojs/vercel'
 import { defineConfig } from 'astro/config'
@@ -10,10 +11,19 @@ export default defineConfig({
   // the dev toolbar sits over the page in every capture
   devToolbar: { enabled: false },
   integrations: [
+    // pages marked noindex stay out of the sitemap: the draft legal pages and the Pro account pages
+    sitemap({ filter: (page) => !/\/(legal|pro)\//.test(new URL(page).pathname) }),
     starlight({
       title: 'Laika Orbit',
       description:
-        'Docs for Laika Orbit, the local-first workspace for Claude Code, and Laika Orbit recall, its zero-model retrieval engine.',
+        'Docs for Laika Orbit, mission control for your Claude Code agents, and Laika Orbit recall, its zero-model retrieval engine.',
+      // docs pages share the site's card when linked
+      head: [
+        { tag: 'meta', attrs: { property: 'og:image', content: 'https://laikaorbit.com/og.png' } },
+        { tag: 'meta', attrs: { property: 'og:image:width', content: '1200' } },
+        { tag: 'meta', attrs: { property: 'og:image:height', content: '630' } },
+        { tag: 'meta', attrs: { name: 'twitter:image', content: 'https://laikaorbit.com/og.png' } },
+      ],
       social: [
         { icon: 'github', label: 'GitHub', href: 'https://github.com/Laika-Dynamics-Ltd/laika-orbit' },
       ],
