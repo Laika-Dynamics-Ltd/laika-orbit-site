@@ -1,64 +1,88 @@
 ---
-import { FREE_FEATURES, PRO, PRO_COMING, PRO_FEATURES } from '../lib/pricing'
+import { FREE_FEATURES, PRO, PRO_COMING, PRO_FEATURES, TERMS } from '../lib/pricing'
 import Page from '../layouts/Page.astro'
 
 // On-demand, so SALES_OPEN switches checkout on and off without a rebuild
 export const prerender = false
 const open = (import.meta.env.SALES_OPEN ?? process.env.SALES_OPEN) === '1'
+// the founding terms as one quiet footnote: every fact kept, none louder than the plans
+const fine = [
+  ...PRO_COMING.map((c) => `Sync is not built yet: ${c.title.charAt(0).toLowerCase()}${c.title.slice(1)}. ${c.detail}`),
+  ...TERMS.map((t) => `${t.replace(/\.$/, '')}.`),
+  'Prices in US dollars, tax added at checkout.',
+].join(' ')
 const GITHUB = 'https://github.com/Laika-Dynamics-Ltd/laika-orbit'
 ---
 
-<Page title="Pricing — Laika Orbit" description="Laika Orbit is free and open source. Orbit Pro adds the signed Mac app, sync and managed build runners.">
-  <section class="wrap pricing-head">
-    <div class="eyebrow">Pricing</div>
-    <h1 class="page-title">Free to run. Pro when you want it done for you.</h1>
-    <p class="muted lede-sm">The whole app is open source. Pro pays for the parts that cost us to run: signed builds, sync and build machines. Your Claude account stays yours; we never resell model usage.</p>
-    <div class="period" role="tablist" aria-label="Billing period">
-      <button type="button" role="tab" aria-selected="false" data-period="monthly">Monthly</button>
-      <button type="button" role="tab" aria-selected="true" data-period="yearly">Yearly <span class="save">{PRO.yearly.saving}</span></button>
-    </div>
+<Page title="Pricing — Laika Orbit" description="Laika Orbit is free and MIT open source. Pro is a founding membership: the signed, notarised Mac app, automatic updates and email support.">
+  <section class="wrap pr-head">
+    <h1 class="pr-title">Pricing</h1>
+    <p class="pr-lede">The whole app is free and MIT open source, with nothing paywalled. Pro is a founding membership: the signed Mac app, updates and a person to email.</p>
   </section>
 
-  <section class="wrap plans">
-    <article class="plan">
-      <h2>Free</h2>
-      <div class="price"><b>$0</b><span>forever</span></div>
-      <p class="muted">For builders happy to run it from source.</p>
-      <a class="btn btn-ghost wide" href="/docs/getting-started/">Install from source</a>
-      <ul>{FREE_FEATURES.map((f) => <li>{f}</li>)}</ul>
+  <section class="wrap pr-plans" aria-label="Plans">
+    <article class="pr-col">
+      <div class="pr-name"><h2>Free</h2></div>
+      <div class="pr-price"><b>$0</b><span>forever</span></div>
+      <div class="pr-bill"><span>MIT open source on <a href={GITHUB}>GitHub</a>. Nothing paywalled.</span></div>
+      <ul class="pr-list">{FREE_FEATURES.map((f) => <li>{f}</li>)}</ul>
+      <div class="pr-cta">
+        <a class={`btn ${open ? 'btn-ghost' : 'btn-light'} wide`} href="/docs/getting-started/">Install from source</a>
+      </div>
     </article>
 
-    <article class="plan pro">
-      <div class="plan-top"><h2>Pro</h2><span class="soon">{open ? 'Founding' : 'Coming soon'}</span></div>
-      <div class="price">
+    <article class="pr-col pr-pro">
+      <div class="pr-name"><h2>Pro</h2><span class="pr-tag">{open ? 'Founding' : 'Coming soon'}</span></div>
+      <div class="pr-price">
         <b data-show="yearly">{PRO.yearly.label}</b><b data-show="monthly" hidden>{PRO.monthly.label}</b>
         <span data-show="yearly">{PRO.currency} {PRO.yearly.per}</span><span data-show="monthly" hidden>{PRO.currency} {PRO.monthly.per}</span>
       </div>
-      <p class="muted">For people who want the app to just work. Founding members lock this price for as long as they stay subscribed, get sync when it lands, and have 30 days to change their mind.</p>
-      {open ? (
-        <button type="button" class="btn btn-light wide" data-checkout>Get Orbit Pro</button>
-      ) : (
+      <div class="pr-bill">
+        <div class="period" role="tablist" aria-label="Billing period">
+          <button type="button" role="tab" aria-selected="false" data-period="monthly">Monthly</button>
+          <button type="button" role="tab" aria-selected="true" data-period="yearly">Yearly</button>
+        </div>
+        <span class="pr-save" data-show="yearly">{PRO.yearly.saving}</span>
+        <span class="pr-save dim" data-show="monthly" hidden>Yearly is {PRO.yearly.saving}</span>
+      </div>
+      <ul class="pr-list">{PRO_FEATURES.map((f) => <li>{f}</li>)}</ul>
+      <div class="pr-cta">
+        {open ? (
+          <>
+            <button type="button" class="btn btn-light wide" data-checkout>Get Orbit Pro</button>
+            <p class="form-note" data-note aria-live="polite"></p>
+          </>
+        ) : (
+          <>
+            <a class="btn btn-ghost wide pr-soon" href="#waitlist" data-join><span>Not on sale yet</span><i aria-hidden="true">·</i>Join waitlist</a>
+            <p class="pr-status">Nothing can be bought yet. We email once, when it opens.</p>
+          </>
+        )}
+      </div>
+    </article>
+
+  </section>
+
+  <section class="wrap pr-foot" aria-label="Founding terms">
+    <p class="pr-fine">
+      {fine}{' '}<a href="/legal/refunds/">Refund policy</a> <i aria-hidden="true">·</i> <a href="#questions">Questions</a>
+    </p>
+    {!open && (
+      <div class="pr-join" id="waitlist">
+        <h3>Join the Pro waitlist</h3>
         <form class="waitlist" data-waitlist>
           <label class="sr-only" for="wl-email">Email</label>
           <input id="wl-email" type="email" name="email" required placeholder="you@company.com" autocomplete="email" />
           {/* bots fill this in; people never see it */}
           <input class="hp" type="text" name="company" tabindex="-1" autocomplete="off" aria-hidden="true" />
-          <button type="submit" class="btn btn-light">Join the waitlist</button>
+          <button type="submit" class="btn btn-ghost">Join waitlist</button>
         </form>
-      )}
-      <p class="form-note" data-note aria-live="polite">{open ? 'Prices in US dollars. Tax is added at checkout where required. Cancel any time.' : 'Be first to hear when Pro opens. No spam.'}</p>
-      <ul>
-        {PRO_FEATURES.map((f) => <li>{f}</li>)}
-        {PRO_COMING.map((f) => (
-          <li class="soon-item">
-            {f} <span class="soon-tag">not built yet</span>
-          </li>
-        ))}
-      </ul>
-    </article>
+        <p class="form-note" data-note aria-live="polite">One email, when Pro opens. Nothing else.</p>
+      </div>
+    )}
   </section>
 
-  <section class="wrap faq">
+  <section class="wrap faq" id="questions" data-g="faq">
     <h2>Questions</h2>
     <details><summary>Do I need a Claude account?</summary><p>Yes. Chats run Claude Code under your own Claude account. Laika Orbit never provides, resells or meters Claude usage, on Free or Pro.</p></details>
     <details><summary>What is a founding membership?</summary><p>Pro is early: today it is the signed, notarised app with automatic updates and email support answered within 2 working days. Sync is being built — we are aiming for the first half of 2027, and it lands for founding members at no extra cost. Your price stays the same for as long as you stay subscribed, and you have 30 days to ask for a refund while sync is still missing. If that is not enough yet, the app is free and open source — wait for us.</p></details>
@@ -107,6 +131,15 @@ const GITHUB = 'https://github.com/Laika-Dynamics-Ltd/laika-orbit'
         say('Checkout is unavailable right now.', true)
       }
       btn.disabled = false
+    })
+    // the Pro column's button leads to the waitlist form under the grid
+    document.querySelector<HTMLAnchorElement>('[data-join]')?.addEventListener('click', (e) => {
+      const input = document.querySelector<HTMLInputElement>('#wl-email')
+      if (!input) return
+      e.preventDefault()
+      document.getElementById('waitlist')?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      input.focus({ preventScroll: true })
+      history.replaceState(null, '', '#waitlist')
     })
     const waitlist = document.querySelector<HTMLFormElement>('[data-waitlist]')
     waitlist?.addEventListener('submit', async (e) => {

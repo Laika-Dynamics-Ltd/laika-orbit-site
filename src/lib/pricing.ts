@@ -5,22 +5,36 @@ export const PRO = {
   currency: 'USD',
 }
 
+/** Free is the whole app. Nothing in it is held back for Pro. */
 export const FREE_FEATURES = [
-  'The full app, built from source (MIT)',
-  'Claude Code chats side by side, grid and task track',
-  'Browser with a profile per account',
+  'The full Laika Orbit app',
+  'Claude Code chats side by side, grid or task track',
+  'A browser with a profile per account',
   'Inbox, calendar and widgets',
-  'Laika Orbit recall: knowledge map, CLI and MCP server',
+  'Laika Orbit recall: knowledge map, CLI, MCP server',
 ]
 
+/** Pro today, exactly. Nothing else is claimed for it. */
 export const PRO_FEATURES = [
   'Everything in Free',
-  'Signed, notarised Mac app with automatic updates',
-  'Email support from a person who builds it, answered within 2 working days',
-  'Your price locked for as long as you stay subscribed',
+  'Signed and notarised Mac app',
+  'Automatic updates',
+  'Email support, answered in 2 working days',
+  'Price locked for as long as you stay subscribed',
 ]
 
 /** Named on the pricing page as not built yet, so nobody buys on the strength of them. */
 export const PRO_COMING = [
-  'Settings, workspaces and pins synced across your Macs, end-to-end encrypted — aiming for the first half of 2027',
+  {
+    short: 'Sync across your Macs',
+    title: 'Settings, workspaces and pins synced across your Macs, end-to-end encrypted',
+    detail: 'Aiming for the first half of 2027, at no extra cost for founding members.',
+  },
+]
+
+/** The founding terms, in plain words. */
+export const TERMS = [
+  '30 days to change your mind while sync is missing',
+  'Cancel any time; the free app carries on',
+  'Your Claude account stays yours. We never resell model usage.',
 ]
