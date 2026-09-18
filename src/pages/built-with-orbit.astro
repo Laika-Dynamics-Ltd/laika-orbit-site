@@ -1,0 +1,147 @@
+---
+import Page from '../layouts/Page.astro'
+---
+
+<Page
+  title="Orbit builds Orbit — Laika Orbit"
+  description="Laika Orbit, this website and its docs are built by Claude Code agents running inside Laika Orbit, with one person deciding what gets built and approving what ships. How that works."
+>
+  <section class="wrap bw-head">
+    <div class="eyebrow">Built with Orbit</div>
+    <h1 class="pr-title">Orbit builds Orbit.</h1>
+    <p class="pr-lede">
+      Laika Orbit, this website and its docs are built by Claude Code agents running inside Laika Orbit,
+      with one person deciding what gets built and approving what ships. This is how that works, with
+      examples from the week we launched.
+    </p>
+    <dl class="stats proof-stats">
+      <div><dt>27</dt><dd>Claude Code chats run in Orbit in one day</dd></div>
+      <div><dt>17</dt><dd>chats working in the same hour</dd></div>
+      <div><dt>1</dt><dd>person steering, approving every push and deploy</dd></div>
+    </dl>
+  </section>
+
+  <section class="wrap bw-list">
+    <article class="bw-row">
+      <div class="bw-n">01</div>
+      <div class="bw-copy">
+        <h2>Many chats at once, each in its own copy</h2>
+        <p>
+          In launch week, one set of chats renamed the product from its working name, another rebuilt
+          the pricing page, another packaged the Mac app, and others wrote these docs, all on the same
+          afternoon. Each chat works on its own branch in its own copy of the repo, so none overwrites
+          another, and the fleet board shows which one needs a decision.
+        </p>
+      </div>
+    </article>
+
+    <article class="bw-row">
+      <div class="bw-n">02</div>
+      <div class="bw-copy">
+        <h2>A design has to beat a real page</h2>
+        <p>
+          New pages go through a gauntlet. Agents build several versions, and critic agents compare each
+          one against a page we admire (Linear's, for our pricing page) without being told which side is
+          ours. Then the sides are swapped: a win in one position only is usually the position, so it
+          doesn't count. A person looks at the survivors and picks.
+        </p>
+      </div>
+      <div class="away-card bw-card" role="img" aria-label="Example gauntlet verdict: our page beat the reference in both slot orders">
+        <div class="term-bar"><i></i><i></i><i></i><span>Gauntlet · pricing</span></div>
+        <div class="sc">
+          <div class="sc-head">Ours vs reference · blind critics</div>
+          <div class="sc-sec">verdicts</div>
+          <div class="sc-row done"><i></i><span><b>slot A</b> Ours wins: clearer plan comparison, one call to action</span><em>win</em></div>
+          <div class="sc-row done"><i></i><span><b>slot B</b> Swapped sides: ours still wins</span><em>win</em></div>
+          <div class="sc-row need u-soon"><i></i><span><b>critic</b> The sync note reads as a hedge; say it plainly</span><em>fix</em></div>
+          <div class="sc-sec">result</div>
+          <div class="sc-row auto"><i></i><span><b>confirmed</b> Won in both orders; goes to a person to pick</span><em>✓</em></div>
+        </div>
+      </div>
+    </article>
+
+    <article class="bw-row">
+      <div class="bw-n">03</div>
+      <div class="bw-copy">
+        <h2>Long jobs report themselves</h2>
+        <p>
+          Anything that takes more than a few minutes, like a build, a batch of screenshots or a site
+          audit, reports to the runs page: its parts, how far along each is, when it should finish and
+          what it produced. A job that goes quiet is flagged as stalled instead of looking busy. The audit
+          that fixed this site's share images and phone layout before launch was one of these runs.
+        </p>
+      </div>
+      <div class="away-card bw-card" role="img" aria-label="Example run: finishing the website, with audit, fix and verify lanes done">
+        <div class="term-bar"><i></i><i></i><i></i><span>Runs</span></div>
+        <div class="sc">
+          <div class="sc-head">site-finish</div>
+          <div class="sc-headline">Finish laikaorbit.com: audit, fix, verify live</div>
+          <div class="sc-sec">lanes</div>
+          <div class="sc-row done"><i></i><span><b>audit</b> 23 pages, 68 links, share tags, phone widths</span><em>done</em></div>
+          <div class="sc-row done"><i></i><span><b>fix</b> Share image, robots.txt, sitemap, phone overflow</span><em>done</em></div>
+          <div class="sc-row done"><i></i><span><b>verify</b> Checked again on the live site</span><em>done</em></div>
+        </div>
+      </div>
+    </article>
+
+    <article class="bw-row">
+      <div class="bw-n">04</div>
+      <div class="bw-copy">
+        <h2>Heavy work goes to another machine</h2>
+        <p>
+          Builds and screenshot captures run on a Linux box under the desk, sent there by the same{' '}
+          <a class="link" href="/docs/other-machines/">offload</a> that ships in the app. The laptop stays
+          quiet and cool while agents work, and the files come back when the job is done.
+        </p>
+      </div>
+    </article>
+
+    <article class="bw-row">
+      <div class="bw-n">05</div>
+      <div class="bw-copy">
+        <h2>Agents look things up instead of rereading</h2>
+        <p>
+          The repo's plans, decisions and notes are indexed by{' '}
+          <a class="link" href="/docs/recall/">Laika Orbit recall</a>, which every chat in the repo has as an MCP server.
+          Asking "how do we sign the Mac app?" returns the one section that answers it in about a
+          millisecond, with no model calls, instead of an agent opening a dozen files.
+        </p>
+      </div>
+    </article>
+
+    <article class="bw-row">
+      <div class="bw-n">06</div>
+      <div class="bw-copy">
+        <h2>Work carries on while nobody's watching</h2>
+        <p>
+          At the end of a day, <a class="link" href="/docs/away-mode/">away mode</a> keeps the chats moving:
+          the plainly safe steps are approved, stuck chats are brought back, and everything else waits. The
+          next morning starts with one summary card of what finished and what needs a decision.
+        </p>
+      </div>
+    </article>
+
+    <article class="bw-row">
+      <div class="bw-n">07</div>
+      <div class="bw-copy">
+        <h2>What a person still does</h2>
+        <p>
+          Decides what to build, reads the plans, and approves every push, deploy, domain change and
+          anything that touches payments. Agents can't move saved passwords or stop running apps on their
+          own: the safety checks stop them and hand the step to a person. The legal pages lost their draft
+          labels only after our lawyer signed them off. And the public repo is exported from the private one
+          with a scan that fails on personal names, home paths and keys, so private work never leaks out.
+        </p>
+      </div>
+    </article>
+  </section>
+
+  <section class="wrap bw-cta">
+    <h2>Run your work the same way.</h2>
+    <p class="muted">Everything on this page is in the free, open-source app.</p>
+    <div class="bw-actions">
+      <a class="btn btn-light" href="/docs/getting-started/">Get started for free</a>
+      <a class="btn btn-ghost" href="/docs/away-mode/">How away mode works</a>
+    </div>
+  </section>
+</Page>

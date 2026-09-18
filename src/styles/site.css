@@ -1112,6 +1112,84 @@ h3 {
 .proof-stats dd {
   max-width: 22ch;
 }
+.bw-more {
+  display: inline-block;
+  margin-top: 28px;
+}
+
+/* ─────────────────────────────── built with orbit page ── */
+.bw-head {
+  padding-top: clamp(64px, 9vw, 120px);
+}
+.bw-head .pr-lede {
+  max-width: 40rem;
+}
+.bw-list {
+  margin-top: clamp(56px, 7vw, 96px);
+  display: grid;
+  gap: 0;
+}
+.bw-row {
+  display: grid;
+  grid-template-columns: 64px minmax(0, 1fr) minmax(0, 1fr);
+  gap: 28px 40px;
+  align-items: start;
+  padding: 44px 0;
+  border-top: 1px solid var(--line);
+}
+.bw-n {
+  font: 13px var(--mono);
+  color: var(--accent);
+  padding-top: 6px;
+}
+.bw-copy {
+  grid-column: 2 / span 2;
+  max-width: 40rem;
+}
+.bw-row:has(.bw-card) .bw-copy {
+  grid-column: 2;
+}
+.bw-copy h2 {
+  margin: 0;
+  font-size: clamp(22px, 2.4vw, 28px);
+  letter-spacing: -0.02em;
+}
+.bw-copy p {
+  margin: 14px 0 0;
+  color: var(--muted);
+  font-size: 16px;
+  line-height: 1.65;
+}
+.bw-card .sc {
+  font-size: 13.5px;
+}
+.bw-cta {
+  padding: clamp(72px, 9vw, 120px) 0 clamp(56px, 7vw, 96px);
+  text-align: center;
+}
+.bw-cta h2 {
+  margin: 0;
+  font-size: clamp(28px, 3.4vw, 40px);
+  letter-spacing: -0.03em;
+}
+.bw-actions {
+  margin-top: 26px;
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+@media (max-width: 860px) {
+  .bw-row {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 18px;
+    padding: 36px 0;
+  }
+  .bw-copy,
+  .bw-row:has(.bw-card) .bw-copy {
+    grid-column: 1;
+  }
+}
 @media (max-width: 720px) {
   .proof-stats {
     gap: 20px;
