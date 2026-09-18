@@ -63,6 +63,7 @@ export default defineConfig({
             { label: 'Knowledge map', slug: 'docs/knowledge-map' },
             { label: 'Away mode', slug: 'docs/away-mode' },
             { label: 'Browser', slug: 'docs/browser' },
+            { label: 'Other machines', slug: 'docs/other-machines' },
             { label: 'Widgets', slug: 'docs/widgets' },
           ],
         },
