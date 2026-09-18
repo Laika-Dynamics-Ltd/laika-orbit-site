@@ -1146,8 +1146,53 @@ h3 {
   grid-column: 2 / span 2;
   max-width: 40rem;
 }
-.bw-row:has(.bw-card) .bw-copy {
+.bw-row:has(.bw-card, .bw-viz) .bw-copy {
   grid-column: 2;
+}
+.bw-head {
+  position: relative;
+}
+.bw-head > :not(canvas) {
+  position: relative;
+}
+.bw-scene {
+  display: block;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transition: opacity 1.2s ease;
+}
+.bw-scene.live {
+  opacity: 1;
+}
+.bw-fleet {
+  position: absolute;
+  top: 0;
+  right: -4%;
+  width: 58%;
+  height: 480px;
+  pointer-events: none;
+  mask-image: radial-gradient(ellipse 60% 60% at 55% 50%, #000 55%, transparent 100%);
+}
+.bw-viz {
+  position: relative;
+  height: 260px;
+  border-radius: var(--radius);
+  border: 1px solid var(--line);
+  background: radial-gradient(ellipse at 50% 60%, rgba(255, 122, 69, 0.05), transparent 70%), #0a0b0d;
+  overflow: hidden;
+}
+.bw-tag {
+  position: absolute;
+  bottom: 14px;
+  font: 11.5px var(--mono);
+  color: var(--faint);
+}
+.bw-tag.l {
+  left: 16px;
+}
+.bw-tag.r {
+  right: 16px;
 }
 .bw-copy h2 {
   margin: 0;
@@ -1186,8 +1231,17 @@ h3 {
     padding: 36px 0;
   }
   .bw-copy,
-  .bw-row:has(.bw-card) .bw-copy {
+  .bw-row:has(.bw-card, .bw-viz) .bw-copy {
     grid-column: 1;
+  }
+  .bw-fleet {
+    width: 100%;
+    right: 0;
+    height: 360px;
+    opacity: 0.45;
+  }
+  .bw-fleet.live {
+    opacity: 0.45;
   }
 }
 @media (max-width: 720px) {

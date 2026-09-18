@@ -7,6 +7,7 @@ import Page from '../layouts/Page.astro'
   description="Laika Orbit, this website and its docs are built by Claude Code agents running inside Laika Orbit, with one person deciding what gets built and approving what ships. How that works."
 >
   <section class="wrap bw-head">
+    <canvas class="bw-scene bw-fleet" data-scene="fleet" aria-hidden="true"></canvas>
     <div class="eyebrow">Built with Orbit</div>
     <h1 class="pr-title">Orbit builds Orbit.</h1>
     <p class="pr-lede">
@@ -94,6 +95,10 @@ import Page from '../layouts/Page.astro'
           quiet and cool while agents work, and the files come back when the job is done.
         </p>
       </div>
+      <div class="bw-viz" role="img" aria-label="Work arcing from this Mac to another machine, and files arcing back">
+        <canvas class="bw-scene" data-scene="offload" aria-hidden="true"></canvas>
+        <span class="bw-tag l">this Mac</span><span class="bw-tag r">build box</span>
+      </div>
     </article>
 
     <article class="bw-row">
@@ -106,6 +111,10 @@ import Page from '../layouts/Page.astro'
           Asking "how do we sign the Mac app?" returns the one section that answers it in about a
           millisecond, with no model calls, instead of an agent opening a dozen files.
         </p>
+      </div>
+      <div class="bw-viz" role="img" aria-label="A cloud of files; a question flies in and lights up the one section that answers it">
+        <canvas class="bw-scene" data-scene="recall" aria-hidden="true"></canvas>
+        <span class="bw-tag l">"how do we sign the Mac app?"</span><span class="bw-tag r">1 section · 0 model calls</span>
       </div>
     </article>
 
@@ -144,4 +153,67 @@ import Page from '../layouts/Page.astro'
       <a class="btn btn-ghost" href="/docs/away-mode/">How away mode works</a>
     </div>
   </section>
+
+  <script>
+    // three.js loads only when a scene is about to scroll into view, and each scene draws only while
+    // it's on screen. Reduced motion, weak machines and ?frame= get one still frame instead.
+    const canvases = [...document.querySelectorAll<HTMLCanvasElement>('canvas[data-scene]')]
+    const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches
+    const conn = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection
+    const weak = (navigator.hardwareConcurrency ?? 8) <= 4 || !!conn?.saveData
+    const frame = new URLSearchParams(location.search).get('frame')
+    const still = reduce || weak || frame !== null
+    const T0 = frame !== null ? Number(frame) || 8 : 8
+
+    async function mount(canvas: HTMLCanvasElement) {
+      const scenes = await import('../scripts/bw-scenes.ts')
+      const make = scenes[canvas.dataset.scene as 'fleet' | 'offload' | 'recall']
+      let scene: import('../scripts/bw-scenes.ts').MiniScene
+      try {
+        scene = make(canvas)
+      } catch {
+        return // no WebGL: the page reads fine without it
+      }
+      const start = performance.now()
+      let running = false
+      // a resize clears the canvas; redraw it at once unless the loop is about to
+      const fit = () => {
+        scene.resize(canvas.clientWidth, canvas.clientHeight)
+        if (!running) scene.render(still ? T0 : T0 + (performance.now() - start) / 1000)
+      }
+      let raf = 0
+      const tick = (now: number) => {
+        scene.render(T0 + (now - start) / 1000)
+        raf = requestAnimationFrame(tick)
+      }
+      new ResizeObserver(fit).observe(canvas)
+      fit()
+      canvas.classList.add('live')
+      if (still) return
+      new IntersectionObserver(([e]) => {
+        const on = e.isIntersecting && !document.hidden
+        if (on && !running) raf = requestAnimationFrame(tick)
+        if (!on && running) cancelAnimationFrame(raf)
+        running = on
+      }).observe(canvas)
+      document.addEventListener('visibilitychange', () => {
+        if (document.hidden && running) {
+          cancelAnimationFrame(raf)
+          running = false
+        }
+      })
+    }
+
+    const near = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) {
+          if (!e.isIntersecting) continue
+          near.unobserve(e.target)
+          mount(e.target as HTMLCanvasElement)
+        }
+      },
+      { rootMargin: '300px 0px' },
+    )
+    canvases.forEach((c) => near.observe(c))
+  </script>
 </Page>

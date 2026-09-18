@@ -32,7 +32,7 @@ export interface OrbitScene {
 }
 
 /** mulberry32: a tiny seeded generator, so the field is identical on every load and every render */
-function seeded(seed: number) {
+export function seeded(seed: number) {
   let a = seed >>> 0
   return () => {
     a = (a + 0x6d2b79f5) >>> 0
@@ -53,7 +53,7 @@ const RINGS = [
   { a: 10.4, b: 4.1, tilt: 0.05, count: 1100, speed: 0.012 },
 ]
 
-function glowTexture(inner: string, outer: string) {
+export function glowTexture(inner: string, outer: string) {
   const c = document.createElement('canvas')
   c.width = c.height = 128
   const g = c.getContext('2d')!
