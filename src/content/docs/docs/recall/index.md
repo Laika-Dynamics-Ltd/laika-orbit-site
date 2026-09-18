@@ -19,9 +19,9 @@ questions ([methodology](https://github.com/Laika-Dynamics-Ltd/laika-orbit/blob/
 
 ## Two ways to use it
 
-- **In Claude Code**, as an MCP server: `claude mcp add 1brain -- npx -y 1brain mcp`.
+- **In Claude Code**, as an MCP server: `claude mcp add laikaorbit -- npx -y laikaorbit mcp`.
   [Details](/docs/recall/mcp/).
-- **In the terminal**: `npx 1brain recall "…"`. [CLI reference](/docs/recall/cli/).
+- **In the terminal**: `npx laikaorbit recall "…"`. [CLI reference](/docs/recall/cli/).
 
 It works on any folder of Markdown and text, and answers best when you add
 [router files](/docs/recall/routers/).

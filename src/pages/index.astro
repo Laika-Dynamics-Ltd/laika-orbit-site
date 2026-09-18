@@ -49,7 +49,7 @@ const mark = { yes: '●', partial: '◐', no: '—' } as const
         </div>
         <p class="hero-note">
           Already in Claude Code? Add Laika Orbit recall with
-          <code class="cmd"><span class="dim">$</span> npx 1brain mcp</code>
+          <code class="cmd"><span class="dim">$</span> npx laikaorbit mcp</code>
         </p>
       </div>
 
@@ -209,10 +209,10 @@ const mark = { yes: '●', partial: '◐', no: '—' } as const
       </div>
       <div class="term" role="img" aria-label="Terminal: adding Laika Orbit recall to Claude Code and recalling an answer">
         <div class="term-bar"><i></i><i></i><i></i><span>zsh</span></div>
-<pre><span class="dim">$</span> claude mcp add 1brain -- npx -y 1brain mcp
-<span class="ok">Added stdio MCP server 1brain</span>
+<pre><span class="dim">$</span> claude mcp add laikaorbit -- npx -y laikaorbit mcp
+<span class="ok">Added stdio MCP server laikaorbit</span>
 
-<span class="dim">$</span> npx 1brain recall "how do I roll back a deploy"
+<span class="dim">$</span> npx laikaorbit recall "how do I roll back a deploy"
 <span class="dim">tokens: roll, back, deploy · margin 82%</span>
    11  100%  <span class="hl">notes/deploy.md</span>
     2   18%  brain/routers/OPS.md

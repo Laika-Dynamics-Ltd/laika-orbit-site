@@ -4,7 +4,7 @@ description: Add the Laika Orbit recall MCP server so Claude recalls instead of 
 ---
 
 ```bash
-claude mcp add 1brain -- npx -y 1brain mcp
+claude mcp add laikaorbit -- npx -y laikaorbit mcp
 ```
 
 That's all: Claude Code starts the server in your project folder when a session begins. Requires Node
@@ -21,7 +21,7 @@ That's all: Claude Code starts the server in your project folder when a session 
 ## Another folder
 
 ```bash
-claude mcp add brain-notes -- npx -y 1brain mcp --root ~/notes
+claude mcp add brain-notes -- npx -y laikaorbit mcp --root ~/notes
 ```
 
 The index is built on the first call and refreshed at most every `refreshSecs` (see
@@ -33,5 +33,5 @@ The `recall` tool describes itself as the thing to prefer over grep and whole-fi
 questions about the workspace. For stronger steering, add a line to your project's `CLAUDE.md`:
 
 ```markdown
-For questions about this project, call the 1brain `recall` tool before searching files.
+For questions about this project, call the laikaorbit `recall` tool before searching files.
 ```

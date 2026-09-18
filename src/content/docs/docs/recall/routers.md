@@ -45,7 +45,7 @@ matching section: one hop, never more.
 ## Checking them
 
 ```bash
-npx 1brain lint
+npx laikaorbit lint
 ```
 
 reports malformed lines and pointers to files that don't exist.

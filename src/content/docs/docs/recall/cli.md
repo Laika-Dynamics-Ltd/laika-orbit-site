@@ -4,19 +4,19 @@ description: Laika Orbit recall commands and options.
 ---
 
 ```bash
-npx 1brain <command> [--root <dir>]
+npx laikaorbit <command> [--root <dir>]
 ```
 
-Or install it: `npm install -g 1brain`.
+Or install it: `npm install -g laikaorbit`.
 
 | Command | What it does |
 |---|---|
-| `1brain index` | Builds the index and reports its size and build time. |
-| `1brain status` | Index health: documents, tokens, routers, pointers, topics. |
-| `1brain lint` | Checks router files for malformed pointers and pointers to files that don't exist. Exits 1 when it finds any. |
-| `1brain recall "<question>"` | Shows the retrieval: candidates with scores, the margin, the evidence sections, and what it cost. |
-| `1brain ask "<question>"` | Prints only the packed prompt (question, evidence, instruction) for piping into a model. |
-| `1brain mcp` | Serves the MCP tools over stdio. |
+| `laikaorbit index` | Builds the index and reports its size and build time. |
+| `laikaorbit status` | Index health: documents, tokens, routers, pointers, topics. |
+| `laikaorbit lint` | Checks router files for malformed pointers and pointers to files that don't exist. Exits 1 when it finds any. |
+| `laikaorbit recall "<question>"` | Shows the retrieval: candidates with scores, the margin, the evidence sections, and what it cost. |
+| `laikaorbit ask "<question>"` | Prints only the packed prompt (question, evidence, instruction) for piping into a model. |
+| `laikaorbit mcp` | Serves the MCP tools over stdio. |
 
 ## Choosing the folder
 
@@ -25,7 +25,7 @@ Or install it: `npm install -g 1brain`.
 ## Example
 
 ```text
-$ npx 1brain recall "how do I roll back a deploy"
+$ npx laikaorbit recall "how do I roll back a deploy"
 how do I roll back a deploy
 tokens: roll, back, deploy
 margin 82%
@@ -43,5 +43,5 @@ notes/deploy.md › Rolling back (lines 3-6)
 `lint` exits non-zero on problems, so it fits in CI:
 
 ```yaml
-- run: npx 1brain lint
+- run: npx laikaorbit lint
 ```
