@@ -7,6 +7,8 @@ description: What Laika Orbit and its recall engine are, and where to start.
 
 - **The Claude panel:** many Claude Code chats side by side, per repo or per project folder, on one or
   several Claude accounts.
+- **Away mode:** leave your chats running for hours, with the plainly safe steps approved for you,
+  and come back to one summary card. See [Away mode](/docs/away-mode/).
 - **The knowledge map:** every indexed file, repo, chat and routine as a 3D map you can search and fly
   through.
 - **A real browser:** Chromium tabs with one storage profile per account, and Chrome extensions.
