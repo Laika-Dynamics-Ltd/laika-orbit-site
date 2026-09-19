@@ -40,6 +40,7 @@ const GITHUB = 'https://github.com/Laika-Dynamics-Ltd/laika-orbit'
         <span class="pr-save" data-show="yearly">{PRO.yearly.saving}</span>
         <span class="pr-save dim" data-show="monthly" hidden>Yearly is {PRO.yearly.saving}</span>
       </div>
+      <div class="pr-body">
       <div class="pr-anywhere">
         <div class="pr-aw-head"><b>{ANYWHERE.title}</b><span class="pr-tag">{ANYWHERE.tag}</span></div>
         <p>{ANYWHERE.line}</p>
@@ -47,6 +48,7 @@ const GITHUB = 'https://github.com/Laika-Dynamics-Ltd/laika-orbit'
       </div>
       <ul class="pr-list">{PRO_FEATURES.map((f) => <li>{f}</li>)}</ul>
       <p class="pr-lock">{FOUNDING_NOTE}</p>
+      </div>
       <div class="pr-cta">
         {open ? (
           <>
