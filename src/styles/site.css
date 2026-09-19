@@ -891,7 +891,7 @@ h3 {
   grid-template-columns: minmax(0, 1.25fr) minmax(0, 0.9fr);
   gap: 64px;
   align-items: start;
-  padding-top: clamp(72px, 9vw, 120px);
+  padding-top: clamp(24px, 3vw, 40px);
 }
 .ps-letter {
   margin-top: 40px;
@@ -1019,10 +1019,10 @@ h3 {
   border-radius: 50%;
   background: var(--accent);
 }
-.ps-list li.soon {
+.ps-list li.ps-soon {
   color: var(--faint);
 }
-.ps-list li.soon::before {
+.ps-list li.ps-soon::before {
   background: none;
   border: 1px solid var(--faint);
 }
