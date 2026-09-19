@@ -3,6 +3,10 @@ import sitemap from '@astrojs/sitemap'
 import starlight from '@astrojs/starlight'
 import vercel from '@astrojs/vercel'
 import { defineConfig } from 'astro/config'
+import { beaconScript } from './src/lib/beacon.mjs'
+
+// the docs pages count views the same way as the rest of the site (see src/lib/beacon.mjs)
+const beacon = beaconScript(process.env.PUBLIC_PULSE_ENDPOINT)
 
 export default defineConfig({
   site: 'https://laikaorbit.com',
@@ -15,6 +19,7 @@ export default defineConfig({
     sitemap({ filter: (page) => !new URL(page).pathname.startsWith('/pro/') }),
     starlight({
       title: 'Laika Orbit',
+      head: beacon ? [{ tag: 'script', content: beacon }] : [],
       description:
         'Docs for Laika Orbit, mission control for your Claude Code agents, and Laika Orbit recall, its zero-model retrieval engine.',
       // docs pages share the site's card when linked
