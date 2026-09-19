@@ -221,4 +221,59 @@ const GITHUB = 'https://github.com/Laika-Dynamics-Ltd/laika-orbit'
     })
     if (new URLSearchParams(location.search).has('cancelled')) say('Checkout cancelled. Nothing was charged.')
   </script>
+  <script>
+    // The Monthly/Yearly transition: a thumb that springs across, the price that morphs through
+    // three.js particles (loaded once the card is near the screen), and small print that rises in.
+    // This listens on the toggle before the page's own handler, so it can measure the old price first.
+    type Morph = import('../scripts/price-morph.ts').PriceMorph
+    const card = document.querySelector<HTMLElement>('.ps-card')
+    const toggle = card?.querySelector<HTMLElement>('.ps-period')
+    const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches
+    let morph: Morph | null = null
+    const shown = () => [...(card?.querySelectorAll<HTMLElement>('.ps-amount b') ?? [])].find((b) => !b.hidden)
+    const rise = (el: HTMLElement) => {
+      el.classList.remove('ps-in')
+      void el.offsetWidth
+      el.classList.add('ps-in')
+    }
+    if (card && toggle) {
+      toggle.style.setProperty('--i', '1')
+      if (!reduce) {
+        const load = () =>
+          import('../scripts/price-morph.ts')
+            .then(({ createPriceMorph }) => (morph = createPriceMorph(card)))
+            .catch(() => {}) // no WebGL: the plain fade below still runs
+        new IntersectionObserver(
+          ([e], o) => {
+            if (!e.isIntersecting) return
+            o.disconnect()
+            if ('requestIdleCallback' in window) requestIdleCallback(() => load(), { timeout: 1500 })
+            else setTimeout(load, 300)
+          },
+          { rootMargin: '200px' },
+        ).observe(card)
+      }
+      toggle.addEventListener(
+        'click',
+        (e) => {
+          const btn = (e.target as HTMLElement).closest<HTMLButtonElement>('[data-period]')
+          if (!btn || btn.getAttribute('aria-selected') === 'true') return
+          toggle.style.setProperty('--i', btn.dataset.period === 'monthly' ? '0' : '1')
+          const old = shown()
+          const from = morph && old ? morph.measure(old) : null
+          // the page's own handler switches the price in this same click; act once it has
+          requestAnimationFrame(() => {
+            card.querySelectorAll<HTMLElement>('.ps-amount span[data-show]:not([hidden]), .ps-fine[data-show]:not([hidden])').forEach(rise)
+            const next = shown()
+            if (!next) return
+            if (from && morph) {
+              next.classList.add('ps-ghost')
+              morph.run(from, next, () => next.classList.remove('ps-ghost'))
+            } else rise(next)
+          })
+        },
+        true,
+      )
+    }
+  </script>
 </Page>
