@@ -138,8 +138,9 @@ const mark = { yes: '●', partial: '◐', no: '—' } as const
             a restart. The fleet board puts the ones waiting on you at the top.
           </p>
           <p class="pf-note">
-            <span>Being built</span> A work ledger for each chat (its branch, commits and uncommitted
-            files) and a merge train that checks finished work and folds it into main. Not in the app yet.
+            <span>New</span> Each chat shows its branch, commits and uncommitted files. Mark its work
+            ready and the merge train lands it on your local main once the repo's own check passes. If
+            the check goes red, the chat that broke it gets the output. Pushing stays with you.
           </p>
         </div>
         <figure class="pf-shot"><Image src={fleet} alt="The fleet board: four chats waiting on you at the top, three finished below, next to an open chat" widths={[800, 1400, 2636]} sizes="(max-width: 960px) 100vw, 60vw" /></figure>
