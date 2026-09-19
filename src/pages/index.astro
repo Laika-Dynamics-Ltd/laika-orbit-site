@@ -1,5 +1,11 @@
 ---
-import ClaudeGrid from '../components/ClaudeGrid.astro'
+import { Image } from 'astro:assets'
+import away from '../assets/product/cockpit/away.webp'
+import fleet from '../assets/product/cockpit/fleet.webp'
+import panels from '../assets/product/cockpit/panels.webp'
+import queue from '../assets/product/cockpit/queue.webp'
+import runs from '../assets/product/cockpit/runs.webp'
+import recall from '../assets/product/recall.webp'
 import HeroWorkspace from '../components/HeroWorkspace.astro'
 import KnowledgeMap from '../components/KnowledgeMap.astro'
 import Footer from '../components/Footer.astro'
@@ -98,81 +104,106 @@ const mark = { yes: '●', partial: '◐', no: '—' } as const
       </div>
     </section>
 
-    <!-- ─────────────────────────────── agents ── -->
-    <section class="section wrap agents" id="product">
-      <div class="agents-head">
+    <!-- ─────────────────────────────── product ── -->
+    <section class="section wrap product" id="product">
+      <div class="split-head">
         <div>
-          <div class="eyebrow">Agents</div>
-          <h2>Many agents. <span class="muted">One view.</span></h2>
+          <div class="eyebrow">Product</div>
+          <h2>A cockpit for a fleet of agents.</h2>
         </div>
-        <p>
-          Run Claude Code in four chats at once, each in its own repo or across a whole project
-          folder. Split them like editor groups and see at a glance which one is waiting on you.
+        <p class="muted">
+          Run many Claude Code chats at once. Orbit keeps them moving, puts what needs you first, and
+          sits beside the editor you already use.
         </p>
       </div>
-      <div class="agents-stage">
-        <div class="frame agents-frame">
-          <ClaudeGrid />
+
+      <article class="pf">
+        <div class="pf-copy">
+          <h3>Give it a goal. It runs the fleet.</h3>
+          <p>
+            A conductor chat sends each of your chats its next step. Switch to Away and it keeps them
+            going: the plainly safe steps are approved, stuck chats are brought back, and anything that
+            reaches outside your Mac waits for you. Come back to one summary card.
+          </p>
+          <a class="link" href="/docs/away-mode/">How away mode works →</a>
         </div>
+        <figure class="pf-shot"><Image src={away} alt="The Autopilot panel set to Away, with the conductor leading and the chats working beside it" widths={[800, 1400, 2502]} sizes="(max-width: 960px) 100vw, 60vw" /></figure>
+      </article>
+
+      <article class="pf pf-flip">
+        <div class="pf-copy">
+          <h3>Every chat. What each one needs.</h3>
+          <p>
+            Chats run side by side, one per task, on any of your Claude accounts, and they come back after
+            a restart. The fleet board puts the ones waiting on you at the top.
+          </p>
+          <p class="pf-note">
+            <span>Being built</span> A work ledger for each chat (its branch, commits and uncommitted
+            files) and a merge train that checks finished work and folds it into main. Not in the app yet.
+          </p>
+        </div>
+        <figure class="pf-shot"><Image src={fleet} alt="The fleet board: four chats waiting on you at the top, three finished below, next to an open chat" widths={[800, 1400, 2636]} sizes="(max-width: 960px) 100vw, 60vw" /></figure>
+      </article>
+
+      <div class="pf-pair">
+        <article class="pf-tall">
+          <div class="pf-copy">
+            <h3>Long jobs report themselves.</h3>
+            <p>Builds, test runs and batch jobs share one page, with progress and an ETA. A job that goes quiet is flagged as stalled. Before and after sit side by side.</p>
+          </div>
+          <figure class="pf-shot tall"><Image src={runs} alt="The runs page: a stalled backfill flagged at the top, a build on another machine, a gauntlet with two artefacts" widths={[400, 750]} sizes="(max-width: 960px) 100vw, 30vw" /></figure>
+        </article>
+        <article class="pf-tall">
+          <div class="pf-copy">
+            <h3>Work that waits its turn.</h3>
+            <p>Line up the next tasks. The queue survives restarts, and with autopilot on, the next item starts by itself when a chat frees up.</p>
+          </div>
+          <figure class="pf-shot tall"><Image src={queue} alt="The queue: tasks for three repos, two waiting on others to finish first" widths={[400, 830]} sizes="(max-width: 960px) 100vw, 30vw" /></figure>
+        </article>
       </div>
-    </section>
 
-    <!-- ─────────────────────────────── bento ── -->
-    <section class="section wrap">
-      <div class="bento">
-        <article class="card">
-          <div class="card-visual accounts" aria-hidden="true">
-            <div class="acct"><span class="dot" style="--c:#ff7a45"></span>Work<div class="bar"><b style="width:62%"></b></div><small>62% this week</small></div>
-            <div class="acct"><span class="dot" style="--c:#7c8cff"></span>Personal<div class="bar"><b style="width:18%"></b></div><small>18% this week</small></div>
-            <div class="acct"><span class="dot" style="--c:#4fd1a5"></span>Client<div class="bar"><b style="width:41%"></b></div><small>41% this week</small></div>
-          </div>
-          <h3>Every account, side by side</h3>
-          <p>Keep work, personal and client accounts apart, with each chat showing which one it's on and what it has used.</p>
+      <article class="pf">
+        <div class="pf-copy">
+          <h3>Heavy work goes to your other machines.</h3>
+          <p>
+            Test runs, builds and captures run on a Linux box under the desk, and the files come back
+            when they finish. No vendor cloud. Windows PCs for GPU work are in testing.
+          </p>
+          <a class="link" href="/docs/other-machines/">Set up a machine →</a>
+        </div>
+        <div class="term pf-term" role="img" aria-label="Terminal: offload lists the machines and runs a command on one">
+          <div class="term-bar"><i></i><i></i><i></i><span>zsh</span></div>
+<pre><span class="dim">$</span> node packages/app/offload.mjs machines
+<span class="hl">box1</span>   <span class="ok">online</span>   6 cores, load 5.5, mem 48%, 0 job(s)
+
+<span class="dim">$</span> node packages/app/offload.mjs run --on box1 --bring back.txt \
+    -- sh -c 'echo made-on-box1 &gt; back.txt'
+<span class="dim">offload:</span> running sh on box1
+<span class="dim">offload:</span> <span class="ok">done on box1 in 0s, exit 0</span>
+
+<span class="dim">$</span> cat back.txt
+made-on-box1</pre>
+        </div>
+      </article>
+
+      <div class="pf-grid">
+        <article class="pf-cell wide">
+          <figure class="pf-shot"><Image src={panels} alt="Panels docked in one window: apps, calendar and the cockpit beside two chats" widths={[800, 1600, 3060]} sizes="(max-width: 960px) 100vw, 66vw" /></figure>
+          <h3>Panels, not windows</h3>
+          <p>Fleet, runs, queue, calendar and your apps dock beside the chats, and the layout is yours.</p>
         </article>
-
-        <article class="card">
-          <div class="card-visual recover" aria-hidden="true">
-            <div class="ev"><span class="t">09:41</span><span class="ok">●</span>Refactor webhook retries</div>
-            <div class="ev bad"><span class="t">09:43</span><span>●</span>Claude Code exited</div>
-            <div class="ev"><span class="t">09:43</span><span class="ok">●</span>Restarted · history intact</div>
-            <div class="ev"><span class="t">09:44</span><span class="ok">●</span>Tests pass</div>
-          </div>
-          <h3>Crashes don't cost you the chat</h3>
-          <p>Chats run in a background host. If Claude Code or the app restarts, every chat comes back where it was, and duplicates are closed for you.</p>
+        <article class="pf-cell">
+          <figure class="pf-shot"><Image src={recall} alt="Recall: an answer and the file it came from, in a palette" widths={[600, 1200]} sizes="(max-width: 960px) 100vw, 33vw" /></figure>
+          <h3>Answers, not searches</h3>
+          <p>Press ⌘K and recall finds the section that answers you in about a millisecond, with no model calls.</p>
         </article>
-
-        <article class="card">
-          <div class="card-visual browser" aria-hidden="true">
-            <div class="tabs"><span class="tab on" style="--c:#ff7a45">Work · Vercel</span><span class="tab" style="--c:#7c8cff">Client · Stripe</span><span class="tab" style="--c:#4fd1a5">Personal · Mail</span></div>
-            <div class="addr"><span>🔒</span>dashboard.stripe.com/test/webhooks</div>
-            <div class="page"><i></i><i></i><i></i></div>
-          </div>
+        <article class="pf-cell">
           <h3>A real browser, every login</h3>
-          <p>Chromium tabs with a profile per account, signed in at once, side by side. Chrome extensions included.</p>
+          <p>Chromium tabs with a profile per account, signed in side by side. Chrome extensions included.</p>
         </article>
-
-        <article class="card">
-          <div class="card-visual inbox" aria-hidden="true">
-            <div class="needs">NEEDS YOU · 3 UNREAD FROM PEOPLE</div>
-            <div class="mail"><b>Sam Rivera</b><span>Launch checklist review</span><small>9:12</small></div>
-            <div class="mail"><b>Priya Shah</b><span>Invoice question</span><small>8:47</small></div>
-            <div class="cal"><span class="now"></span><b>14:00</b> Design review <small>in 25 min</small></div>
-          </div>
-          <h3>Your day, in the loop</h3>
-          <p>Inbox, calendar and routines on the rails, so the meeting in 25 minutes doesn't sneak up on you mid-refactor.</p>
-        </article>
-
-        <article class="card wide">
-          <div class="card-visual machines" aria-hidden="true">
-            <div class="node you"><b>MacBook Pro</b><small>you</small></div>
-            <svg viewBox="0 0 300 60" preserveAspectRatio="none"><path d="M0 30 C 100 30, 200 10, 300 10" /><path d="M0 30 C 100 30, 200 50, 300 50" /></svg>
-            <div class="nodes">
-              <div class="node"><b>studio-mini</b><small>2 chats · Unity build</small></div>
-              <div class="node"><b>build-box</b><small>1 chat · tests</small></div>
-            </div>
-          </div>
-          <h3>Put the heavy work on another machine</h3>
-          <p>Run chats and terminals on other machines on your network over SSH, so builds and test suites don't slow your laptop. No vendor cloud in between.</p>
+        <article class="pf-cell span2">
+          <h3>Backs off when you look away</h3>
+          <p>Hidden panels stop drawing. Idle, the app went from 41% of a CPU core to 11%, and to 5.5% while you're in another window.</p>
         </article>
       </div>
     </section>
