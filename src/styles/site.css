@@ -1026,7 +1026,7 @@ h3 {
   opacity: 0;
   transition: none;
 }
-.ps-amount span {
+.ps-amount span:not([hidden]) {
   display: inline-block;
 }
 .ps-in {
