@@ -885,6 +885,44 @@ h3 {
   font: 11.5px var(--mono);
 }
 
+/* ─────────────────────────────── pricing: orbit anywhere ── */
+.pr-anywhere {
+  margin: 18px 0 6px;
+  padding: 16px 18px;
+  border: 1px solid rgba(255, 122, 69, 0.28);
+  border-radius: 12px;
+  background: linear-gradient(180deg, rgba(255, 122, 69, 0.07), rgba(255, 122, 69, 0.02));
+}
+.pr-aw-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.pr-aw-head b {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text);
+}
+.pr-anywhere p {
+  margin: 4px 0 10px;
+  color: var(--text-2);
+  font-size: 14px;
+}
+.pr-anywhere ul {
+  margin: 0;
+  padding-left: 18px;
+  color: var(--muted);
+  font-size: 13.5px;
+  line-height: 1.7;
+}
+.pr-lock,
+.pr-addons {
+  margin: 14px 0 0;
+  color: var(--faint);
+  font-size: 13px;
+  line-height: 1.55;
+}
+
 /* ─────────────────────────────── product ── */
 .product .split-head h2 {
   max-width: 14ch;

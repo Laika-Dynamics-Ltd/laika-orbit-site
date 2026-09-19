@@ -37,7 +37,8 @@ import Page from '../../layouts/Page.astro'
       }
       if (!r.ok) return fail(`${d.error ?? 'Something went wrong'}. If you paid, email laika@laikadynamics.com and we will sort it out.`)
       $('[data-title]').textContent = 'Welcome to Orbit Pro'
-      $('[data-lede]').textContent = d.email ? `Thanks! A receipt is on its way to ${d.email}.` : 'Thanks for your purchase.'
+      const price = d.plan === 'monthly' ? 'US$15 a month' : d.plan === 'yearly' ? 'US$150 a year' : 'your founding price'
+      $('[data-lede]').textContent = `${d.email ? `Thanks! A receipt is on its way to ${d.email}.` : 'Thanks for your purchase.'} You're a founding member: ${price}, locked for as long as you stay subscribed.`
       $<HTMLInputElement>('[data-key]').value = d.key
       $('[data-box]').hidden = false
       $('[data-steps]').hidden = false

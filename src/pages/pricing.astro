@@ -1,5 +1,5 @@
 ---
-import { FREE_FEATURES, PRO, PRO_FEATURES, SYNC_HONEST, SYNC_NOTE, TERMS } from '../lib/pricing'
+import { ADDONS_NOTE, ANYWHERE, FOUNDING_NOTE, FREE_FEATURES, PRO, PRO_FEATURES, SYNC_HONEST, SYNC_NOTE, TERMS } from '../lib/pricing'
 import Page from '../layouts/Page.astro'
 
 // On-demand, so SALES_OPEN switches checkout on and off without a rebuild
@@ -8,11 +8,11 @@ const open = (import.meta.env.SALES_OPEN ?? process.env.SALES_OPEN) === '1'
 const GITHUB = 'https://github.com/Laika-Dynamics-Ltd/laika-orbit'
 ---
 
-<Page title="Pricing — Laika Orbit" description="Laika Orbit is free and MIT open source. Pro is a founding membership: the signed, notarised Mac app, automatic updates and email support.">
+<Page title="Pricing — Laika Orbit" description="Laika Orbit is free and MIT open source. Pro is a founding membership: Orbit Anywhere (coming), the signed Mac app with automatic updates, and priority support, at a price locked for as long as you stay subscribed.">
   <section class="wrap pr-head">
     <div class="eyebrow">Pricing</div>
     <h1 class="pr-title">Back Orbit early.<br /><span>Lock in your price.</span></h1>
-    <p class="pr-lede">The whole app is free and open source, and it stays that way. Pro is for people who'd rather not build it themselves.</p>
+    <p class="pr-lede">The whole app is free and open source, and it stays that way. Pro adds what only we can run for you, starting with Orbit Anywhere.</p>
   </section>
 
   <section class="wrap pr-plans" aria-label="Plans">
@@ -40,7 +40,13 @@ const GITHUB = 'https://github.com/Laika-Dynamics-Ltd/laika-orbit'
         <span class="pr-save" data-show="yearly">{PRO.yearly.saving}</span>
         <span class="pr-save dim" data-show="monthly" hidden>Yearly is {PRO.yearly.saving}</span>
       </div>
+      <div class="pr-anywhere">
+        <div class="pr-aw-head"><b>{ANYWHERE.title}</b><span class="pr-tag">{ANYWHERE.tag}</span></div>
+        <p>{ANYWHERE.line}</p>
+        <ul>{ANYWHERE.points.map((f) => <li>{f}</li>)}</ul>
+      </div>
       <ul class="pr-list">{PRO_FEATURES.map((f) => <li>{f}</li>)}</ul>
+      <p class="pr-lock">{FOUNDING_NOTE}</p>
       <div class="pr-cta">
         {open ? (
           <>
@@ -60,6 +66,7 @@ const GITHUB = 'https://github.com/Laika-Dynamics-Ltd/laika-orbit'
   <section class="wrap pr-foot" aria-label="Founding terms">
     <div class="pr-terms">
       <p class="pr-sync"><b>{SYNC_NOTE}</b> {SYNC_HONEST}</p>
+      <p class="pr-addons">{ADDONS_NOTE}</p>
       <p class="pr-fine">
         {TERMS.map((t) => <><span>{t}</span><i aria-hidden="true">·</i></>)}
         <a href="/legal/refunds/">Refund policy</a><i aria-hidden="true">·</i><a href="#questions">Questions</a>
@@ -83,8 +90,10 @@ const GITHUB = 'https://github.com/Laika-Dynamics-Ltd/laika-orbit'
   <section class="wrap faq" id="questions" data-g="faq">
     <h2>Questions</h2>
     <details><summary>Do I need a Claude account?</summary><p>Yes. Chats run Claude Code under your own Claude account, and it stays yours. Laika Orbit never provides, resells or meters Claude usage, on Free or Pro.</p></details>
-    <details><summary>What is a founding membership?</summary><p>Pro is early: today it is the signed, notarised app with automatic updates and email support answered within 2 working days. Sync is being built — we are aiming for the first half of 2027, and it lands for founding members at no extra cost. Your price stays the same for as long as you stay subscribed, and you have 30 days to ask for a refund while sync is still missing. If that is not enough yet, the app is free and open source — wait for us.</p></details>
-    <details><summary>When does sync arrive?</summary><p>Sync is not built yet. It will keep your settings, workspaces and pins in step across your Macs, end-to-end encrypted. We are aiming for the first half of 2027, and founding members get it at no extra cost.</p></details>
+    <details><summary>What is a founding membership?</summary><p>Pro is early. Today it is the signed, notarised app with automatic updates and priority support: a named reply within one NZ working day. Its headline, Orbit Anywhere, is being built, and it lands for founding members at no extra cost. Founding members keep US$15 a month or US$150 a year for as long as they stay subscribed; the standard price becomes US$20 a month once Anywhere ships. You have 30 days to ask for a refund while sync is still missing. If that is not enough yet, the app is free and open source: wait for us.</p></details>
+    <details><summary>What is Orbit Anywhere?</summary><p>Your fleet from your phone: an iPhone app that shows every chat and what it needs, lets you approve or answer from anywhere with push alerts, brings the morning briefing to your phone, and keeps your Macs in sync. It runs through a relay we host, with no ports open on your Mac. It is not built yet. Sync is aiming for the first half of 2027; we'll give dates for the rest when we have them.</p></details>
+    <details><summary>When does sync arrive?</summary><p>Sync is part of Orbit Anywhere and is not built yet. It will keep your settings, workspaces and pins in step across your Macs, end-to-end encrypted. We are aiming for the first half of 2027, and founding members get it at no extra cost.</p></details>
+    <details><summary>What about cloud GPUs and device testing?</summary><p>They're coming later as metered add-ons, charged for what you use and never folded into the flat price. Offloading to your own machines stays free.</p></details>
     <details><summary>What happens if I stop paying?</summary><p>Pro features stop at the end of your billing period, and the app carries on as the free, open-source version. Your data stays on your machine.</p></details>
     <details><summary>Can I cancel or change plans?</summary><p>Any time, from the billing portal linked in your account. Yearly plans can switch to monthly at renewal.</p></details>
     <details><summary>What currency, and do you charge tax?</summary><p>Prices are in US dollars. Where the law requires it, such as GST in New Zealand or VAT in the UK and EU, tax is calculated at checkout from your address. Business customers can add a tax ID.</p></details>
