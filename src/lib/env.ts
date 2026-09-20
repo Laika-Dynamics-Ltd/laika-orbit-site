@@ -13,7 +13,9 @@
  *   STRIPE_ALLOW_LIVE          "1" to allow an sk_live_ key (needs Joe's go-ahead)
  */
 const read = (name: string): string | undefined => {
-  const v = (import.meta.env[name] as string | undefined) ?? process.env[name]
+  // `import.meta.env` exists in the Astro/Vite build but not under plain node, where the tests
+  // drive these same handlers, so fall through to process.env instead of throwing.
+  const v = (import.meta.env?.[name] as string | undefined) ?? process.env[name]
   return v && v.trim() ? v.trim() : undefined
 }
 
