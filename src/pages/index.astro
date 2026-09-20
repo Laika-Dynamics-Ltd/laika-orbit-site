@@ -12,7 +12,7 @@ import Download from '../components/Download.astro'
 import Footer from '../components/Footer.astro'
 import Nav from '../components/Nav.astro'
 import Site from '../layouts/Site.astro'
-import { ready as downloadReady } from '../lib/release.mjs'
+import { RELEASE, ready as downloadReady } from '../lib/release.mjs'
 
 const GITHUB = 'https://github.com/Laika-Dynamics-Ltd/laika-orbit'
 
@@ -30,8 +30,8 @@ const mark = { yes: '●', partial: '◐', no: '—' } as const
 ---
 
 <Site
-  title="Laika Orbit — mission control for your AI work"
-  description="Parallel Claude Code agents, a real browser, your inbox and calendar, and a live map of everything you know, in one local window. Open source."
+  title="Laika Orbit — mission control for your AI agents"
+  description="Run many Claude Code agents at once. Laika Orbit keeps them moving, shows what needs you first, and keeps working while you are away. On your own Mac. Open source."
 >
   <Nav />
 
@@ -48,8 +48,8 @@ const mark = { yes: '●', partial: '◐', no: '—' } as const
         </a>
         <h1>Mission control<br />for your AI agents</h1>
         <p class="lede">
-          Run Claude Code agents side by side, with a real browser, your inbox and calendar, and a
-          live map of everything you know. One window, on your own Mac.<span class="lede-tail"> Open source.</span>
+          Run a fleet of Claude Code agents side by side. Orbit keeps them moving, puts what needs you
+          first, and keeps working while you are away. One window, on your own Mac.<span class="lede-tail"> Open source.</span>
         </p>
         {downloadReady ? (
           <Download secondary={{ href: GITHUB, label: 'Star on GitHub' }} />
@@ -331,11 +331,18 @@ made-on-box1</pre>
     <!-- ─────────────────────────────── final CTA ── -->
     <section class="final wrap">
       <h2>Ready for liftoff?</h2>
-      <p class="muted">Clone it, run it, and put your whole working day in one orbit.</p>
-      <div class="hero-cta center">
-        <a class="btn btn-light" href="/docs/getting-started/">Get started for free</a>
-        <a class="btn btn-ghost" href="/docs/">Read the docs</a>
-      </div>
+      <p class="muted">Download it, give it a goal, and let the fleet run.</p>
+      {downloadReady ? (
+        <div class="hero-cta center">
+          <a class="btn btn-light" href={RELEASE.url} data-download>Download for Mac</a>
+          <a class="btn btn-ghost" href="/docs/">Read the docs</a>
+        </div>
+      ) : (
+        <div class="hero-cta center">
+          <a class="btn btn-light" href="/docs/getting-started/">Get started for free</a>
+          <a class="btn btn-ghost" href="/docs/">Read the docs</a>
+        </div>
+      )}
     </section>
   </main>
 

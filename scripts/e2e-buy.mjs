@@ -14,6 +14,8 @@ await p.goto(`${BASE}/pricing/`, { waitUntil: 'networkidle' })
 await step('1-pricing')
 await p.click('[data-checkout]')
 await p.waitForURL(/checkout\.stripe\.com/, { timeout: 60000 })
+// a dev server started from a folder whose .env holds a live key serves live sessions: never type a card into one
+if (!/\/cs_test_/.test(p.url())) { console.error('not a test-mode session, stopping before any card is typed:', p.url().slice(0, 48)); process.exit(3) }
 await p.waitForLoadState('networkidle')
 await step('2-checkout')
 const fill = async (sel, v) => { const el = p.locator(sel).first(); if (await el.count()) { await el.fill(v) } }
