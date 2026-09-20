@@ -8,9 +8,10 @@
     "build": "rm -rf node_modules/.astro .astro && astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "test": "node --test test/*.test.ts",
+    "test": "node --experimental-test-module-mocks --test test/*.test.ts",
     "e2e:buy": "node scripts/e2e-buy.mjs",
     "license:keygen": "node scripts/license-keygen.mjs",
+    "license:match": "node scripts/license-key-match.mjs",
     "resend:setup": "node scripts/resend-setup.mjs"
   },
   "dependencies": {
