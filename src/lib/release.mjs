@@ -6,38 +6,40 @@
  * checksums with `shasum -a 256 -c SHA256SUMS`, the minimum macOS from the built app's
  * Info.plist — rather than copied from a build script.
  *
- * `url` IS NOT SET YET, and the download button does not render until it is. v1.0.0 was first
- * published on a private repo, where every asset returns 404 to the public; it is being moved to
- * the public repo. Putting the real url here is the single change that turns the download on, and
- * `ready` below is what the pages check, so a half-finished move cannot ship a dead button.
+ * v1.0.0 was first published on a private repo, where every asset returned 404 to the public, and
+ * has since been moved to Laika-Dynamics-Ltd/laika-orbit. The url below was fetched
+ * unauthenticated (HTTP 206) and the checksum re-read from the SHA256SUMS asset served by that
+ * public release, so this is the file the public actually gets, not the one on somebody's disk.
  *
- * When the public url arrives, re-confirm the checksum against the asset actually served from it.
- * If the file was rebuilt rather than copied across, the hash below is stale and wrong.
+ * `ready` is what the pages check. Empty the url and the whole download disappears from the site
+ * rather than turning into a dead button.
  */
 export const RELEASE = {
   version: '1.0.0',
   tag: 'v1.0.0',
   /** the public download url for the .dmg — fill this in to switch the download on */
-  url: '',
+  url: 'https://github.com/Laika-Dynamics-Ltd/laika-orbit/releases/download/v1.0.0/LaikaOrbit-1.0.0-arm64.dmg',
   /** where the release itself lives, for people who want the notes and the other assets */
-  page: '',
+  page: 'https://github.com/Laika-Dynamics-Ltd/laika-orbit/releases/tag/v1.0.0',
   file: 'LaikaOrbit-1.0.0-arm64.dmg',
   bytes: 360_499_772,
   sha256: 'c5c1fe33aafdfedf21673e32ae568b912197c7f50d3e11f3c063bfbe044ecf8b',
   /** Apple silicon only: there is no Intel build of 1.0.0 */
   arch: 'Apple silicon',
   /**
-   * FALSE for the 1.0.0 artefact as it stands, which is why the download copy no longer claims it.
-   * Checked on the artefact itself, not on the release notes, which say the opposite:
-   *   codesign -dv LaikaOrbit-1.0.0-arm64.dmg   → "code object is not signed at all"
-   *   the app inside                            → Signature=adhoc, TeamIdentifier=not set
-   *   spctl --assess --type execute             → rejected
-   *   xcrun stapler validate (dmg and app)      → no ticket stapled
-   * An ad-hoc signature is not a Developer ID signature: on someone else's Mac this is quarantined
-   * and Gatekeeper refuses it until they right-click → Open. Set this true only when codesign shows
-   * a Developer ID authority and stapler validates, and the copy will say so again by itself.
+   * True, checked on the app inside the published dmg (the one whose sha256 matches the line
+   * below — there is an older, unsigned build of the same version and filename lying around, and
+   * checking that one instead is how this briefly got recorded as false):
+   *   codesign -dv   Authority=Developer ID Application: Joe Sealey (HB8K7XP52D), flags=runtime
+   *   spctl -a -t exec -vv   accepted, source=Notarized Developer ID
+   *   xcrun stapler validate   The validate action worked!
+   * Stapled, so Gatekeeper accepts it offline and the first open is clean.
+   *
+   * The dmg container itself is not signed or stapled — only the app inside is. Gatekeeper judges
+   * the app, so this does not affect anyone opening it; worth fixing in a later build, not worth
+   * re-cutting v1.0.0 for.
    */
-  signed: false,
+  signed: true,
   minMacOS: '13',
   minMacOSName: 'Ventura',
 }
