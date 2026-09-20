@@ -12,6 +12,7 @@ export const FREE_FEATURES = [
   'A browser with a profile per account',
   'Inbox, calendar and widgets',
   'Laika Orbit recall: knowledge map, CLI, MCP server',
+  'Signed and notarised by Apple: the Mac download opens without a warning',
 ]
 
 /** Pro's headline: not built yet, so it is always shown marked as coming. */
@@ -30,8 +31,7 @@ export const ANYWHERE = {
 /** Pro today, exactly. Nothing else is claimed for it. */
 export const PRO_FEATURES = [
   'Everything in Free',
-  'Signed and notarised Mac app, with automatic updates',
-  'Priority support: a named reply within one NZ working day',
+  'Email support, answered within 2 working days',
   'Founding price, locked for as long as you stay subscribed',
 ]
 
