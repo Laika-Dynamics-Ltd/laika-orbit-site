@@ -1,6 +1,7 @@
 ---
 import { ADDONS_NOTE, ANYWHERE, FREE_FEATURES, PRO, PRO_FEATURES, SYNC_HONEST, TERMS } from '../lib/pricing'
 import Page from '../layouts/Page.astro'
+import { RELEASE, ready as downloadReady, requirement, size } from '../lib/release.mjs'
 
 // On-demand, so SALES_OPEN switches checkout on and off without a rebuild
 export const prerender = false
@@ -112,11 +113,18 @@ const GITHUB = 'https://github.com/Laika-Dynamics-Ltd/laika-orbit'
       <div>
         <div class="ps-free-tag"><b>Free</b> $0 · MIT licensed</div>
         <h2 class="ps-h2 small">The whole app, free.</h2>
-        <p>Laika Orbit is open source under the MIT licence. Nothing is paywalled: build it from source and you have every feature in the app. Pro is the hosted service on top.</p>
+        <p>Laika Orbit is open source under the MIT licence. Nothing is paywalled: download it or build it from source and you have every feature in the app. Pro is the hosted service on top.</p>
         <div class="ps-free-actions">
-          <a class="btn btn-ghost" href="/docs/getting-started/">Install from source</a>
+          {downloadReady ? (
+            <a class="btn btn-ghost" href={RELEASE.url} data-download>Download for Mac</a>
+          ) : (
+            <a class="btn btn-ghost" href="/docs/getting-started/">Install from source</a>
+          )}
           <a class="link" href={GITHUB}>View on GitHub</a>
         </div>
+        {downloadReady && (
+          <p class="ps-small">{RELEASE.version} · {size} · {requirement} · <a href="/docs/getting-started/">or install from source</a></p>
+        )}
       </div>
       <ul class="ps-free-list">{FREE_FEATURES.map((f) => <li>{f}</li>)}</ul>
     </div>

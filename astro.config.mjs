@@ -3,6 +3,23 @@ import sitemap from '@astrojs/sitemap'
 import starlight from '@astrojs/starlight'
 import vercel from '@astrojs/vercel'
 import { defineConfig } from 'astro/config'
+import { beaconScript } from './src/lib/beacon.mjs'
+
+// the docs pages count views the same way as the rest of the site (see src/lib/beacon.mjs)
+const beacon = beaconScript(process.env.PUBLIC_PULSE_ENDPOINT)
+
+/**
+ * Vercel Web Analytics on every page, docs included, from one place. The beacon has to be wired
+ * twice — once here for Starlight, once in Site.astro — because it is an inline string; this is a
+ * module, so a single injected import covers all 25 pages and there is no second place to forget.
+ * What it sends, and what it refuses to send, is src/lib/analytics.mjs.
+ */
+const vercelAnalytics = {
+  name: 'laika:vercel-analytics',
+  hooks: {
+    'astro:config:setup': ({ injectScript }) => injectScript('page', "import '/src/lib/analytics-client.mjs'"),
+  },
+}
 
 export default defineConfig({
   site: 'https://laikaorbit.com',
@@ -11,14 +28,17 @@ export default defineConfig({
   // the dev toolbar sits over the page in every capture
   devToolbar: { enabled: false },
   integrations: [
+    vercelAnalytics,
     // pages marked noindex stay out of the sitemap: the Pro account pages
     sitemap({ filter: (page) => !new URL(page).pathname.startsWith('/pro/') }),
     starlight({
       title: 'Laika Orbit',
       description:
         'Docs for Laika Orbit, mission control for your Claude Code agents, and Laika Orbit recall, its zero-model retrieval engine.',
-      // docs pages share the site's card when linked
+      // docs pages share the site's card when linked, and count views the same way as the rest of
+      // the site. One head, deliberately: two `head` keys here means the second silently wins.
       head: [
+        ...(beacon ? [{ tag: 'script', content: beacon }] : []),
         { tag: 'meta', attrs: { property: 'og:image', content: 'https://laikaorbit.com/og.png' } },
         { tag: 'meta', attrs: { property: 'og:image:width', content: '1200' } },
         { tag: 'meta', attrs: { property: 'og:image:height', content: '630' } },
