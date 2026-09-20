@@ -1,7 +1,7 @@
 ---
-import { FREE_FEATURES, PRO, PRO_FEATURES, SYNC_HONEST, SYNC_NOTE, TERMS } from '../lib/pricing'
+import { ADDONS_NOTE, ANYWHERE, FREE_FEATURES, PRO, PRO_FEATURES, SYNC_HONEST, TERMS } from '../lib/pricing'
 import Page from '../layouts/Page.astro'
-import { RELEASE, ready as downloadReady, size } from '../lib/release.mjs'
+import { RELEASE, ready as downloadReady, requirement, size } from '../lib/release.mjs'
 
 // On-demand, so SALES_OPEN switches checkout on and off without a rebuild
 export const prerender = false
@@ -9,92 +9,135 @@ const open = (import.meta.env.SALES_OPEN ?? process.env.SALES_OPEN) === '1'
 const GITHUB = 'https://github.com/Laika-Dynamics-Ltd/laika-orbit'
 ---
 
-<Page title="Pricing — Laika Orbit" description="Laika Orbit is free and MIT open source. Pro is a founding membership: the signed, notarised Mac app, automatic updates and email support.">
-  <section class="wrap pr-head">
-    <div class="eyebrow">Pricing</div>
-    <h1 class="pr-title">Back Orbit early.<br /><span>Lock in your price.</span></h1>
-    <p class="pr-lede">The whole app is free and open source, and it stays that way. Pro is for people who'd rather not build it themselves.</p>
-  </section>
-
-  <section class="wrap pr-plans" aria-label="Plans">
-    <article class="pr-col">
-      <div class="pr-name"><h2>Free</h2></div>
-      <div class="pr-price"><b>$0</b><span>forever</span></div>
-      <div class="pr-bill"><span>MIT open source on <a href={GITHUB}>GitHub</a>. Nothing paywalled.</span></div>
-      <ul class="pr-list">{FREE_FEATURES.map((f) => <li>{f}</li>)}</ul>
-      <div class="pr-cta">
-        {downloadReady ? (
-          <>
-            <a class={`btn ${open ? 'btn-ghost' : 'btn-light'} wide`} href={RELEASE.url} data-download>Download for Mac</a>
-            <p class="pr-dl-note">
-              {RELEASE.version} · {size} · <a href="/docs/getting-started/">or install from source</a>
-            </p>
-          </>
-        ) : (
-          <a class={`btn ${open ? 'btn-ghost' : 'btn-light'} wide`} href="/docs/getting-started/">Install from source</a>
-        )}
+<Page title="Pricing — Laika Orbit" description="Laika Orbit is free and MIT open source, and the Mac app is signed and notarised by Apple. Pro is a founding membership: Orbit Anywhere (coming), email support answered within 2 working days, at a price locked for as long as you stay subscribed.">
+  <!-- the founding pitch, in the builders' words, beside the price card -->
+  <section class="wrap ps-hero">
+    <div class="ps-pitch">
+      <div class="eyebrow">Founding membership</div>
+      <h1 class="pr-title">Back Orbit early.<br /><span>Lock in your price.</span></h1>
+      <div class="ps-letter">
+        <div class="ps-from">From the people who build it</div>
+        <p>Laika Orbit is open source under the MIT licence, and it stays that way. Every feature in the app is in the free version, and nothing is held back to make you pay.</p>
+        <p>Pro is the hosted service on top: what only we can run for you. Its headline is Orbit Anywhere, your fleet from your phone. It isn't built yet, so we'll be plain about it: today Pro is email support answered within two working days, and your price held where it is while the rest is built. The app itself, signed and notarised, is free.</p>
+        <p class="ps-strong">Join now and you're a founding member. Your price stays where it is for as long as you stay subscribed, and Orbit Anywhere arrives at no extra cost.</p>
       </div>
-    </article>
-
-    <article class="pr-col pr-pro">
-      <div class="pr-name"><h2>Pro</h2><span class="pr-tag">{open ? 'Founding' : 'Not on sale yet'}</span></div>
-      <div class="pr-price">
-        <b data-show="yearly">{PRO.yearly.label}</b><b data-show="monthly" hidden>{PRO.monthly.label}</b>
-        <span data-show="yearly">{PRO.currency} {PRO.yearly.per}</span><span data-show="monthly" hidden>{PRO.currency} {PRO.monthly.per}</span>
-      </div>
-      <div class="pr-bill">
-        <div class="period" role="tablist" aria-label="Billing period">
-          <button type="button" role="tab" aria-selected="false" data-period="monthly">Monthly</button>
-          <button type="button" role="tab" aria-selected="true" data-period="yearly">Yearly</button>
-        </div>
-        <span class="pr-save" data-show="yearly">{PRO.yearly.saving}</span>
-        <span class="pr-save dim" data-show="monthly" hidden>Yearly is {PRO.yearly.saving}</span>
-      </div>
-      <ul class="pr-list">{PRO_FEATURES.map((f) => <li>{f}</li>)}</ul>
-      <div class="pr-cta">
-        {open ? (
-          <>
-            <button type="button" class="btn btn-light wide" data-checkout>Get Orbit Pro</button>
-            <p class="form-note" data-note aria-live="polite"></p>
-          </>
-        ) : (
-          <>
-            <a class="btn btn-ghost wide" href="#waitlist" data-join>Join waitlist</a>
-          </>
-        )}
-      </div>
-    </article>
-
-  </section>
-
-  <section class="wrap pr-foot" aria-label="Founding terms">
-    <div class="pr-terms">
-      <p class="pr-sync"><b>{SYNC_NOTE}</b> {SYNC_HONEST}</p>
-      <p class="pr-fine">
-        {TERMS.map((t) => <><span>{t}</span><i aria-hidden="true">·</i></>)}
-        <a href="/legal/refunds/">Refund policy</a><i aria-hidden="true">·</i><a href="#questions">Questions</a>
-      </p>
     </div>
-    {!open && (
-      <div class="pr-join" id="waitlist">
-        <h3>Join the Pro waitlist</h3>
-        <form class="waitlist" data-waitlist>
-          <label class="sr-only" for="wl-email">Email</label>
-          <input id="wl-email" type="email" name="email" required placeholder="you@company.com" autocomplete="email" />
-          {/* bots fill this in; people never see it */}
-          <input class="hp" type="text" name="company" tabindex="-1" autocomplete="off" aria-hidden="true" />
-          <button type="submit" class="btn btn-ghost">Join waitlist</button>
-        </form>
-        <p class="form-note" data-note aria-live="polite">One email, when Pro opens. Nothing else.</p>
+
+    <aside class="ps-card" aria-label="Orbit Pro">
+      <div class="ps-card-top"><span class="ps-card-name">Laika Orbit Pro</span><span class="ps-pill">{open ? 'Founding' : 'Not on sale yet'}</span></div>
+      <div class="ps-card-sub">Founding member</div>
+      <div class="ps-amount">
+        <b data-show="yearly">{PRO.yearly.label}</b><b data-show="monthly" hidden>{PRO.monthly.label}</b>
+        <span data-show="yearly">{PRO.yearly.per}</span><span data-show="monthly" hidden>{PRO.monthly.per}</span>
       </div>
-    )}
+      <div class="ps-period" role="tablist" aria-label="Billing period">
+        <button type="button" role="tab" aria-selected="false" data-period="monthly">Monthly</button>
+        <button type="button" role="tab" aria-selected="true" data-period="yearly">Yearly <em>{PRO.yearly.saving}</em></button>
+      </div>
+      <p class="ps-fine" data-show="yearly">US$150 a year, the same as 10 months. Tax added at checkout.</p>
+      <p class="ps-fine" data-show="monthly" hidden>US$15 a month. Tax added at checkout.</p>
+      <ul class="ps-list">
+        {PRO_FEATURES.filter((f) => f !== 'Everything in Free').map((f) => <li>{f}</li>)}
+        <li class="ps-soon">{ANYWHERE.title}: the phone app, approvals, push, the briefing, sync. {ANYWHERE.tag}</li>
+      </ul>
+      <p class="ps-fine ps-std">The standard price becomes US$20 a month once Orbit Anywhere ships.</p>
+      <div class="ps-cta">
+        {open ? (
+          <button type="button" class="btn btn-light wide" data-checkout>Get Orbit Pro</button>
+        ) : (
+          <form class="ps-waitlist" id="waitlist" data-waitlist>
+            <label class="sr-only" for="wl-email">Email</label>
+            <input id="wl-email" type="email" name="email" required placeholder="you@company.com" autocomplete="email" />
+            {/* bots fill this in; people never see it */}
+            <input class="hp" type="text" name="company" tabindex="-1" autocomplete="off" aria-hidden="true" />
+            <button type="submit" class="btn btn-light wide">Join waitlist</button>
+          </form>
+        )}
+        <p class="form-note" data-note aria-live="polite">{open ? '' : 'One email, when founding memberships open.'}</p>
+      </div>
+    </aside>
+  </section>
+
+  <section class="wrap ps-free-strip">
+    <i aria-hidden="true"></i>
+    <span>Not paying? That's fine. Laika Orbit is MIT open source and the whole app is free; Pro is the hosted service on top.</span>
+    <a class="link" href="#free">What's in the free app</a>
+  </section>
+
+  <!-- what you get today, and what's coming -->
+  <section class="wrap ps-section">
+    <div class="eyebrow">What the membership is</div>
+    <h2 class="ps-h2">What you get today.<br /><span>And what's coming.</span></h2>
+    <div class="ps-track" aria-hidden="true"><i class="now"></i><b></b><i></i><b class="dash"></b></div>
+    <div class="ps-two">
+      <article class="ps-panel">
+        <div class="ps-kicker now">Today</div>
+        <h3>Ready the day you join</h3>
+        <ul class="ps-today">
+          <li><b>Email support</b><span>Write to us and you get an answer within two working days.</span></li>
+          <li><b>Your price, locked</b><span>US$15 a month or US$150 a year, for as long as you stay subscribed.</span></li>
+        </ul>
+      </article>
+      <article class="ps-panel">
+        <div class="ps-kicker">{ANYWHERE.tag}</div>
+        <h3>{ANYWHERE.title}</h3>
+        <p class="ps-lead">{ANYWHERE.line} Through a relay we run, with no ports open on your Mac.</p>
+        <ul class="ps-points">{ANYWHERE.points.map((f) => <li>{f}</li>)}</ul>
+        <dl class="ps-facts">
+          <div><dt>Status</dt><dd class="warn">Not built yet</dd></div>
+          <div><dt>Sync, aiming for</dt><dd>First half of 2027</dd></div>
+          <div><dt>For founding members</dt><dd>No extra cost</dd></div>
+          <div><dt>Standard price once it ships</dt><dd>US$20 a month</dd></div>
+        </dl>
+        <p class="ps-honest">{SYNC_HONEST}</p>
+      </article>
+    </div>
+    <p class="ps-later"><span>Later</span> {ADDONS_NOTE} Never in the flat price.</p>
+  </section>
+
+  <!-- our side of it -->
+  <section class="wrap ps-section">
+    <div class="eyebrow">Our side of it</div>
+    <h2 class="ps-h2">Four promises.</h2>
+    <ol class="ps-promises">
+      <li><em>01</em><h3>Your price is locked</h3><p>US$15 a month or US$150 a year stays that way for as long as you stay subscribed.</p></li>
+      <li><em>02</em><h3>30 days to change your mind</h3><p>Ask within 30 days and you get your money back. The <a class="link" href="/legal/refunds/">refund policy</a> has the details.</p></li>
+      <li><em>03</em><h3>Cancel any time</h3><p>Pro stops at the end of your billing period. The free app carries on, and your data stays on your Mac.</p></li>
+      <li><em>04</em><h3>Your Claude account stays yours</h3><p>Chats run on your own Claude account. We never provide, resell or meter model usage.</p></li>
+    </ol>
+  </section>
+
+  <!-- the free app -->
+  <section class="wrap ps-section" id="free">
+    <div class="ps-freecard">
+      <div>
+        <div class="ps-free-tag"><b>Free</b> $0 · MIT licensed</div>
+        <h2 class="ps-h2 small">The whole app, free.</h2>
+        <p>Laika Orbit is open source under the MIT licence. Nothing is paywalled: download it or build it from source and you have every feature in the app. Pro is the hosted service on top.</p>
+        <div class="ps-free-actions">
+          {downloadReady ? (
+            <a class="btn btn-ghost" href={RELEASE.url} data-download>Download for Mac</a>
+          ) : (
+            <a class="btn btn-ghost" href="/docs/getting-started/">Install from source</a>
+          )}
+          <a class="link" href={GITHUB}>View on GitHub</a>
+        </div>
+        {downloadReady && (
+          <p class="ps-small">{RELEASE.version} · {size} · {requirement} · <a href="/docs/getting-started/">or install from source</a></p>
+        )}
+      </div>
+      <ul class="ps-free-list">{FREE_FEATURES.map((f) => <li>{f}</li>)}</ul>
+    </div>
+    <p class="ps-small">{TERMS.join(' · ')}. Laika Orbit runs Claude Code and is not affiliated with Anthropic.</p>
   </section>
 
   <section class="wrap faq" id="questions" data-g="faq">
     <h2>Questions</h2>
     <details><summary>Do I need a Claude account?</summary><p>Yes. Chats run Claude Code under your own Claude account, and it stays yours. Laika Orbit never provides, resells or meters Claude usage, on Free or Pro.</p></details>
-    <details><summary>What is a founding membership?</summary><p>Pro is early: today it is the signed, notarised app with automatic updates and email support answered within 2 working days. Sync is being built — we are aiming for the first half of 2027, and it lands for founding members at no extra cost. Your price stays the same for as long as you stay subscribed, and you have 30 days to ask for a refund while sync is still missing. If that is not enough yet, the app is free and open source — wait for us.</p></details>
-    <details><summary>When does sync arrive?</summary><p>Sync is not built yet. It will keep your settings, workspaces and pins in step across your Macs, end-to-end encrypted. We are aiming for the first half of 2027, and founding members get it at no extra cost.</p></details>
+    <details><summary>What is a founding membership?</summary><p>Pro is early. Today it is email support, answered within two working days, and your price locked for as long as you stay subscribed. The app itself is free, open source, and signed and notarised by Apple, so you can run it without paying us anything. Pro's headline, Orbit Anywhere, is being built, and it lands for founding members at no extra cost. Founding members keep US$15 a month or US$150 a year for as long as they stay subscribed; the standard price becomes US$20 a month once Anywhere ships. You have 30 days to ask for a refund while sync is still missing. If that is not enough yet, the app is free and open source: wait for us.</p></details>
+    <details><summary>What is Orbit Anywhere?</summary><p>Your fleet from your phone: an iPhone app that shows every chat and what it needs, lets you approve or answer from anywhere with push alerts, brings the morning briefing to your phone, and keeps your Macs in sync. It runs through a relay we host, with no ports open on your Mac. It is not built yet. Sync is aiming for the first half of 2027; we'll give dates for the rest when we have them.</p></details>
+    <details><summary>When does sync arrive?</summary><p>Sync is part of Orbit Anywhere and is not built yet. It will keep your settings, workspaces and pins in step across your Macs, end-to-end encrypted. We are aiming for the first half of 2027, and founding members get it at no extra cost.</p></details>
+    <details><summary>What about cloud GPUs and device testing?</summary><p>They're coming later as metered add-ons, charged for what you use and never folded into the flat price. Offloading to your own machines stays free.</p></details>
     <details><summary>What happens if I stop paying?</summary><p>Pro features stop at the end of your billing period, and the app carries on as the free, open-source version. Your data stays on your machine.</p></details>
     <details><summary>Can I cancel or change plans?</summary><p>Any time, from the billing portal linked in your account. Yearly plans can switch to monthly at renewal.</p></details>
     <details><summary>What currency, and do you charge tax?</summary><p>Prices are in US dollars. Where the law requires it, such as GST in New Zealand or VAT in the UK and EU, tax is calculated at checkout from your address. Business customers can add a tax ID.</p></details>
@@ -183,5 +226,60 @@ const GITHUB = 'https://github.com/Laika-Dynamics-Ltd/laika-orbit'
       button.disabled = false
     })
     if (new URLSearchParams(location.search).has('cancelled')) say('Checkout cancelled. Nothing was charged.')
+  </script>
+  <script>
+    // The Monthly/Yearly transition: a thumb that springs across, the price that morphs through
+    // three.js particles (loaded once the card is near the screen), and small print that rises in.
+    // This listens on the toggle before the page's own handler, so it can measure the old price first.
+    type Morph = import('../scripts/price-morph.ts').PriceMorph
+    const card = document.querySelector<HTMLElement>('.ps-card')
+    const toggle = card?.querySelector<HTMLElement>('.ps-period')
+    const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches
+    let morph: Morph | null = null
+    const shown = () => [...(card?.querySelectorAll<HTMLElement>('.ps-amount b') ?? [])].find((b) => !b.hidden)
+    const rise = (el: HTMLElement) => {
+      el.classList.remove('ps-in')
+      void el.offsetWidth
+      el.classList.add('ps-in')
+    }
+    if (card && toggle) {
+      toggle.style.setProperty('--i', '1')
+      if (!reduce) {
+        const load = () =>
+          import('../scripts/price-morph.ts')
+            .then(({ createPriceMorph }) => (morph = createPriceMorph(card)))
+            .catch(() => {}) // no WebGL: the plain fade below still runs
+        new IntersectionObserver(
+          ([e], o) => {
+            if (!e.isIntersecting) return
+            o.disconnect()
+            if ('requestIdleCallback' in window) requestIdleCallback(() => load(), { timeout: 1500 })
+            else setTimeout(load, 300)
+          },
+          { rootMargin: '200px' },
+        ).observe(card)
+      }
+      toggle.addEventListener(
+        'click',
+        (e) => {
+          const btn = (e.target as HTMLElement).closest<HTMLButtonElement>('[data-period]')
+          if (!btn || btn.getAttribute('aria-selected') === 'true') return
+          toggle.style.setProperty('--i', btn.dataset.period === 'monthly' ? '0' : '1')
+          const old = shown()
+          const from = morph && old ? morph.measure(old) : null
+          // the page's own handler switches the price in this same click; act once it has
+          requestAnimationFrame(() => {
+            card.querySelectorAll<HTMLElement>('.ps-amount span[data-show]:not([hidden]), .ps-fine[data-show]:not([hidden])').forEach(rise)
+            const next = shown()
+            if (!next) return
+            if (from && morph) {
+              next.classList.add('ps-ghost')
+              morph.run(from, next, () => next.classList.remove('ps-ghost'))
+            } else rise(next)
+          })
+        },
+        true,
+      )
+    }
   </script>
 </Page>
