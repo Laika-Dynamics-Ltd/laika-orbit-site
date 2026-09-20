@@ -1,13 +1,16 @@
 import type { APIRoute } from 'astro'
 import { ConfigError, need } from '../../../lib/env'
 import { publicKeyFor, verifyLicense } from '../../../lib/license'
-import { ACTIVE, json, stripe } from '../../../lib/stripe'
+import { ACTIVE, json, recordCheckIn, stripe } from '../../../lib/stripe'
 
 export const prerender = false
 
 /**
  * Checks a licence for the app: POST { key } → { valid, status, renewsAt }. The signature proves
  * which subscription the key names; Stripe says whether that subscription still pays for Pro.
+ *
+ * A check that finds a paying subscription also records the check-in (see `recordCheckIn`), which
+ * is how a live licence is told from a dormant one. Nothing about what the app did is sent or kept.
  */
 export const POST: APIRoute = async ({ request }) => {
   let key = ''
@@ -22,8 +25,10 @@ export const POST: APIRoute = async ({ request }) => {
     const sub = await stripe().subscriptions.retrieve(payload.sub)
     if (sub.metadata?.license_id !== payload.lid) return json(200, { valid: false, reason: 'licence was replaced' })
     const item = sub.items.data[0]
+    const valid = ACTIVE.has(sub.status)
+    if (valid) await recordCheckIn(sub)
     return json(200, {
-      valid: ACTIVE.has(sub.status),
+      valid,
       status: sub.status,
       plan: payload.plan,
       cancelAtPeriodEnd: sub.cancel_at_period_end,
