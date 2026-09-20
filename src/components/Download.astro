@@ -27,10 +27,24 @@ const { secondary, compact = false } = Astro.props
       <p class="dl-meta">
         Free and open source, MIT. Version {RELEASE.version} · {size} · {requirement}.
         <br />
-        Signed and notarised, so it opens without a warning.
+        {RELEASE.signed ? (
+          'Signed and notarised, so it opens without a warning.'
+        ) : (
+          <>
+            This build is not signed yet, so macOS will block it the first time: right-click the app
+            and choose Open, then Open again. <a href="#dl-why">Why</a>
+          </>
+        )}
       </p>
-      <details class="dl-sum">
-        <summary>Checksum</summary>
+      <details class="dl-sum" id="dl-why">
+        <summary>{RELEASE.signed ? 'Checksum' : 'Checksum, and why macOS blocks it'}</summary>
+        {!RELEASE.signed && (
+          <p>
+            This build carries no Developer ID signature, so macOS cannot check that it came from
+            us and will refuse it until you open it by hand. That is exactly what the checksum
+            below is for: it is how you confirm the file you have is the file we published.
+          </p>
+        )}
         <p>Verify the file you downloaded matches the one we published:</p>
         <code>shasum -a 256 {RELEASE.file}</code>
         <code class="dl-hash">{RELEASE.sha256}</code>

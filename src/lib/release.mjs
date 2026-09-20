@@ -26,6 +26,18 @@ export const RELEASE = {
   sha256: 'c5c1fe33aafdfedf21673e32ae568b912197c7f50d3e11f3c063bfbe044ecf8b',
   /** Apple silicon only: there is no Intel build of 1.0.0 */
   arch: 'Apple silicon',
+  /**
+   * FALSE for the 1.0.0 artefact as it stands, which is why the download copy no longer claims it.
+   * Checked on the artefact itself, not on the release notes, which say the opposite:
+   *   codesign -dv LaikaOrbit-1.0.0-arm64.dmg   → "code object is not signed at all"
+   *   the app inside                            → Signature=adhoc, TeamIdentifier=not set
+   *   spctl --assess --type execute             → rejected
+   *   xcrun stapler validate (dmg and app)      → no ticket stapled
+   * An ad-hoc signature is not a Developer ID signature: on someone else's Mac this is quarantined
+   * and Gatekeeper refuses it until they right-click → Open. Set this true only when codesign shows
+   * a Developer ID authority and stapler validates, and the copy will say so again by itself.
+   */
+  signed: false,
   minMacOS: '13',
   minMacOSName: 'Ventura',
 }
