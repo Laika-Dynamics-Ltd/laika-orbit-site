@@ -8,9 +8,11 @@ import runs from '../assets/product/cockpit/runs.webp'
 import recall from '../assets/product/recall.webp'
 import HeroWorkspace from '../components/HeroWorkspace.astro'
 import KnowledgeMap from '../components/KnowledgeMap.astro'
+import Download from '../components/Download.astro'
 import Footer from '../components/Footer.astro'
 import Nav from '../components/Nav.astro'
 import Site from '../layouts/Site.astro'
+import { ready as downloadReady } from '../lib/release.mjs'
 
 const GITHUB = 'https://github.com/Laika-Dynamics-Ltd/laika-orbit'
 
@@ -49,11 +51,16 @@ const mark = { yes: '●', partial: '◐', no: '—' } as const
           Run Claude Code agents side by side, with a real browser, your inbox and calendar, and a
           live map of everything you know. One window, on your own Mac.<span class="lede-tail"> Open source.</span>
         </p>
-        <div class="hero-cta">
-          <a class="btn btn-light" href="/docs/getting-started/">Get started for free</a>
-          <a class="btn btn-ghost" href={GITHUB}>Star on GitHub</a>
-        </div>
+        {downloadReady ? (
+          <Download secondary={{ href: GITHUB, label: 'Star on GitHub' }} />
+        ) : (
+          <div class="hero-cta">
+            <a class="btn btn-light" href="/docs/getting-started/">Get started for free</a>
+            <a class="btn btn-ghost" href={GITHUB}>Star on GitHub</a>
+          </div>
+        )}
         <p class="hero-note">
+          {downloadReady && <><a href="/docs/getting-started/">Or install from source</a> · </>}
           Already in Claude Code? Add Laika Orbit recall with
           <code class="cmd"><span class="dim">$</span> npx laikaorbit mcp</code>
         </p>

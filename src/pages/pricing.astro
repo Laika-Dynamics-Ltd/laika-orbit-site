@@ -1,6 +1,7 @@
 ---
 import { FREE_FEATURES, PRO, PRO_FEATURES, SYNC_HONEST, SYNC_NOTE, TERMS } from '../lib/pricing'
 import Page from '../layouts/Page.astro'
+import { RELEASE, ready as downloadReady, size } from '../lib/release.mjs'
 
 // On-demand, so SALES_OPEN switches checkout on and off without a rebuild
 export const prerender = false
@@ -22,7 +23,16 @@ const GITHUB = 'https://github.com/Laika-Dynamics-Ltd/laika-orbit'
       <div class="pr-bill"><span>MIT open source on <a href={GITHUB}>GitHub</a>. Nothing paywalled.</span></div>
       <ul class="pr-list">{FREE_FEATURES.map((f) => <li>{f}</li>)}</ul>
       <div class="pr-cta">
-        <a class={`btn ${open ? 'btn-ghost' : 'btn-light'} wide`} href="/docs/getting-started/">Install from source</a>
+        {downloadReady ? (
+          <>
+            <a class={`btn ${open ? 'btn-ghost' : 'btn-light'} wide`} href={RELEASE.url} data-download>Download for Mac</a>
+            <p class="pr-dl-note">
+              {RELEASE.version} · {size} · <a href="/docs/getting-started/">or install from source</a>
+            </p>
+          </>
+        ) : (
+          <a class={`btn ${open ? 'btn-ghost' : 'btn-light'} wide`} href="/docs/getting-started/">Install from source</a>
+        )}
       </div>
     </article>
 

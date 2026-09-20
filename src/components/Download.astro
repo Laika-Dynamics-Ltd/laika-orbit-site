@@ -1,0 +1,49 @@
+---
+/**
+ * The download call to action. It renders only when src/lib/release.mjs has a real url; until then
+ * the page keeps the call to action it had, so a half-finished release cannot put a dead primary
+ * button on the home page.
+ *
+ * Everything shown here — version, size, requirement, checksum — comes from that one module, so
+ * the home page and the pricing page can never quietly disagree about what the current release is.
+ */
+import { RELEASE, ready, requirement, size } from '../lib/release.mjs'
+
+interface Props {
+  /** shown beside the download; the home page and the pricing page want different second buttons */
+  secondary?: { href: string; label: string }
+  compact?: boolean
+}
+const { secondary, compact = false } = Astro.props
+---
+
+{
+  ready && (
+    <>
+      <div class:list={['hero-cta', compact && 'dl-compact']}>
+        <a class="btn btn-light" href={RELEASE.url} data-download>Download for Mac</a>
+        {secondary && <a class="btn btn-ghost" href={secondary.href}>{secondary.label}</a>}
+      </div>
+      <p class="dl-meta">
+        Free and open source, MIT. Version {RELEASE.version} · {size} · {requirement}.
+        <br />
+        Signed and notarised, so it opens without a warning.
+      </p>
+      <details class="dl-sum">
+        <summary>Checksum</summary>
+        <p>Verify the file you downloaded matches the one we published:</p>
+        <code>shasum -a 256 {RELEASE.file}</code>
+        <code class="dl-hash">{RELEASE.sha256}</code>
+        {RELEASE.page && (
+          <p>
+            Release notes and the other builds are on <a href={RELEASE.page}>the release page</a>.
+          </p>
+        )}
+      </details>
+
+      {/* the click is counted by the beacon, which watches for [data-download] on every page:
+          one more against a daily count at "/download", and nothing at all when the browser has
+          asked not to be tracked. See src/lib/beacon.mjs */}
+    </>
+  )
+}

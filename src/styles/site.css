@@ -2202,3 +2202,13 @@ h3 {
   color: var(--text);
   font-weight: 540;
 }
+
+/* ───────────────────────────────────────────────────────── download ── */
+/* the release facts under the download button: quiet, but there before anyone has to ask */
+.dl-meta { margin: 14px 0 0; color: var(--dim); font-size: 14px; line-height: 1.6 }
+.dl-sum { margin: 10px 0 0; font-size: 13px; color: var(--dim) }
+.dl-sum summary { cursor: pointer; width: fit-content }
+.dl-sum p { margin: 8px 0 6px }
+.dl-sum code { display: block; padding: 6px 9px; border-radius: 6px; background: rgba(255, 255, 255, 0.05); font-size: 12px; overflow-wrap: anywhere }
+.dl-sum .dl-hash { margin-top: 4px; color: var(--tx) }
+.pr-dl-note { margin: 8px 0 0; font-size: 13px; color: var(--dim); text-align: center }
