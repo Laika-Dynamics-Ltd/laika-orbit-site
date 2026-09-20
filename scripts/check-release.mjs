@@ -55,7 +55,10 @@ const get = async (url, init) => {
 
 // The public API, with no token: a release that is still a draft, or in a private repo, answers 404
 // here exactly as it does for a visitor — which is the answer that matters.
-const api = `https://api.github.com/repos/${owner}/${repo}/releases/tags/${tag}`
+// The API root is overridable so the checks below can be exercised against a stub: the only way to
+// see the BEHIND branch fire while this repo has exactly one published release.
+const API = process.env.GITHUB_API ?? 'https://api.github.com'
+const api = `${API}/repos/${owner}/${repo}/releases/tags/${tag}`
 const r = await get(api, { headers: { accept: 'application/vnd.github+json', 'user-agent': 'laika-orbit-site check:release' } })
 if (r.status === 403 || r.status === 429) cannotCheck('the GitHub API rate-limited this check; try again shortly')
 if (r.status === 404) mismatch(`GitHub serves no public release ${tag} for ${owner}/${repo} — a draft or private release is a 404 to everyone else too`)
@@ -85,5 +88,21 @@ if (published !== RELEASE.sha256)
 // repo or a renamed asset. 206 is the honest answer; 200 means the range was ignored, which is fine.
 const head = await get(RELEASE.url, { headers: { range: 'bytes=0-0', 'user-agent': 'laika-orbit-site check:release' } })
 if (!head.ok) mismatch(`the download url answers ${head.status} to an unauthenticated request, so the public cannot fetch it`)
+
+// Everything above proves the site describes a real artefact correctly. It does not prove it
+// describes the *current* one, and that is the likelier mistake: publish a new version, forget this
+// file, and every check still passes because the old release is still served. /releases/latest is
+// what GitHub calls newest, ignoring drafts and prereleases.
+const l = await get(`${API}/repos/${owner}/${repo}/releases/latest`, {
+  headers: { accept: 'application/vnd.github+json', 'user-agent': 'laika-orbit-site check:release' },
+})
+if (l.ok) {
+  const latest = (await l.json()).tag_name
+  if (latest && latest !== RELEASE.tag)
+    done(
+      `release: BEHIND — the site offers ${RELEASE.tag}, correctly, but ${latest} is the latest public release. Point src/lib/release.mjs at ${latest} before deploying, or say here why ${RELEASE.tag} is deliberate.`,
+      1,
+    )
+}
 
 done(`release: MATCH — ${owner}/${repo} ${tag} serves ${RELEASE.file}, ${asset.size} bytes, sha256 ${published.slice(0, 12)}…, and the url resolves publicly`, 0)
