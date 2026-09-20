@@ -5,24 +5,34 @@ import Page from '../../layouts/Page.astro'
 <Page title="Privacy policy — Laika Orbit" description="Privacy policy for Laika Orbit and laikaorbit.com.">
   <article class="wrap narrow legal">
     <h1 class="page-title">Privacy policy</h1>
-    <p class="muted">Laika Dynamics Limited, New Zealand · Last updated: 19 September 2026</p>
+    <p class="muted">Laika Dynamics Limited, New Zealand · Last updated: 20 September 2026</p>
 
     <h2>The short version</h2>
-    <p>Laika Orbit runs on your machine. Your files, chats, inbox and calendar stay there. We collect only what we need to sell and support Orbit Pro.</p>
+    <p>Laika Orbit runs on your machine. Your files, chats, inbox and calendar stay there. We collect what we need to sell and support Orbit Pro, and — only if you turn it on — anonymous counts of coarse actions in the app.</p>
 
     <h2>What we collect</h2>
     <ul>
       <li><b>Purchases:</b> your name, email, billing address and tax ID (if given), processed by Stripe. Stripe handles card details; we never see them.</li>
       <li><b>Waitlist:</b> your email address, stored with our email provider.</li>
-      <li><b>Licence checks:</b> when the app checks your licence it sends the licence key to laikaorbit.com. We use it only to confirm your subscription.</li>
-      <li><b>Website analytics:</b> aggregate, cookie-free page statistics (page views, referrers, country). No personal profiles.</li>
+      <li><b>Licence checks:</b> when the app checks your licence it sends the licence key to laikaorbit.com. We use it to confirm your subscription, and we record that the check happened — see below.</li>
+      <li><b>Website analytics:</b> aggregate, cookie-free page statistics (page views, referrers, country). No personal profiles, and no IP addresses kept.</li>
+      <li><b>Anonymous usage reporting in the app:</b> off unless you turn it on. See below.</li>
     </ul>
 
+    <h2>Licence checks</h2>
+    <p>When Laika Orbit Pro checks that your licence is valid — at most once an hour while the app is open — we record two things on your own subscription record at Stripe: the time of your first activation, and the date (not the time) of the most recent check. We use them to tell an active licence from a dormant one and to count how many people are actually using Pro. They are stored with Stripe, who already hold your subscription, and nowhere else. We do not record what you did in the app, and this check sends us nothing about your work.</p>
+
+    <h2>Anonymous usage reporting</h2>
+    <p>The app can send anonymous counts of coarse actions — that recall ran, that a chat opened — once a day. It is <b>off unless you say yes</b> to the card that asks, and declining creates nothing at all. If you do turn it on, what reaches us is a random id made at that moment and tied to no account, the app version, your platform, and daily counts of a fixed list of actions. Never anything finer than a day, and no location of any kind: not your country, not your region, not an IP address we keep.</p>
+    <p>Turning it off again destroys the id and anything still waiting to be sent.</p>
+
     <h2>What we don't collect</h2>
-    <p>The app has no telemetry. We don't receive your code, files, prompts, chats, emails or calendar.</p>
+    <p>We never receive your code, files, file names, paths, search queries, recall results, chat text, prompts, emails, calendar entries, browser URLs, account names or hostnames — from the app there is no code path that could send them. That is true whether or not you turn on usage reporting: what it sends is counts of actions, never their content.</p>
 
     <h2>Who we share it with</h2>
-    <p>Stripe (payments and tax), Vercel (website hosting), and our email provider (waitlist and receipts). We don't sell personal information.</p>
+    <p>Stripe (payments, tax and the licence-check dates above), Vercel (website hosting), our email provider (waitlist and receipts), and Cloudflare.</p>
+    <p><b>Cloudflare</b> runs the endpoint that counts page views and, if you have turned on anonymous usage reporting in the app, receives those counts. Cloudflare sees the network request — and so your IP address, as any web server does; we never store it. What we keep is a daily count per page, referring site and country, with no identifier attached.</p>
+    <p>We don't sell personal information.</p>
 
     <h2>Your rights</h2>
     <p>You can ask to see, correct or delete your personal information under the New Zealand Privacy Act 2020, and the GDPR or UK GDPR where they apply. Email <a class="link" href="mailto:laika@laikadynamics.com">laika@laikadynamics.com</a>. We keep billing records for as long as tax law requires.</p>
