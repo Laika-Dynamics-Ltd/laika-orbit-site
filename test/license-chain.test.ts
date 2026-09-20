@@ -18,6 +18,7 @@
  * Run: npm test
  */
 import assert from 'node:assert/strict'
+import { spawnSync } from 'node:child_process'
 import { generateKeyPairSync } from 'node:crypto'
 import { existsSync, mkdtempSync, readFileSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
@@ -388,4 +389,69 @@ test('the public key shipped in the app is a usable Ed25519 key', () => {
   } finally {
     process.env.ORBIT_LICENSE_PUBKEY = saved
   }
+})
+
+// ------------------------------------------------ the check that guards a deploy
+
+/** Runs scripts/check-license-keys.mjs in its own process, with only the env it is given. */
+function runKeyCheck(env: Record<string, string | undefined>) {
+  const r = spawnSync(process.execPath, [resolve(HERE, '../scripts/check-license-keys.mjs')], {
+    encoding: 'utf8',
+    env: { PATH: process.env.PATH, ORBIT_APP_LICENSE: APP_LICENSE, ...env } as NodeJS.ProcessEnv,
+  })
+  return { code: r.status, out: `${r.stdout}${r.stderr}`.trim() }
+}
+
+/** The base64 bodies of a PEM: the part that would actually be a leak. */
+const bodyOf = (pem: string) =>
+  pem
+    .split('\n')
+    .filter((l) => l && !l.includes('-----'))
+    .join('')
+
+test('the key check says MATCH for a real pair, and only that', () => {
+  const r = runKeyCheck({ LICENSE_SIGNING_KEY: PRIVATE_PEM, ORBIT_LICENSE_PUBKEY: PUBLIC_PEM })
+  assert.equal(r.code, 0)
+  assert.equal(r.out, 'license keys: MATCH')
+})
+
+test('the key check says MISMATCH for a mixed pair, names the two sources, and exits non-zero', () => {
+  const r = runKeyCheck({
+    LICENSE_SIGNING_KEY: PRIVATE_PEM,
+    ORBIT_LICENSE_PUBKEY: OTHER.publicKey.export({ type: 'spki', format: 'pem' }).toString(),
+  })
+  assert.notEqual(r.code, 0, 'a deploy step must be able to refuse on this')
+  assert.equal(r.code, 1)
+  assert.match(r.out, /^license keys: MISMATCH/)
+  assert.match(r.out, /LICENSE_SIGNING_KEY/)
+  assert.match(r.out, /ORBIT_LICENSE_PUBKEY/)
+})
+
+test('the key check prints no key material, in any outcome', () => {
+  const priv = bodyOf(PRIVATE_PEM)
+  const pub = bodyOf(PUBLIC_PEM)
+  const runs = [
+    runKeyCheck({ LICENSE_SIGNING_KEY: PRIVATE_PEM, ORBIT_LICENSE_PUBKEY: PUBLIC_PEM }),
+    runKeyCheck({ LICENSE_SIGNING_KEY: PRIVATE_PEM, ORBIT_LICENSE_PUBKEY: OTHER.publicKey.export({ type: 'spki', format: 'pem' }).toString() }),
+    runKeyCheck({ LICENSE_SIGNING_KEY: 'not-a-key', ORBIT_LICENSE_PUBKEY: PUBLIC_PEM }),
+  ]
+  for (const r of runs) {
+    assert.ok(r.out.length > 0)
+    for (const secret of [priv, pub]) {
+      // no whole key, and no run of it long enough to be one: not a value, not a prefix
+      for (let i = 0; i + 12 <= secret.length; i += 4) assert.ok(!r.out.includes(secret.slice(i, i + 12)), 'the check leaked key material')
+    }
+    // and no length, which would narrow a key down on its own. As a whole number: the word
+    // "base64" in an error message is not a leak of a 64-character key.
+    for (const n of [priv.length, pub.length]) assert.doesNotMatch(r.out, new RegExp(`\\b${n}\\b`), 'the check leaked a key length')
+  }
+})
+
+test('the key check refuses to guess when it cannot check', () => {
+  assert.equal(runKeyCheck({ LICENSE_SIGNING_KEY: undefined, ORBIT_LICENSE_PUBKEY: PUBLIC_PEM }).code, 2)
+  assert.match(runKeyCheck({ LICENSE_SIGNING_KEY: undefined }).out, /CANNOT CHECK/)
+  // a signing key that is not a key at all is a failure to check, not a mismatch
+  assert.equal(runKeyCheck({ LICENSE_SIGNING_KEY: 'not-a-key', ORBIT_LICENSE_PUBKEY: PUBLIC_PEM }).code, 2)
+  // base64 of the PEM is how it is stored in an env var, and must still match
+  assert.equal(runKeyCheck({ LICENSE_SIGNING_KEY: Buffer.from(PRIVATE_PEM).toString('base64'), ORBIT_LICENSE_PUBKEY: PUBLIC_PEM }).code, 0)
 })
