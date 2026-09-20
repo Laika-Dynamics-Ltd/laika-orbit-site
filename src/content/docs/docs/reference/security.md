@@ -10,8 +10,17 @@ description: What stays on your machine, what leaves it, and how the app protect
   (`LAIKA_BRIEFS=0` turns that off).
 - **Inbox and calendar** are fetched from Google with the credentials you configure.
 - **Laika Orbit recall** makes no network calls. Indexing and recall are local.
+- **Anonymous usage counts** are sent only if you turn them on. The app ships with reporting off; a
+  card asks once, and declining creates nothing. If you say yes, what leaves is a random install id
+  made at that moment, the app version, your platform, and daily counts of a fixed list of coarse
+  actions (that recall ran, that a chat opened). Never a file name, path, query, prompt, URL, IP
+  address — or where you are. Turning it off destroys the id and the queue.
+- **Licence checks** (Orbit Pro only) send your licence key to laikaorbit.com at most once an hour
+  while the app is open. The date of the check is recorded against your own Stripe subscription;
+  nothing about what you did is sent.
 
-Nothing is sent to Laika Dynamics. There's no telemetry.
+Nothing else is sent to Laika Dynamics. The full detail is in the
+[privacy policy](https://laikaorbit.com/legal/privacy).
 
 ## How the app protects itself
 
