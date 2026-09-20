@@ -12,6 +12,7 @@
     "e2e:buy": "node scripts/e2e-buy.mjs",
     "license:keygen": "node scripts/license-keygen.mjs",
     "check:license-keys": "node scripts/check-license-keys.mjs",
+    "check:license-checkin": "node --experimental-test-module-mocks --test test/license-checkin-live.test.ts",
     "resend:setup": "node scripts/resend-setup.mjs"
   },
   "dependencies": {
