@@ -23,13 +23,6 @@ const vercelAnalytics = {
 
 export default defineConfig({
   site: 'https://laikaorbit.com',
-  // addresses people type or link to by guess; each used to be a 404
-  redirects: {
-    '/download': '/', // the hero holds the button, the requirements and the checksum
-    '/changelog': 'https://github.com/Laika-Dynamics-Ltd/laika-orbit/releases',
-    '/support': '/docs/',
-    '/contact': 'https://github.com/Laika-Dynamics-Ltd/laika-orbit/issues',
-  },
   // pages stay static; the checkout, webhook and licence routes run as Vercel functions
   adapter: vercel(),
   // the dev toolbar sits over the page in every capture
