@@ -2,6 +2,7 @@
 import '@fontsource-variable/inter'
 import '@fontsource-variable/jetbrains-mono'
 import '../styles/site.css'
+import { beaconScript } from '../lib/beacon.mjs'
 
 interface Props {
   title: string
@@ -10,6 +11,7 @@ interface Props {
 }
 const { title, description, noindex = false } = Astro.props
 const canonical = new URL(Astro.url.pathname, Astro.site)
+const beacon = beaconScript(import.meta.env.PUBLIC_PULSE_ENDPOINT)
 ---
 
 <!doctype html>
@@ -46,6 +48,7 @@ const canonical = new URL(Astro.url.pathname, Astro.site)
         url: 'https://laikaorbit.com',
       })}
     />
+    {beacon && <script is:inline set:html={beacon} />}
   </head>
   <body>
     <slot />
