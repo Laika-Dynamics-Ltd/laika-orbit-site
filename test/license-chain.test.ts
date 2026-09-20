@@ -455,3 +455,85 @@ test('the key check refuses to guess when it cannot check', () => {
   // base64 of the PEM is how it is stored in an env var, and must still match
   assert.equal(runKeyCheck({ LICENSE_SIGNING_KEY: Buffer.from(PRIVATE_PEM).toString('base64'), ORBIT_LICENSE_PUBKEY: PUBLIC_PEM }).code, 0)
 })
+
+// ------------------------------------------------------- the check-in it records
+
+/** The verify route, called the way the app calls it. */
+async function postVerify(key: string) {
+  const res = await verifyPost({
+    request: new Request('https://site.test/api/license/verify', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ key }) }),
+  } as never)
+  return (await (res as Response).json()) as { valid: boolean; reason?: string }
+}
+
+test('a licence check records that it happened, once a day and no finer', async () => {
+  subscription = freshSubscription()
+  const { key } = await licenseFor(SUB_ID)
+  const today = new Date().toISOString().slice(0, 10)
+  updateCalls = []
+
+  // the first check writes both fields
+  assert.equal((await postVerify(key)).valid, true)
+  assert.equal(updateCalls.length, 1)
+  assert.equal(subscription.metadata.last_check_day, today)
+  assert.match(subscription.metadata.activated_at, /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/)
+  const activated = subscription.metadata.activated_at
+
+  // the app checks in hourly; the rest of today writes nothing, so no history accumulates
+  for (let i = 0; i < 5; i++) assert.equal((await postVerify(key)).valid, true)
+  assert.equal(updateCalls.length, 1, 'an hourly check must not write once an hour')
+
+  // tomorrow's first check moves the day on, and never re-dates the activation
+  subscription.metadata.last_check_day = '2026-09-19'
+  assert.equal((await postVerify(key)).valid, true)
+  assert.equal(updateCalls.length, 2)
+  assert.equal(subscription.metadata.last_check_day, today)
+  assert.equal(subscription.metadata.activated_at, activated, 'the first activation time was overwritten')
+
+  // what is kept is two fields and a day, not a time and not an identifier
+  assert.deepEqual(Object.keys(subscription.metadata).sort(), ['activated_at', 'last_check_day', 'license_id'])
+  const written = updateCalls.map((c) => (c.params as { metadata: Record<string, string> }).metadata)
+  for (const m of written) {
+    assert.deepEqual(Object.keys(m).sort(), ['activated_at', 'last_check_day'])
+    assert.equal(m.last_check_day.length, 10, 'a check-in day must not carry a time')
+    assert.ok(!JSON.stringify(m).includes(CUS_ID), 'the check-in wrote a customer identifier')
+  }
+})
+
+test('nothing is recorded for a licence that is not paying, or not genuine', async () => {
+  subscription = freshSubscription('canceled')
+  const { key } = await licenseFor(SUB_ID)
+  updateCalls = []
+
+  const cancelled = await postVerify(key)
+  assert.equal(cancelled.valid, false)
+  assert.equal(updateCalls.length, 0, 'a cancelled subscription must not be marked as checking in')
+  assert.equal(subscription.metadata.last_check_day, undefined)
+
+  subscription = freshSubscription()
+  await licenseFor(SUB_ID)
+  updateCalls = []
+  const [prefix, body, sig] = key.split('.')
+  assert.equal((await postVerify(`${prefix}.${body}.${sig[0] === 'A' ? 'B' : 'A'}${sig.slice(1)}`)).valid, false)
+  assert.equal((await postVerify('not a key')).valid, false)
+  assert.equal(updateCalls.length, 0, 'an unsigned key must not be able to touch a subscription')
+})
+
+test('a failed check-in write still lets a paid licence work', async () => {
+  subscription = freshSubscription()
+  const { key } = await licenseFor(SUB_ID)
+  updateCalls = []
+  const broken = new Error('service unavailable')
+  broken.name = 'StripeConnectionError'
+  const real = (await import('../src/lib/stripe.ts')) as unknown as { stripe: () => { subscriptions: { update: unknown } } }
+  const subs = real.stripe().subscriptions
+  const saved = subs.update
+  subs.update = async () => {
+    throw broken
+  }
+  try {
+    assert.equal((await postVerify(key)).valid, true, 'a metadata write must never decide whether Pro works')
+  } finally {
+    subs.update = saved
+  }
+})
