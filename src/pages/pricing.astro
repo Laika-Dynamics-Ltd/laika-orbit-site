@@ -116,7 +116,7 @@ const GITHUB = 'https://github.com/Laika-Dynamics-Ltd/laika-orbit'
         <p>Laika Orbit is open source under the MIT licence. Nothing is paywalled: download it or build it from source and you have every feature in the app. Pro is the hosted service on top.</p>
         <div class="ps-free-actions">
           {downloadReady ? (
-            <a class="btn btn-ghost" href={RELEASE.url} data-download>Download for Mac</a>
+            <a class="btn btn-ghost" href={RELEASE.url} data-download={RELEASE.file}>Download for Mac</a>
           ) : (
             <a class="btn btn-ghost" href="/docs/getting-started/">Install from source</a>
           )}

@@ -21,7 +21,7 @@ const { secondary, compact = false } = Astro.props
   ready && (
     <>
       <div class:list={['hero-cta', compact && 'dl-compact']}>
-        <a class="btn btn-light" href={RELEASE.url} data-download>Download for Mac</a>
+        <a class="btn btn-light" href={RELEASE.url} data-download={RELEASE.file}>Download for Mac</a>
         {secondary && <a class="btn btn-ghost" href={secondary.href}>{secondary.label}</a>}
       </div>
       <p class="dl-meta">
@@ -55,9 +55,12 @@ const { secondary, compact = false } = Astro.props
         )}
       </details>
 
-      {/* the click is counted by the beacon, which watches for [data-download] on every page:
-          one more against a daily count at "/download", and nothing at all when the browser has
-          asked not to be tracked. See src/lib/beacon.mjs */}
+      {/* two things watch for [data-download] on every page, so no page has to wire up counting:
+          the beacon adds one to a daily count at "/download" (src/lib/beacon.mjs), and
+          src/lib/analytics-client.mjs sends a `download` event to Vercel Web Analytics carrying
+          the asset name in this attribute and nothing else. Both are silent when the browser has
+          asked not to be tracked. Neither is the real download count — GitHub has that, and
+          `npm run check:downloads` reads it. */}
     </>
   )
 }
