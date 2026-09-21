@@ -1,0 +1,7 @@
+# esbuild (pulled in by astro/vite) places its platform binary in a postinstall, and pnpm
+# refuses to run a dependency's build scripts unless it is approved here. Without this,
+# `pnpm install --frozen-lockfile` fails with ERR_PNPM_IGNORED_BUILDS on a fresh clone.
+# pnpm 12 reads allowBuilds from this file; pnpm 10 reads pnpm.onlyBuiltDependencies in
+# package.json, so both are set and either version installs cleanly.
+allowBuilds:
+  esbuild: true
