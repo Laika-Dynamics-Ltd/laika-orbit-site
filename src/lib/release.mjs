@@ -7,24 +7,25 @@
  * Info.plist — rather than copied from a build script.
  *
  * v1.0.0 was first published on a private repo, where every asset returned 404 to the public, and
- * has since been moved to Laika-Dynamics-Ltd/laika-orbit. The url below was fetched
- * unauthenticated (HTTP 206) and the checksum re-read from the SHA256SUMS asset served by that
- * public release, so this is the file the public actually gets, not the one on somebody's disk.
+ * has since been moved to Laika-Dynamics-Ltd/laika-orbit. v1.0.1 (21 Sep 2026) was checked with
+ * `pnpm release:verify v1.0.1` in laika-orbit on 22 Sep, which fetches the published bytes, hashes
+ * them, mounts the DMG and asserts the app inside is Developer ID signed, hardened, notarised and
+ * stapled — a local file with the release's name hashed differently, so nothing here comes from disk.
  *
  * `ready` is what the pages check. Empty the url and the whole download disappears from the site
  * rather than turning into a dead button.
  */
 export const RELEASE = {
-  version: '1.0.0',
-  tag: 'v1.0.0',
+  version: '1.0.1',
+  tag: 'v1.0.1',
   /** the public download url for the .dmg — fill this in to switch the download on */
-  url: 'https://github.com/Laika-Dynamics-Ltd/laika-orbit/releases/download/v1.0.0/LaikaOrbit-1.0.0-arm64.dmg',
+  url: 'https://github.com/Laika-Dynamics-Ltd/laika-orbit/releases/download/v1.0.1/LaikaOrbit-1.0.1-arm64.dmg',
   /** where the release itself lives, for people who want the notes and the other assets */
-  page: 'https://github.com/Laika-Dynamics-Ltd/laika-orbit/releases/tag/v1.0.0',
-  file: 'LaikaOrbit-1.0.0-arm64.dmg',
-  bytes: 360_499_772,
-  sha256: 'c5c1fe33aafdfedf21673e32ae568b912197c7f50d3e11f3c063bfbe044ecf8b',
-  /** Apple silicon only: there is no Intel build of 1.0.0 */
+  page: 'https://github.com/Laika-Dynamics-Ltd/laika-orbit/releases/tag/v1.0.1',
+  file: 'LaikaOrbit-1.0.1-arm64.dmg',
+  bytes: 365_987_406,
+  sha256: '7f3623f4cabd0025ef558064fe57cf056346fb7bec147968001e26695b4b25cb',
+  /** Apple silicon only: there is no Intel build of 1.0.1 */
   arch: 'Apple silicon',
   /**
    * True, checked on the app inside the published dmg (the one whose sha256 matches the line
@@ -37,7 +38,7 @@ export const RELEASE = {
    *
    * The dmg container itself is not signed or stapled — only the app inside is. Gatekeeper judges
    * the app, so this does not affect anyone opening it; worth fixing in a later build, not worth
-   * re-cutting v1.0.0 for.
+   * re-cutting for; still true of 1.0.1.
    */
   signed: true,
   minMacOS: '13',
