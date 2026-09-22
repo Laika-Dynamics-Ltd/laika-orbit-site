@@ -2761,3 +2761,73 @@ h3 {
 .dl-sum code { display: block; padding: 6px 9px; border-radius: 6px; background: rgba(255, 255, 255, 0.05); font-size: 12px; overflow-wrap: anywhere }
 .dl-sum .dl-hash { margin-top: 4px; color: var(--tx) }
 .pr-dl-note { margin: 8px 0 0; font-size: 13px; color: var(--dim); text-align: center }
+
+/* ─────────────────────────────── screenshot lightbox ── */
+.pf-zoom {
+  display: block;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: inherit;
+  cursor: zoom-in;
+  border-radius: var(--radius);
+}
+.pf-zoom:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 4px;
+}
+.lb {
+  max-width: none;
+  max-height: none;
+  width: 100vw;
+  height: 100dvh;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--text);
+  display: none;
+  place-items: center;
+}
+.lb[open] {
+  display: grid;
+}
+.lb::backdrop {
+  background: rgba(4, 5, 6, 0.86);
+  backdrop-filter: blur(6px);
+}
+.lb img {
+  display: block;
+  max-width: min(96vw, 1600px);
+  max-height: 92dvh;
+  width: auto;
+  height: auto;
+  border-radius: var(--radius);
+  border: 1px solid var(--line-2);
+  box-shadow: 0 40px 100px -40px rgba(0, 0, 0, 0.9);
+  cursor: default;
+}
+.lb-close {
+  position: fixed;
+  top: 18px;
+  right: 22px;
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--line-2);
+  border-radius: 999px;
+  background: var(--bg-2);
+  color: var(--text);
+  font-size: 26px;
+  line-height: 1;
+  cursor: pointer;
+}
+.lb-close:hover,
+.lb-close:focus-visible {
+  border-color: var(--accent);
+  color: var(--accent);
+  outline: none;
+}
