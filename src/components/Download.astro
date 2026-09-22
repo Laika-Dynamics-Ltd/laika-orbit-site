@@ -21,7 +21,7 @@ const { secondary, compact = false } = Astro.props
   ready && (
     <>
       <div class:list={['hero-cta', compact && 'dl-compact']}>
-        <a class="btn btn-light" href={RELEASE.url} data-download={RELEASE.file}>Download for Mac</a>
+        <a class="btn btn-light" href={`/download/${RELEASE.file}`} data-download={RELEASE.file}>Download for Mac</a>
         {secondary && <a class="btn btn-ghost" href={secondary.href}>{secondary.label}</a>}
       </div>
       <p class="dl-meta">
@@ -55,12 +55,12 @@ const { secondary, compact = false } = Astro.props
         )}
       </details>
 
-      {/* two things watch for [data-download] on every page, so no page has to wire up counting:
-          the beacon adds one to a daily count at "/download" (src/lib/beacon.mjs), and
-          src/lib/analytics-client.mjs sends a `download` event to Vercel Web Analytics carrying
-          the asset name in this attribute and nothing else. Both are silent when the browser has
-          asked not to be tracked. Neither is the real download count — GitHub has that, and
-          `npm run check:downloads` reads it. */}
+      {/* The button goes through /download/<file>, which counts one "download started" at the pulse
+          worker on the server and then redirects to GitHub (src/lib/download-hit.mjs): the count the
+          Users panel reads, silent only for a visitor who asked not to be tracked. On top of that,
+          src/lib/analytics-client.mjs watches [data-download] on every page and sends a `download`
+          event to Vercel Web Analytics carrying the asset name in this attribute and nothing else.
+          Neither is the real download count — GitHub has that, and `npm run check:downloads` reads it. */}
     </>
   )
 }

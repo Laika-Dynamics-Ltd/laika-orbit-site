@@ -9,9 +9,10 @@
  * its edge, the beacon in the page), so their totals will be close but never identical.
  *
  * It also sends one custom event, `download`, when someone presses a download button: the click
- * the site can see, as against the file GitHub actually served, which only
- * `npm run check:downloads` can tell us. The two are meant to differ — the gap is people who
- * pressed and never finished — so neither is corrected against the other.
+ * the site can see. The download itself is counted on the server, when /download/<file> hands
+ * out the redirect (src/lib/download-hit.mjs), and the file GitHub actually served only
+ * `npm run check:downloads` can tell us. The three are meant to differ — the gaps are people who
+ * pressed and never finished — so none is corrected against another.
  *
  * The event carries the asset's filename and nothing else. No url, no referrer, nothing about the
  * person; downloadProps() in analytics.mjs is what enforces that.
