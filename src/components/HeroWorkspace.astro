@@ -956,15 +956,16 @@ const stars = [0, 90, 180, 270].map((a) => pt(40, a + 45))
   .c-s {
     stroke: var(--acc);
     stroke-width: 0.8;
-    transform: rotate(102deg);
+    --s0: 102deg;
+    transform: rotate(var(--s0));
     animation: hw-sec 60s steps(60) infinite;
   }
   @keyframes hw-sec {
     from {
-      transform: rotate(102deg);
+      transform: rotate(var(--s0));
     }
     to {
-      transform: rotate(462deg);
+      transform: rotate(calc(var(--s0) + 360deg));
     }
   }
   .cal-d {
@@ -2184,3 +2185,47 @@ const stars = [0, 90, 180, 270].map((a) => pt(40, a + 45))
     }
   }
 </style>
+
+<script>
+  // The calendar block shows the visitor's own time and zone. The server-rendered text stays as
+  // the no-JS fallback; this only rewrites it once the page is up, then again at every minute.
+  const now = document.querySelector<HTMLElement>('.cal-now')
+  if (now) {
+    const d = now.querySelector<HTMLElement>('.cal-d')
+    const t = now.querySelector<HTMLElement>('.cal-t')
+    const z = now.querySelector<HTMLElement>('.cal-z')
+    const hand = (c: string) => now.querySelector<SVGElement>(c)
+    const isoWeek = (x: Date) => {
+      const u = new Date(Date.UTC(x.getFullYear(), x.getMonth(), x.getDate()))
+      u.setUTCDate(u.getUTCDate() + 4 - (u.getUTCDay() || 7))
+      const y0 = new Date(Date.UTC(u.getUTCFullYear(), 0, 1))
+      return Math.ceil(((u.getTime() - y0.getTime()) / 864e5 + 1) / 7)
+    }
+    const dayFmt = new Intl.DateTimeFormat(undefined, { weekday: 'long', day: 'numeric', month: 'short' })
+    const zoneFmt = new Intl.DateTimeFormat(undefined, { timeZoneName: 'short' })
+    const city = (Intl.DateTimeFormat().resolvedOptions().timeZone || '').split('/').pop()?.replace(/_/g, ' ').toUpperCase() ?? ''
+    const two = (n: number) => String(n).padStart(2, '0')
+    const paint = () => {
+      const x = new Date()
+      const h = x.getHours(), m = x.getMinutes(), s = x.getSeconds()
+      if (d) d.innerHTML = `<b>Wk${isoWeek(x)}</b> · ${dayFmt.format(x)}`
+      if (t) t.innerHTML = `${two(h)}<span class="colon">:</span>${two(m)}`
+      if (z) {
+        const abbr = zoneFmt.formatToParts(x).find((p) => p.type === 'timeZoneName')?.value ?? ''
+        z.textContent = [abbr, city].filter(Boolean).join(' · ')
+      }
+      hand('.c-h')?.style.setProperty('transform', `rotate(${(h % 12) * 30 + m * 0.5}deg)`)
+      hand('.c-m')?.style.setProperty('transform', `rotate(${m * 6 + s * 0.1}deg)`)
+      const sec = hand('.c-s')
+      if (sec) {
+        // restart the sweep from the real second: the keyframes read --s0 for their start angle
+        sec.style.animation = 'none'
+        void sec.getBoundingClientRect()
+        sec.style.setProperty('--s0', `${s * 6}deg`)
+        sec.style.animation = ''
+      }
+    }
+    paint()
+    setTimeout(() => { paint(); setInterval(paint, 60_000) }, (60 - new Date().getSeconds()) * 1000)
+  }
+</script>
