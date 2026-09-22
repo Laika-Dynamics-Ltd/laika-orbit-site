@@ -7,26 +7,26 @@
  * Info.plist — rather than copied from a build script.
  *
  * v1.0.0 was first published on a private repo, where every asset returned 404 to the public, and
- * has since been moved to Laika-Dynamics-Ltd/laika-orbit. v1.0.1 (21 Sep 2026) was checked with
- * `pnpm release:verify v1.0.1` in laika-orbit on 22 Sep, which fetches the published bytes, hashes
- * them, mounts the DMG and asserts the app inside is Developer ID signed, hardened, notarised and
- * stapled — a local file with the release's name hashed differently, so nothing here comes from disk.
+ * has since been moved to Laika-Dynamics-Ltd/laika-orbit. Each release is checked with
+ * `pnpm release:verify v<x.y.z>` in laika-orbit, which fetches the published bytes, hashes them,
+ * mounts the DMG and asserts the app inside is Developer ID signed, hardened, notarised and
+ * stapled — a local file with a release's name once hashed differently, so nothing here comes from disk.
  *
  * `ready` is what the pages check. Empty the url and the whole download disappears from the site
  * rather than turning into a dead button.
  */
 export const RELEASE = {
-  version: '1.0.1',
-  tag: 'v1.0.1',
+  version: '1.0.2',
+  tag: 'v1.0.2',
   /** the public download url for the .dmg — fill this in to switch the download on */
-  url: 'https://github.com/Laika-Dynamics-Ltd/laika-orbit/releases/download/v1.0.1/LaikaOrbit-1.0.1-arm64.dmg',
+  url: 'https://github.com/Laika-Dynamics-Ltd/laika-orbit/releases/download/v1.0.2/LaikaOrbit-1.0.2-universal.dmg',
   /** where the release itself lives, for people who want the notes and the other assets */
-  page: 'https://github.com/Laika-Dynamics-Ltd/laika-orbit/releases/tag/v1.0.1',
-  file: 'LaikaOrbit-1.0.1-arm64.dmg',
-  bytes: 365_987_406,
-  sha256: '7f3623f4cabd0025ef558064fe57cf056346fb7bec147968001e26695b4b25cb',
-  /** Apple silicon only: there is no Intel build of 1.0.1 */
-  arch: 'Apple silicon',
+  page: 'https://github.com/Laika-Dynamics-Ltd/laika-orbit/releases/tag/v1.0.2',
+  file: 'LaikaOrbit-1.0.2-universal.dmg',
+  bytes: 652_997_069,
+  sha256: '9a1449ed159234801d162713f3f9ce312f7c59c652857e44b5b6c7a3a8ccefff',
+  /** one universal build: Apple silicon, and Intel, which has never been tested (no Intel Mac here) */
+  arch: 'Apple silicon and Intel',
   /**
    * True, checked on the app inside the published dmg (the one whose sha256 matches the line
    * below — there is an older, unsigned build of the same version and filename lying around, and
@@ -36,9 +36,8 @@ export const RELEASE = {
    *   xcrun stapler validate   The validate action worked!
    * Stapled, so Gatekeeper accepts it offline and the first open is clean.
    *
-   * The dmg container itself is not signed or stapled — only the app inside is. Gatekeeper judges
-   * the app, so this does not affect anyone opening it; worth fixing in a later build, not worth
-   * re-cutting for; still true of 1.0.1.
+   * From 1.0.2 the dmg container is signed, notarised and stapled as well as the app inside it
+   * (package-mac.mjs); 1.0.0 and 1.0.1 only had the app done.
    */
   signed: true,
   minMacOS: '13',
