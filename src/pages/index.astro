@@ -134,7 +134,7 @@ const mark = { yes: '●', partial: '◐', no: '—' } as const
           </p>
           <a class="link" href="/docs/away-mode/">How away mode works →</a>
         </div>
-        <figure class="pf-shot"><Image src={away} alt="The Autopilot panel set to Away, with the conductor leading and the chats working beside it" widths={[800, 1400, 2502]} sizes="(max-width: 960px) 100vw, 60vw" /></figure>
+        <button class="pf-zoom" type="button"><figure class="pf-shot"><Image src={away} alt="The Autopilot panel set to Away, with the conductor leading and the chats working beside it" widths={[800, 1400, 2502]} sizes="(max-width: 960px) 100vw, 60vw" /></figure></button>
       </article>
 
       <article class="pf pf-flip">
@@ -150,7 +150,7 @@ const mark = { yes: '●', partial: '◐', no: '—' } as const
             the check goes red, the chat that broke it gets the output. Pushing stays with you.
           </p>
         </div>
-        <figure class="pf-shot"><Image src={fleet} alt="The fleet board: three chats waiting on you at the top, the rest grouped below, next to the conductor and an open chat" widths={[800, 1400, 2636]} sizes="(max-width: 960px) 100vw, 60vw" /></figure>
+        <button class="pf-zoom" type="button"><figure class="pf-shot"><Image src={fleet} alt="The fleet board: three chats waiting on you at the top, the rest grouped below, next to the conductor and an open chat" widths={[800, 1400, 2636]} sizes="(max-width: 960px) 100vw, 60vw" /></figure></button>
       </article>
 
       <div class="pf-pair">
@@ -159,14 +159,14 @@ const mark = { yes: '●', partial: '◐', no: '—' } as const
             <h3>Long jobs report themselves.</h3>
             <p>Builds, test runs and batch jobs share one page, with progress and an ETA. A job that goes quiet is flagged as stalled. Before and after sit side by side.</p>
           </div>
-          <figure class="pf-shot tall"><Image src={runs} alt="The runs panel: a backfill that went quiet flagged at the top, a gauntlet with two artefacts, an iOS build on another machine, two finished today" widths={[400, 750]} sizes="(max-width: 960px) 100vw, 30vw" /></figure>
+          <button class="pf-zoom" type="button"><figure class="pf-shot tall"><Image src={runs} alt="The runs panel: a backfill that went quiet flagged at the top, a gauntlet with two artefacts, an iOS build on another machine, two finished today" widths={[400, 750]} sizes="(max-width: 960px) 100vw, 30vw" /></figure></button>
         </article>
         <article class="pf-tall">
           <div class="pf-copy">
             <h3>Work that waits its turn.</h3>
             <p>Line up the next tasks. The queue survives restarts, and with autopilot on, the next item starts by itself when a chat frees up.</p>
           </div>
-          <figure class="pf-shot tall"><Image src={queue} alt="The queue: six tasks for three repos, one running, two waiting on others to finish first" widths={[400, 830]} sizes="(max-width: 960px) 100vw, 30vw" /></figure>
+          <button class="pf-zoom" type="button"><figure class="pf-shot tall"><Image src={queue} alt="The queue: six tasks for three repos, one running, two waiting on others to finish first" widths={[400, 830]} sizes="(max-width: 960px) 100vw, 30vw" /></figure></button>
         </article>
       </div>
 
@@ -196,12 +196,12 @@ made-on-box1</pre>
 
       <div class="pf-grid">
         <article class="pf-cell wide">
-          <figure class="pf-shot"><Image src={panels} alt="Panels docked in one window: apps, calendar and the cockpit beside two chats" widths={[800, 1600, 3060]} sizes="(max-width: 960px) 100vw, 66vw" /></figure>
+          <button class="pf-zoom" type="button"><figure class="pf-shot"><Image src={panels} alt="Panels docked in one window: apps, calendar and the cockpit beside two chats" widths={[800, 1600, 3060]} sizes="(max-width: 960px) 100vw, 66vw" /></figure></button>
           <h3>Panels, not windows</h3>
           <p>Fleet, runs, queue, calendar and your apps dock beside the chats, and the layout is yours.</p>
         </article>
         <article class="pf-cell">
-          <figure class="pf-shot"><Image src={recall} alt="Recall: an answer and the file it came from, in a palette" widths={[600, 1200]} sizes="(max-width: 960px) 100vw, 33vw" /></figure>
+          <button class="pf-zoom" type="button"><figure class="pf-shot"><Image src={recall} alt="Recall: an answer and the file it came from, in a palette" widths={[600, 1200]} sizes="(max-width: 960px) 100vw, 33vw" /></figure></button>
           <h3>Answers, not searches</h3>
           <p>Press ⌘K and recall finds the section that answers you in about a millisecond, with no model calls.</p>
         </article>
@@ -347,6 +347,51 @@ made-on-box1</pre>
   </main>
 
   <Footer />
+
+  <!-- The screenshot lightbox: one dialog for every .pf-shot, filled on click with the largest
+       candidate of the image's own srcset, so no asset is added for it. -->
+  <dialog class="lb" aria-label="Screenshot, enlarged">
+    <button class="lb-close" type="button" aria-label="Close">&times;</button>
+    <img alt="" />
+  </dialog>
+
+  <script>
+    const lb = document.querySelector<HTMLDialogElement>('dialog.lb')
+    if (lb && typeof lb.showModal === 'function') {
+      const big = lb.querySelector('img')!
+      let opener: HTMLElement | null = null
+      // the widest `w` candidate Astro emitted for this image; the plain src when there is none
+      const largest = (img: HTMLImageElement) => {
+        let best = img.currentSrc || img.src
+        let w = 0
+        for (const c of img.srcset.split(',')) {
+          const [url, size] = c.trim().split(/\s+/)
+          const n = parseInt(size ?? '', 10)
+          if (url && n > w) (w = n), (best = url)
+        }
+        return best
+      }
+      for (const b of document.querySelectorAll<HTMLButtonElement>('.pf-zoom')) {
+        b.addEventListener('click', () => {
+          const img = b.querySelector('img')
+          if (!img) return
+          opener = b
+          big.src = largest(img)
+          big.alt = img.alt
+          lb.showModal()
+        })
+      }
+      const close = () => lb.open && lb.close()
+      lb.querySelector('.lb-close')!.addEventListener('click', close)
+      // a click on the backdrop lands on the dialog itself, never on the image or the button
+      lb.addEventListener('click', (e) => e.target === lb && close())
+      lb.addEventListener('close', () => {
+        big.removeAttribute('src')
+        opener?.focus()
+        opener = null
+      })
+    }
+  </script>
 
   <script>
     // Load three.js only when the hero can use it; the poster covers everyone else.
