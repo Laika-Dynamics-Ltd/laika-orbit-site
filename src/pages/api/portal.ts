@@ -1,6 +1,7 @@
 import type { APIRoute } from 'astro'
 import { ConfigError, need, optional } from '../../lib/env'
 import { publicKeyFor, verifyLicense } from '../../lib/license'
+import { callerIp, LIMITS, overLimit, WINDOW } from '../../lib/rate-limit'
 import { json, stripe } from '../../lib/stripe'
 
 export const prerender = false
@@ -14,7 +15,10 @@ export const prerender = false
 const ORBIT_PORTAL_CONFIGURATION = 'bpc_1UHZz3GmHNUR8QoX6x2GEjFc'
 
 /** Stripe's customer portal (card, invoices, cancel, switch plan) for the holder of a licence key. */
-export const POST: APIRoute = async ({ request, url }) => {
+export const POST: APIRoute = async ({ request, url, clientAddress }) => {
+  if (overLimit('portal', callerIp(request, clientAddress), LIMITS.portal, WINDOW)) {
+    return json(429, { error: 'Too many requests from here. Try again in a few minutes.' })
+  }
   let key = ''
   try {
     key = String((await request.json()).key ?? '')

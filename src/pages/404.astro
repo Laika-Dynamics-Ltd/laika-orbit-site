@@ -1,0 +1,16 @@
+---
+import Page from '../layouts/Page.astro'
+import { ready } from '../lib/release.mjs'
+---
+
+<Page title="Page not found — Laika Orbit" description="That page isn't here." noindex={true}>
+  <article class="wrap narrow legal">
+    <h1 class="page-title">That page isn't here</h1>
+    <p class="muted">The address may have changed, or the link may have been wrong.</p>
+    <p>
+      Try the <a class="link" href="/">home page</a>, the <a class="link" href="/docs/">docs</a> or
+      <a class="link" href="/pricing/">pricing</a>.{ready && <> The Mac download is on the <a class="link" href="/">home page</a>.</>}
+    </p>
+    <p>If something on this site sent you here, tell us: <a class="link" href="mailto:laika@laikadynamics.com">laika@laikadynamics.com</a>.</p>
+  </article>
+</Page>

@@ -1,11 +1,15 @@
 import type { APIRoute } from 'astro'
 import { automaticTax, ConfigError, need, salesOpen } from '../../lib/env'
+import { callerIp, LIMITS, overLimit, WINDOW } from '../../lib/rate-limit'
 import { json, stripe } from '../../lib/stripe'
 
 export const prerender = false
 
 /** Starts Stripe Checkout for Orbit Pro. Body: { plan: "monthly" | "yearly" }. */
-export const POST: APIRoute = async ({ request, url }) => {
+export const POST: APIRoute = async ({ request, url, clientAddress }) => {
+  if (overLimit('checkout', callerIp(request, clientAddress), LIMITS.checkout, WINDOW)) {
+    return json(429, { error: 'Too many requests from here. Try again in a few minutes.' })
+  }
   if (!salesOpen()) return json(403, { error: 'Orbit Pro is not on sale yet. Join the waitlist instead.' })
   let plan: string
   try {

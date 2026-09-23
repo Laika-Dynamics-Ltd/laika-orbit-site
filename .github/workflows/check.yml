@@ -1,0 +1,24 @@
+# What runs before a push becomes a deployment. Vercel builds whatever lands on main, so this is the
+# only gate between a bad commit and production: the typecheck the repo could not previously run, and
+# the tests that cover the licence chain and the download counter.
+name: check
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm typecheck
+      # no Stripe key in CI on purpose: the live check-in test skips itself, the rest are offline
+      - run: pnpm test

@@ -14,6 +14,7 @@ const beacon = beaconScript(process.env.PUBLIC_PULSE_ENDPOINT)
  * module, so a single injected import covers all 25 pages and there is no second place to forget.
  * What it sends, and what it refuses to send, is src/lib/analytics.mjs.
  */
+/** @type {import('astro').AstroIntegration} */
 const vercelAnalytics = {
   name: 'laika:vercel-analytics',
   hooks: {
@@ -33,18 +34,21 @@ export default defineConfig({
     sitemap({ filter: (page) => !new URL(page).pathname.startsWith('/pro/') }),
     starlight({
       title: 'Laika Orbit',
+      // one 404 for the whole site, the site's own (src/pages/404.astro); Starlight ships a second
+      // one at the same address, and two static routes on /404 is a hard error in a later Astro
+      disable404Route: true,
       description:
         'Docs for Laika Orbit, mission control for your Claude Code agents, and Laika Orbit recall, its zero-model retrieval engine.',
       // docs pages share the site's card when linked, and count views the same way as the rest of
       // the site. One head, deliberately: two `head` keys here means the second silently wins.
-      head: [
+      head: /** @type {import('@astrojs/starlight/types').StarlightUserConfig['head']} */ ([
         ...(beacon ? [{ tag: 'script', content: beacon }] : []),
         { tag: 'meta', attrs: { property: 'og:image', content: 'https://laikaorbit.com/og.png' } },
         { tag: 'meta', attrs: { property: 'og:image:width', content: '1200' } },
         { tag: 'meta', attrs: { property: 'og:image:height', content: '630' } },
         { tag: 'meta', attrs: { name: 'twitter:image', content: 'https://laikaorbit.com/og.png' } },
         { tag: 'link', attrs: { rel: 'apple-touch-icon', href: '/apple-touch-icon.png' } },
-      ],
+      ]),
       social: [
         { icon: 'github', label: 'GitHub', href: 'https://github.com/Laika-Dynamics-Ltd/laika-orbit' },
       ],
