@@ -1,6 +1,7 @@
 import type { APIRoute } from 'astro'
 import { ConfigError, need } from '../../../lib/env'
 import { publicKeyFor, verifyLicense } from '../../../lib/license'
+import { callerIp, LIMITS, overLimit, WINDOW } from '../../../lib/rate-limit'
 import { ACTIVE, json, recordCheckIn, stripe } from '../../../lib/stripe'
 
 export const prerender = false
@@ -12,7 +13,10 @@ export const prerender = false
  * A check that finds a paying subscription also records the check-in (see `recordCheckIn`), which
  * is how a live licence is told from a dormant one. Nothing about what the app did is sent or kept.
  */
-export const POST: APIRoute = async ({ request }) => {
+export const POST: APIRoute = async ({ request, clientAddress }) => {
+  if (overLimit('verify', callerIp(request, clientAddress), LIMITS.verify, WINDOW)) {
+    return json(429, { error: 'Too many requests from here. Try again in a few minutes.' })
+  }
   let key = ''
   try {
     key = String((await request.json()).key ?? '')
