@@ -16,6 +16,7 @@ import Page from '../../layouts/Page.astro'
       <li><b>Waitlist:</b> your email address, stored with our email provider.</li>
       <li><b>Licence checks:</b> when the app checks your licence it sends the licence key to laikaorbit.com. We use it to confirm your subscription, and we record that the check happened — see below.</li>
       <li><b>Website analytics:</b> aggregate, cookie-free page statistics (page views, downloads started, referrers, country). No personal profiles, and no IP addresses kept.</li>
+      <li><b>Abuse prevention:</b> when you use checkout, the billing portal or a licence check, we count how many times that has been asked for from your network in the last few minutes, so nobody can hammer those endpoints. What is stored is a one-way hash of your IP address, salted with a secret only our server holds, which cannot be turned back into an address; it carries no name, email or account, and it is deleted once the few minutes are up.</li>
       <li><b>Anonymous usage reporting in the app:</b> off unless you turn it on. See below.</li>
     </ul>
 
@@ -31,7 +32,7 @@ import Page from '../../layouts/Page.astro'
 
     <h2>Who we share it with</h2>
     <p>Stripe (payments, tax and the licence-check dates above), Vercel (website hosting), our email provider (waitlist and receipts), and Cloudflare.</p>
-    <p><b>Cloudflare</b> runs the endpoint that counts page views and, if you have turned on anonymous usage reporting in the app, receives those counts. Cloudflare sees the network request — and so your IP address, as any web server does; we never store it. What we keep is a daily count per page, referring site and country, with no identifier attached.</p>
+    <p><b>Cloudflare</b> runs the endpoint that counts page views and, if you have turned on anonymous usage reporting in the app, receives those counts. Cloudflare sees the network request — and so your IP address, as any web server does; we never store it. What we keep is a daily count per page, referring site and country, with no identifier attached. The same endpoint holds the abuse-prevention counts described above, which reach it already hashed: your address is never sent there.</p>
     <p>We don't sell personal information.</p>
 
     <h2>Your rights</h2>
