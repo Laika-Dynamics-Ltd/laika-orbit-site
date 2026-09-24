@@ -37,6 +37,49 @@ curl -s https://laikaorbit.com/ | grep -o 'https://[a-z0-9.-]*workers\.dev' | he
 #                             PUBLIC_PULSE_ENDPOINT is already set in Vercel (the beacon uses it)
 ```
 
+## The worker half, in one block
+
+Three commands do the worker side: the shared secret, the table, the deploy. Each is followed by the
+thing that tells you it worked, so nothing here has to be taken on trust. Paste it a step at a time.
+The sections after this one are the same three commands with the reasoning, plus the site half.
+
+```bash
+cd ~/dev/'Laika Local Tools'/laika-orbit/tools/pulse-ingest
+npx wrangler whoami              # ✔ the Laika Dynamics account — the one that owns laika-pulse
+
+# ── 1. the shared secret ──────────────────────────────────────────────────────────────────────
+# One random string, generated straight into your Keychain, never into a file. The worker knows it
+# as PULSE_LIMIT_TOKEN; the site's Vercel project holds the same string as RATE_LIMIT_TOKEN, which
+# is where the site side reads it from (step 6). Skip the first command if it is already there.
+security add-generic-password -U -s 'laika-orbit secret' -a orbit-pulse-limit-token \
+  -l 'laika-orbit secret: orbit-pulse-limit-token' \
+  -w "$(python3 -c 'import secrets; print(secrets.token_urlsafe(32))')"
+
+security find-generic-password -s 'laika-orbit secret' -a orbit-pulse-limit-token -w \
+  | tr -d '\n' | npx wrangler secret put PULSE_LIMIT_TOKEN
+#   ✨ Success! Uploaded secret PULSE_LIMIT_TOKEN
+npx wrangler secret list         # ✔ PULSE_LIMIT_TOKEN listed beside PULSE_READ_TOKEN (names only)
+
+# ── 2. the table the counter lives in ─────────────────────────────────────────────────────────
+# schema.sql is every table in the database, all CREATE TABLE IF NOT EXISTS, so this adds
+# rate_limit and leaves the live page-view and install data untouched.
+npx wrangler d1 execute laika-pulse --remote --file=schema.sql --yes
+npx wrangler d1 execute laika-pulse --remote --yes --command "SELECT count(*) AS n FROM rate_limit"
+#   ✔ n = 0 — a "no such table: rate_limit" here means the schema did not apply
+
+# ── 3. the deploy ─────────────────────────────────────────────────────────────────────────────
+# wrangler deploy, not deploy.sh: that script is the first-time installer and would try to create
+# the database and rotate the read token.
+npx wrangler deploy
+#   ✔ prints https://laika-pulse.laikadynamics.workers.dev
+curl -s -X POST -d '{}' https://laika-pulse.laikadynamics.workers.dev/v1/limit
+#   ✔ {"error":"unauthorized"} — it answered {"error":"not found"} before the deploy, so this one
+#     line is the proof the new code is actually the code now running
+```
+
+Then the counting itself, end of step 5: four calls with the token, watching `n` climb to `over: true`.
+And step 8 for the check that matters — whether the *site* is asking.
+
 ## 1. Let both code changes land on main first
 
 Nothing here deploys code by hand. Two branches carry this work, both marked `Ready: yes`, and the
@@ -214,8 +257,57 @@ npx wrangler d1 execute laika-pulse --remote --yes \
 ```
 
 `n = 3` under a single `verify:` bucket is the proof: one row, counted three times, from a caller the
-worker knows only as a hash. **No rows at all** means the site is still failing open — go to the table
-below. More than one `verify:` bucket for the same caller means the salt is not stable.
+worker knows only as a hash. It is worth being precise about why this is the check and a 429 is not.
+
+A shared limiter and one that has silently fallen back to the per-instance count are identical from
+outside. Both answer 200. Both answer at the same speed. Neither logs anything: `overLimitShared`
+returns `false` on a missing endpoint, a missing token, a non-200, and on its own 600ms timeout, and
+`false` means *not over the limit*, so the request simply proceeds. There is no error to find, and you
+cannot tell them apart by hammering the endpoint either — the local count still produces a 429 on its
+own once one instance is hot enough, so a 429 proves nothing about the shared half.
+
+The row is the only observable that differs. Three requests, one row, `n = 3`:
+
+- **no rows at all** → the site is not reaching the worker: `RATE_LIMIT_TOKEN` or
+  `PUBLIC_PULSE_ENDPOINT` missing in Vercel, or added without the redeploy in step 7
+- **`n` short of 3, or rows appearing only sometimes** → the worker is answering slower than the
+  600ms budget, so some calls time out and fall back. `npx wrangler tail` while you repeat the loop
+- **more than one `verify:` bucket for the same caller** → `RATE_LIMIT_SALT` is not stable, and every
+  count is restarting at one
+
+Repeat the loop from a second network (phone hotspot) if you want the buckets-per-caller behaviour
+confirmed as well: a different address must produce a second bucket, not add to the first.
+
+## Two things that must stay true
+
+If this is ever rewritten, moved to another store, or extended, these two are the ones to preserve.
+Both are cheap to keep and quiet to break.
+
+**The worker never sees an address.** The site hashes the caller's IP — SHA-256, salted with
+`RATE_LIMIT_SALT`, a secret the site alone holds — and sends only the hex. The worker stores that
+opaque string as `bucket` and could not reverse it if it wanted to. This is what keeps
+laikaorbit.com's privacy page true when it says no IP address is kept, so the hashing has to stay on
+the site's side of the wire. A future version that posts the address and hashes it in the worker
+would pass every test in this document and quietly make that page a lie.
+
+**The cron's two jobs share one promise.** In `worker.js`'s `scheduled`, the release sample and the
+pruning of lapsed windows are awaited inside a single `ctx.waitUntil`. Two `waitUntil` calls is the
+obvious way to write it and it is wrong: a caller that keeps only the last promise it is handed — the
+repo's own tests do — stops waiting on the first, which is the release sample, the half that matters.
+The pruning is the cheap half and must not displace it.
+
+## The layers above this one
+
+This limiter is the floor, not the defence. The two attacks worth naming have stronger, cheaper
+answers that are configuration rather than code:
+
+- **card testing** on the checkout route → Stripe Radar rules, in the Stripe dashboard
+- **licence-key brute force** on `/api/license/verify` → Vercel firewall rules, in the project's
+  Firewall tab
+
+Both act before a request costs us anything, and neither needs a deploy to change. The shared counter
+sits beneath them: it is what stops an ordinary flood from one address, and what makes the ceiling a
+real number instead of a number times however many instances are warm.
 
 ## When it does not work
 
