@@ -11,6 +11,8 @@
  *   SALES_OPEN                 "1" to take payments; otherwise Pro buttons join the waitlist
  *   RESEND_API_KEY, RESEND_AUDIENCE_ID   waitlist storage (optional)
  *   STRIPE_ALLOW_LIVE          "1" to allow an sk_live_ key (needs Joe's go-ahead)
+ *   RATE_LIMIT_TOKEN           the pulse worker's PULSE_LIMIT_TOKEN; unset = per-instance limits only
+ *   RATE_LIMIT_SALT            stable salt for the IP hash sent to the worker (falls back to the token)
  */
 const read = (name: string): string | undefined => {
   // `import.meta.env` exists in the Astro/Vite build but not under plain node, where the tests
