@@ -1,13 +1,13 @@
 import type { APIRoute } from 'astro'
 import { ConfigError } from '../../../lib/env'
-import { callerIp, LIMITS, overLimit, WINDOW } from '../../../lib/rate-limit'
+import { callerIp, LIMITS, overLimitShared, WINDOW } from '../../../lib/rate-limit'
 import { json, licenseFor, stripe } from '../../../lib/stripe'
 
 export const prerender = false
 
 /** The licence key for a finished checkout: GET /api/license?session_id=cs_… (the success page). */
 export const GET: APIRoute = async ({ request, url, clientAddress }) => {
-  if (overLimit('license', callerIp(request, clientAddress), LIMITS.license, WINDOW)) {
+  if (await overLimitShared('license', callerIp(request, clientAddress), LIMITS.license, WINDOW)) {
     return json(429, { error: 'Too many requests from here. Try again in a few minutes.' })
   }
   const sessionId = url.searchParams.get('session_id') ?? ''

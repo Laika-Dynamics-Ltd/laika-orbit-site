@@ -1,7 +1,7 @@
 import type { APIRoute } from 'astro'
 import { ConfigError, need } from '../../../lib/env'
 import { publicKeyFor, verifyLicense } from '../../../lib/license'
-import { callerIp, LIMITS, overLimit, WINDOW } from '../../../lib/rate-limit'
+import { callerIp, LIMITS, overLimitShared, WINDOW } from '../../../lib/rate-limit'
 import { ACTIVE, json, recordCheckIn, stripe } from '../../../lib/stripe'
 
 export const prerender = false
@@ -14,7 +14,7 @@ export const prerender = false
  * is how a live licence is told from a dormant one. Nothing about what the app did is sent or kept.
  */
 export const POST: APIRoute = async ({ request, clientAddress }) => {
-  if (overLimit('verify', callerIp(request, clientAddress), LIMITS.verify, WINDOW)) {
+  if (await overLimitShared('verify', callerIp(request, clientAddress), LIMITS.verify, WINDOW)) {
     return json(429, { error: 'Too many requests from here. Try again in a few minutes.' })
   }
   let key = ''

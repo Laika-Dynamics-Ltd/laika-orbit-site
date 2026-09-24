@@ -1,12 +1,21 @@
 /**
- * A per-IP burst limit for the public write endpoints, in one place.
+ * A per-IP burst limit for the public endpoints, in one place.
  *
- * Honest about what it is: an in-memory counter inside one serverless instance. Vercel runs several,
- * so the real ceiling is the limit times however many instances are warm — it stops a script hammering
- * one endpoint, it is not a shield against a distributed flood. That is Vercel's own firewall's job.
- * The point here is narrower: keep a loop from turning our Stripe API quota, or a licence-key guessing
- * run, into a bill or an outage. A shared store (KV) would be the next step if that ever matters.
+ * Two counters, deliberately. `overLimit` is in memory and per serverless instance, which means the
+ * real ceiling it can enforce alone is the limit times however many instances happen to be warm —
+ * close to no limit at all on a payments route. `overLimitShared` adds the counter that all of them
+ * share: one row in the pulse worker's D1, upserted per call (POST /v1/limit, tools/pulse-ingest in
+ * the app repo). The worker was chosen over Vercel KV or Upstash because it is already ours: no new
+ * dependency, no new bill.
+ *
+ * The local count still runs first and can answer on its own, so an obvious flood costs no round
+ * trip. The shared one is the authority for everything that gets past it.
+ *
+ * It fails OPEN. If the worker is slow, down or unconfigured, the request proceeds on the local
+ * count alone. Blocking a paying customer's checkout because a counter is unreachable would be the
+ * worse failure, and a distributed flood is Vercel's firewall's job either way.
  */
+import { optional } from './env'
 type Bucket = { n: number; first: number }
 
 const buckets = new Map<string, Map<string, Bucket>>()
@@ -50,4 +59,39 @@ export const LIMITS = {
   license: 20,
   verify: 120,
   waitlist: 5,
+}
+
+/** SHA-256 hex, via Web Crypto so this works the same in the Vercel function and under plain node. */
+async function sha256Hex(input: string): Promise<string> {
+  const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(input))
+  return Array.from(new Uint8Array(digest), (b) => b.toString(16).padStart(2, '0')).join('')
+}
+
+/**
+ * The same question as `overLimit`, asked of the counter every instance shares.
+ *
+ * The caller's address never leaves this process: what goes to the worker is a SHA-256 of it salted
+ * with RATE_LIMIT_SALT (or the token, if no separate salt is set), so the worker stores an opaque
+ * string it cannot reverse and laikaorbit.com's privacy page stays true. The salt must be stable, or
+ * every request would land in its own bucket and count to one for ever.
+ */
+export async function overLimitShared(name: string, ip: string, max: number, windowMs = WINDOW): Promise<boolean> {
+  if (overLimit(name, ip, max, windowMs)) return true
+  const endpoint = optional('PUBLIC_PULSE_ENDPOINT')
+  const token = optional('RATE_LIMIT_TOKEN')
+  if (!endpoint || !token) return false
+  try {
+    const who = await sha256Hex(`${optional('RATE_LIMIT_SALT') ?? token}:${ip}`)
+    const r = await fetch(`${endpoint.replace(/\/+$/, '')}/v1/limit`, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json', authorization: `Bearer ${token}` },
+      body: JSON.stringify({ name, who, max, windowMs }),
+      // short on purpose: this sits in front of checkout, and a slow counter must not become a slow buy
+      signal: AbortSignal.timeout(600),
+    })
+    if (!r.ok) return false
+    return ((await r.json()) as { over?: unknown }).over === true
+  } catch {
+    return false
+  }
 }

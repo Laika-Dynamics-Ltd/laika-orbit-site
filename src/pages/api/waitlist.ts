@@ -1,5 +1,5 @@
 import type { APIRoute } from 'astro'
-import { callerIp, LIMITS, overLimit, WINDOW } from '../../lib/rate-limit'
+import { callerIp, LIMITS, overLimitShared, WINDOW } from '../../lib/rate-limit'
 import { addContact, resendConfigured, sendConfirmation } from '../../lib/resend'
 import { json } from '../../lib/stripe'
 
@@ -25,7 +25,7 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
   const email = String(body.email ?? '').trim().toLowerCase()
   if (!EMAIL.test(email) || email.length > 254) return json(400, { error: 'That email address looks wrong.' })
 
-  if (overLimit('waitlist', callerIp(request, clientAddress), LIMITS.waitlist, WINDOW)) {
+  if (await overLimitShared('waitlist', callerIp(request, clientAddress), LIMITS.waitlist, WINDOW)) {
     return json(429, { error: 'Too many sign-ups from here. Try again later.' })
   }
 
