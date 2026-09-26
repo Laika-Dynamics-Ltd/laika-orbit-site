@@ -69,8 +69,8 @@ export const WINDOWS = {
   tag: 'v1.0.3',
   url: 'https://github.com/Laika-Dynamics-Ltd/laika-orbit/releases/download/v1.0.3/LaikaOrbit-1.0.3-x64-setup.exe',
   file: 'LaikaOrbit-1.0.3-x64-setup.exe',
-  bytes: 0,
-  sha256: '',
+  bytes: 215_983_572,
+  sha256: '081caf4f9fdca325edf5b1d7d22a4531795e670108bc2e0bc51ca022833dcdde',
   /** x64 only: there is no arm64 Windows build, so an ARM PC is not served at all */
   arch: '64-bit (x64)',
   /**
