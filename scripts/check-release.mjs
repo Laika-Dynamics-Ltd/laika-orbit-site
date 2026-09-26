@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 /**
- * Does the site offer the artefact GitHub actually serves?
+ * Do the site's downloads — the Mac disk image, and the Windows installer when there is one —
+ * describe the artefacts GitHub actually serves?
  *
  *   npm run check:release
  *
@@ -24,7 +25,7 @@
  *
  * Exit: 0 match, 1 mismatch, 2 could not check.
  */
-import { RELEASE, ready } from '../src/lib/release.mjs'
+import { RELEASE, WINDOWS, ready, windowsReady } from '../src/lib/release.mjs'
 
 /** One line out, and nothing else, ever. */
 const done = (line, code) => {
@@ -89,6 +90,35 @@ if (published !== RELEASE.sha256)
 const head = await get(RELEASE.url, { headers: { range: 'bytes=0-0', 'user-agent': 'laika-orbit-site check:release' } })
 if (!head.ok) mismatch(`the download url answers ${head.status} to an unauthenticated request, so the public cannot fetch it`)
 
+// The Windows installer gets the same three questions, when the site offers one: the release has an
+// asset by that name, it is the size and the digest release.mjs claims, and the url resolves for
+// someone who is not us. A second download, not an alternative — the page offers both at once, so
+// either being wrong is the same failure.
+let winLine = null
+if (windowsReady) {
+  const winParts = new URL(WINDOWS.url).pathname.split('/').filter(Boolean)
+  const [, , , , winTag, winFile] = winParts
+  if (winTag !== tag)
+    mismatch(`WINDOWS.url points at ${winTag} but the Mac download is on ${tag} — one release, one tag`)
+  if (winFile !== WINDOWS.file) mismatch(`WINDOWS.url ends in ${winFile} but WINDOWS.file says ${WINDOWS.file}`)
+  const win = release.assets?.find((a) => a.name === WINDOWS.file)
+  if (!win)
+    mismatch(`${tag} has no asset named ${WINDOWS.file} (it has: ${(release.assets ?? []).map((a) => a.name).join(', ') || 'nothing'})`)
+  if (win.size !== WINDOWS.bytes) mismatch(`${WINDOWS.file} on ${tag} is ${win.size} bytes, but WINDOWS.bytes says ${WINDOWS.bytes}`)
+  const wl = text
+    .split('\n')
+    .map((l) => l.trim())
+    .find((l) => !l.startsWith('#') && l.endsWith(` ${WINDOWS.file}`))
+  if (!wl) mismatch(`SHA256SUMS on ${tag} has no line for ${WINDOWS.file}`)
+  const winPublished = wl.split(/\s+/)[0]
+  if (winPublished !== WINDOWS.sha256)
+    mismatch(`${WINDOWS.file} on ${tag} has sha256 ${winPublished}, but WINDOWS.sha256 says ${WINDOWS.sha256} — the site is describing a different build of the same filename`)
+  const winHead = await get(WINDOWS.url, { headers: { range: 'bytes=0-0', 'user-agent': 'laika-orbit-site check:release' } })
+  if (!winHead.ok)
+    mismatch(`the Windows download url answers ${winHead.status} to an unauthenticated request, so the public cannot fetch it`)
+  winLine = `${WINDOWS.file}, ${win.size} bytes, sha256 ${winPublished.slice(0, 12)}…`
+}
+
 // Everything above proves the site describes a real artefact correctly. It does not prove it
 // describes the *current* one, and that is the likelier mistake: publish a new version, forget this
 // file, and every check still passes because the old release is still served. /releases/latest is
@@ -105,4 +135,7 @@ if (l.ok) {
     )
 }
 
-done(`release: MATCH — ${owner}/${repo} ${tag} serves ${RELEASE.file}, ${asset.size} bytes, sha256 ${published.slice(0, 12)}…, and the url resolves publicly`, 0)
+done(
+  `release: MATCH — ${owner}/${repo} ${tag} serves ${RELEASE.file}, ${asset.size} bytes, sha256 ${published.slice(0, 12)}…${winLine ? ` and ${winLine}` : ''}, and the url${winLine ? 's' : ''} resolve${winLine ? '' : 's'} publicly`,
+  0,
+)

@@ -12,7 +12,7 @@ import Download from '../components/Download.astro'
 import Footer from '../components/Footer.astro'
 import Nav from '../components/Nav.astro'
 import Site from '../layouts/Site.astro'
-import { RELEASE, ready as downloadReady } from '../lib/release.mjs'
+import { RELEASE, WINDOWS, ready as downloadReady, windowsReady } from '../lib/release.mjs'
 
 const GITHUB = 'https://github.com/Laika-Dynamics-Ltd/laika-orbit'
 
@@ -334,7 +334,11 @@ made-on-box1</pre>
       <p class="muted">Download it, give it a goal, and let the fleet run.</p>
       {downloadReady ? (
         <div class="hero-cta center">
-          <a class="btn btn-light" href={RELEASE.url} data-download={RELEASE.file}>Download for Mac</a>
+          {/* through /download/<file>, like the hero button, so this one is counted too */}
+          <a class="btn btn-light" href={`/download/${RELEASE.file}`} data-download={RELEASE.file}>Download for Mac</a>
+          {windowsReady && (
+            <a class="btn btn-ghost" href={`/download/${WINDOWS.file}`} data-download={WINDOWS.file}>Windows (early)</a>
+          )}
           <a class="btn btn-ghost" href="/docs/">Read the docs</a>
         </div>
       ) : (

@@ -1,7 +1,7 @@
 ---
 import { ADDONS_NOTE, ANYWHERE, FREE_FEATURES, PRO, PRO_FEATURES, SYNC_HONEST, TERMS } from '../lib/pricing'
 import Page from '../layouts/Page.astro'
-import { RELEASE, ready as downloadReady, requirement, size } from '../lib/release.mjs'
+import { RELEASE, WINDOWS, ready as downloadReady, requirement, size, windowsReady, windowsSize } from '../lib/release.mjs'
 
 // On-demand, so SALES_OPEN switches checkout on and off without a rebuild
 export const prerender = false
@@ -116,7 +116,7 @@ const GITHUB = 'https://github.com/Laika-Dynamics-Ltd/laika-orbit'
         <p>Laika Orbit is open source under the MIT licence. Nothing is paywalled: download it or build it from source and you have every feature in the app. Pro is the hosted service on top.</p>
         <div class="ps-free-actions">
           {downloadReady ? (
-            <a class="btn btn-ghost" href={RELEASE.url} data-download={RELEASE.file}>Download for Mac</a>
+            <a class="btn btn-ghost" href={`/download/${RELEASE.file}`} data-download={RELEASE.file}>Download for Mac</a>
           ) : (
             <a class="btn btn-ghost" href="/docs/getting-started/">Install from source</a>
           )}
@@ -124,6 +124,11 @@ const GITHUB = 'https://github.com/Laika-Dynamics-Ltd/laika-orbit'
         </div>
         {downloadReady && (
           <p class="ps-small">{RELEASE.version} · {size} · {requirement} · <a href="/docs/getting-started/">or install from source</a></p>
+        )}
+        {windowsReady && (
+          <p class="ps-small">
+            On Windows: <a href={`/download/${WINDOWS.file}`} data-download={WINDOWS.file}>the early x64 installer</a>, {windowsSize} · not signed
+          </p>
         )}
       </div>
       <ul class="ps-free-list">{FREE_FEATURES.map((f) => <li>{f}</li>)}</ul>
