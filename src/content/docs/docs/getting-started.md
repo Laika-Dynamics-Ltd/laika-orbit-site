@@ -5,7 +5,8 @@ description: Requirements, installing from source, and what happens on first lau
 
 ## Requirements
 
-- **macOS** for the desktop app. The server and Laika Orbit recall also run on Linux.
+- **macOS** for the desktop app, or **Windows 10 or later, 64-bit** for the early Windows
+  installer ([what early means](#windows)). The server and Laika Orbit recall also run on Linux.
 - **Node 22.18 or newer** and **pnpm 10**. With [mise](https://mise.jdx.dev), `mise install` sets up both.
 - **A Claude account** for chats (you can try the panel with an offline demo agent first).
 - Optional: `brew install poppler` so PDFs are indexed (`pdftotext`).
@@ -16,10 +17,27 @@ description: Requirements, installing from source, and what happens on first lau
 
 ## Install
 
-Laika Orbit is free either way: build it from source below, or download the signed, notarised Mac
-build from the [releases page](https://github.com/Laika-Dynamics-Ltd/laika-orbit/releases). There is
-no updater yet, so new versions are a fresh download. [Orbit Pro](/pricing/), the paid membership on
-top, isn't on sale yet; join the waitlist to hear when it opens.
+Laika Orbit is free either way: build it from source below, or download a build from the
+[releases page](https://github.com/Laika-Dynamics-Ltd/laika-orbit/releases) — the signed, notarised
+Mac disk image, or the Windows x64 installer. From 1.0.3 the Mac build checks for new versions and
+can update itself; the Windows one cannot yet, so a new version there means downloading it again.
+[Orbit Pro](/pricing/), the paid membership on top, isn't on sale yet; join the waitlist to hear when
+it opens.
+
+<h3 id="windows">On Windows</h3>
+
+The installer runs, carries its own Node, and serves the real UI; a chat's terminal is PowerShell.
+It is early, and three things are worth knowing before you rely on it:
+
+- It is **not code-signed**, so SmartScreen stops it the first time: More info, then Run anyway. The
+  checksum beside the [download](/#dl-win-why) stands in for the signature until there is one.
+- **Secrets are not kept in a keychain** on Windows as they are on macOS, so anything that needs a
+  stored credential is not safe to rely on there yet. This is the gap that matters most.
+- Only the **x64** build exists — no arm64 — and no automated check runs on Windows: it is built and
+  exercised by hand, on one machine.
+
+It installs for you alone, without an administrator, and lets you choose the folder. Your data lives
+in `%APPDATA%\Laika Orbit\`, never inside the install folder.
 
 ```bash
 git clone https://github.com/Laika-Dynamics-Ltd/laika-orbit.git

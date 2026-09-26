@@ -8,13 +8,21 @@
 import assert from 'node:assert/strict'
 import { test } from 'node:test'
 import { country, downloadHit, downloadTarget, optedOut, referrerHost, sendHit } from '../src/lib/download-hit.mjs'
-import { RELEASE } from '../src/lib/release.mjs'
+import { RELEASE, WINDOWS, windowsReady } from '../src/lib/release.mjs'
 
 const h = (o: Record<string, string> = {}) => new Headers(o)
 
 test('/download resolves to the current release, and a named asset to itself', () => {
   assert.deepEqual(downloadTarget(), { file: RELEASE.file, url: RELEASE.url })
   assert.deepEqual(downloadTarget(RELEASE.file), { file: RELEASE.file, url: RELEASE.url })
+})
+
+test('the Windows installer resolves by name exactly when it is switched on', () => {
+  // true either way: with no Windows file published the name is a 404 like any other, and with one
+  // it is counted and redirected like the dmg. The assertion cannot quietly stop meaning anything.
+  const target = downloadTarget(WINDOWS.file)
+  if (windowsReady) assert.deepEqual(target, { file: WINDOWS.file, url: WINDOWS.url })
+  else assert.equal(target, null)
 })
 
 test('a name that is not a release asset is null, never a guess', () => {

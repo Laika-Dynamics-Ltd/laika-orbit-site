@@ -52,3 +52,48 @@ export const size = `${Math.round(RELEASE.bytes / 1_000_000)} MB`
 
 /** "macOS 13 Ventura or later, Apple silicon" */
 export const requirement = `macOS ${RELEASE.minMacOS} ${RELEASE.minMacOSName} or later, ${RELEASE.arch}`
+
+/**
+ * The Windows installer of the same release.
+ *
+ * Beside the Mac release rather than inside it, because the two are not the same kind of download
+ * and the page has to say so: the Mac build is signed, notarised and universal, and this one is an
+ * early x64 build that Windows itself warns about. The numbers came the same way — the size off
+ * the published asset, the digest off the release's own SHA256SUMS, never off a local file.
+ *
+ * Empty the url (or the size, or the digest) and Windows disappears from the site, exactly as the
+ * Mac download does, rather than becoming a dead button.
+ */
+export const WINDOWS = {
+  version: '1.0.3',
+  tag: 'v1.0.3',
+  url: 'https://github.com/Laika-Dynamics-Ltd/laika-orbit/releases/download/v1.0.3/LaikaOrbit-1.0.3-x64-setup.exe',
+  file: 'LaikaOrbit-1.0.3-x64-setup.exe',
+  bytes: 215_983_572,
+  sha256: '081caf4f9fdca325edf5b1d7d22a4531795e670108bc2e0bc51ca022833dcdde',
+  /** x64 only: there is no arm64 Windows build, so an ARM PC is not served at all */
+  arch: '64-bit (x64)',
+  /**
+   * False, and Windows will say so: there is no Windows code-signing certificate, so SmartScreen
+   * shows "Windows protected your PC" the first time Setup.exe runs. The checksum on the page is
+   * what stands in for a signature until there is one.
+   */
+  signed: false,
+  minWindows: '10',
+  /**
+   * Early, and the page says it in as many words rather than in a footnote. The installer runs and
+   * serves the real UI, but secrets are not kept in a keychain on Windows, so anything needing a
+   * stored credential is not safe to rely on there, and no automated check runs on Windows at all:
+   * it is built and exercised by hand on one machine. The app's README says the same.
+   */
+  early: true,
+}
+
+/** the Windows download is shown only once there is a real file, with a real size and digest */
+export const windowsReady = Boolean(WINDOWS.url && WINDOWS.bytes && WINDOWS.sha256)
+
+/** "412 MB", written the way the Mac size is */
+export const windowsSize = `${Math.round(WINDOWS.bytes / 1_000_000)} MB`
+
+/** "Windows 10 or later, 64-bit (x64)" */
+export const windowsRequirement = `Windows ${WINDOWS.minWindows} or later, ${WINDOWS.arch}`

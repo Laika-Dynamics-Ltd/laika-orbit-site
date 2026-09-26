@@ -6,8 +6,21 @@
  *
  * Everything shown here — version, size, requirement, checksum — comes from that one module, so
  * the home page and the pricing page can never quietly disagree about what the current release is.
+ *
+ * The Mac download is still the gate: it is the build that is signed, notarised and tested, and
+ * the Windows installer is offered beside it, labelled early, only when release.mjs has a real
+ * file for it. A Windows visitor is told what "early" means before they download, not after.
  */
-import { RELEASE, ready, requirement, size } from '../lib/release.mjs'
+import {
+  RELEASE,
+  WINDOWS,
+  ready,
+  requirement,
+  size,
+  windowsReady,
+  windowsRequirement,
+  windowsSize,
+} from '../lib/release.mjs'
 
 interface Props {
   /** shown beside the download; the home page and the pricing page want different second buttons */
@@ -22,6 +35,11 @@ const { secondary, compact = false } = Astro.props
     <>
       <div class:list={['hero-cta', compact && 'dl-compact']}>
         <a class="btn btn-light" href={`/download/${RELEASE.file}`} data-download={RELEASE.file}>Download for Mac</a>
+        {windowsReady && (
+          <a class="btn btn-ghost" href={`/download/${WINDOWS.file}`} data-download={WINDOWS.file}>
+            Windows (early)
+          </a>
+        )}
         {secondary && <a class="btn btn-ghost" href={secondary.href}>{secondary.label}</a>}
       </div>
       <p class="dl-meta">
@@ -36,6 +54,12 @@ const { secondary, compact = false } = Astro.props
           </>
         )}
       </p>
+      {windowsReady && (
+        <p class="dl-win">
+          Windows {WINDOWS.version} · {windowsSize} · {windowsRequirement}. An early build, and not
+          signed. <a href="#dl-win-why">What that means</a>
+        </p>
+      )}
       <details class="dl-sum" id="dl-why">
         <summary>{RELEASE.signed ? 'Checksum' : 'Checksum, and why macOS blocks it'}</summary>
         {!RELEASE.signed && (
@@ -54,6 +78,27 @@ const { secondary, compact = false } = Astro.props
           </p>
         )}
       </details>
+
+      {windowsReady && (
+        <details class="dl-sum" id="dl-win-why">
+          <summary>The Windows build: what works, and what Windows will say</summary>
+          <p>
+            It carries no code signature — there is no Windows certificate yet — so SmartScreen
+            stops it the first time with “Windows protected your PC”: choose More info, then Run
+            anyway. The checksum below is how you confirm the file you have is the file we
+            published, and it is what stands in for a signature until there is one.
+          </p>
+          <p>
+            It installs for you alone, needs no administrator, and lets you choose the folder. Two
+            gaps worth knowing before you rely on it: secrets are not kept in a keychain on
+            Windows, so anything that needs a stored credential is not safe there yet, and only the
+            64-bit x64 build exists — an ARM PC is not served.
+          </p>
+          <p>Verify the file you downloaded matches the one we published, in PowerShell:</p>
+          <code>certutil -hashfile "{WINDOWS.file}" SHA256</code>
+          <code class="dl-hash">{WINDOWS.sha256}</code>
+        </details>
+      )}
 
       {/* The button goes through /download/<file>, which counts one "download started" at the pulse
           worker on the server and then redirects to GitHub (src/lib/download-hit.mjs): the count the

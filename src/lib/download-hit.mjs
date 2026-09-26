@@ -20,18 +20,29 @@
  *
  * Pure, so `npm test` can drive it with plain headers and no server.
  */
-import { RELEASE, ready } from './release.mjs'
+import { RELEASE, WINDOWS, ready, windowsReady } from './release.mjs'
 
-/** the assets a person may ask for by name, and where each one lives */
-const ASSETS = () => (ready ? new Map([[RELEASE.file, RELEASE.url]]) : new Map())
+/**
+ * The assets a person may ask for by name, and where each one lives: the Mac disk image and, once
+ * there is one on the release, the Windows installer. Each is in the map only while its own
+ * download is switched on, so turning one off cannot leave the other's button counting hits at a
+ * url that 404s.
+ */
+const ASSETS = () =>
+  new Map([
+    ...(ready ? [[RELEASE.file, RELEASE.url]] : []),
+    ...(windowsReady ? [[WINDOWS.file, WINDOWS.url]] : []),
+  ])
 
 /**
  * Where /download or /download/<file> goes, or null for a name that is not a release asset — a
  * 404 rather than a guess, so a typo can never be counted as a download.
  */
 export function downloadTarget(file) {
-  if (!ready) return null
-  if (file === undefined || file === null || file === '') return { file: RELEASE.file, url: RELEASE.url }
+  // /download with no name is the Mac download, as it always was: the buttons name the Windows
+  // file, so nothing here has to guess a platform from a user agent
+  if (file === undefined || file === null || file === '')
+    return ready ? { file: RELEASE.file, url: RELEASE.url } : null
   const url = ASSETS().get(String(file))
   return url ? { file: String(file), url } : null
 }
