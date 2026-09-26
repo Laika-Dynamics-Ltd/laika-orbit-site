@@ -16,15 +16,15 @@
  * rather than turning into a dead button.
  */
 export const RELEASE = {
-  version: '1.0.2',
-  tag: 'v1.0.2',
+  version: '1.0.3',
+  tag: 'v1.0.3',
   /** the public download url for the .dmg — fill this in to switch the download on */
-  url: 'https://github.com/Laika-Dynamics-Ltd/laika-orbit/releases/download/v1.0.2/LaikaOrbit-1.0.2-universal.dmg',
+  url: 'https://github.com/Laika-Dynamics-Ltd/laika-orbit/releases/download/v1.0.3/LaikaOrbit-1.0.3-universal.dmg',
   /** where the release itself lives, for people who want the notes and the other assets */
-  page: 'https://github.com/Laika-Dynamics-Ltd/laika-orbit/releases/tag/v1.0.2',
-  file: 'LaikaOrbit-1.0.2-universal.dmg',
-  bytes: 652_997_069,
-  sha256: '9a1449ed159234801d162713f3f9ce312f7c59c652857e44b5b6c7a3a8ccefff',
+  page: 'https://github.com/Laika-Dynamics-Ltd/laika-orbit/releases/tag/v1.0.3',
+  file: 'LaikaOrbit-1.0.3-universal.dmg',
+  bytes: 650_509_290,
+  sha256: 'f1592d04c104d396c8e1878e051c731247b2e8a4cc88901be78f567fec06806b',
   /** one universal build: Apple silicon, and Intel, which has never been tested (no Intel Mac here) */
   arch: 'Apple silicon and Intel',
   /**
